@@ -1,4 +1,6 @@
 'use strict';
+const { Sequelize, DataTypes } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     id: {
@@ -7,18 +9,21 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false
+    username: { 
+      type: DataTypes.STRING, 
+      allowNull: false, 
+      unique: true 
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+    email: { 
+      type: DataTypes.STRING, 
+      allowNull: false, 
+      unique: true, 
+      validate: { isEmail: true } 
     },
-    mdp: {
-      type: DataTypes.STRING,
-      allowNull: false
+    mdp: { 
+      type: DataTypes.STRING, 
+      allowNull: false, 
+      validate: { len: [6, 255] } 
     },
     role: {
       type: DataTypes.ENUM('Admin', 'Formateur', 'Apprenant'),
@@ -27,18 +32,16 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: true,
     paranoid: true,
-    freezeTableName: true
+    freezeTableName: true,
+    tableName: 'User',
   });
 
-  // ✅ Register Associations
+  // Associations
   User.associate = (models) => {
-    User.hasMany(models.Formation, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-    User.hasMany(models.Historisation, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-    User.hasOne(models.DailyStreak, { foreignKey: 'user_id', onDelete: 'CASCADE' });
- 
+    User.hasMany(models.Formation, { foreignKey: 'userId', onDelete: 'CASCADE' });
+    User.hasMany(models.Historisation, { foreignKey: 'userId', onDelete: 'CASCADE' });
+    User.hasOne(models.DailyStreak, { foreignKey: 'userId', onDelete: 'CASCADE' });
   };
 
   return User;
 };
-
-

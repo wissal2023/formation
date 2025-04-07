@@ -2,10 +2,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
 
-// Import related models
-const User = require('./user');
-const Quiz = require('./quiz');
-
 module.exports = (sequelize, DataTypes) => {
   const Recompense = sequelize.define('Recompense', {
   id: {
@@ -63,15 +59,13 @@ module.exports = (sequelize, DataTypes) => {
   }
 }, {
   paranoid: true, // Enables soft delete
-  freezeTableName: true, // Keeps table name as 'recompense'
-  modelName: 'recompense'
+  freezeTableName: true
 });
 
-// ✅ Define Associations
- Recompense.associate = (models) => {
-  Recompense.belongsTo(models.Quiz, { foreignKey: 'user_id' });
+// Associations
+Recompense.associate = (models) => {
+  Recompense.belongsTo(models.Quiz, { foreignKey: 'QuizId', onDelete: 'CASCADE' });
 };
-
 
 return Recompense;
 };
