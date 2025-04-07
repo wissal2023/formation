@@ -2,9 +2,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
 
-// Import related models
-const Question = require('./question');
-
 module.exports = (sequelize, DataTypes) => {
   const Reponse = sequelize.define('Reponse', {
   id: {
@@ -13,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     primaryKey: true,
     type: DataTypes.INTEGER
   },
-  reponseText: {  // Renamed 'reponses' to be more meaningful
+  reponseText: { 
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -33,8 +30,7 @@ module.exports = (sequelize, DataTypes) => {
   }
 }, {
   paranoid: true, // Enables soft delete
-  freezeTableName: true, // Keeps table name as 'reponse'
-  modelName: 'reponse'
+  freezeTableName: true
 });
 
 
