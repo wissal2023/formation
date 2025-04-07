@@ -1,9 +1,5 @@
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
-
-// Import User model (assuming historisation is related to users)
-const User = require('./user');
 
 
 module.exports = (sequelize, DataTypes) => {
@@ -45,5 +41,5 @@ module.exports = (sequelize, DataTypes) => {
   Historisation.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 };
 
-return Historisation;
+  return Historisation;
 };
