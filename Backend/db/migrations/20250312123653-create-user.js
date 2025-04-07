@@ -1,8 +1,7 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('user', {
+    await queryInterface.createTable('Users', { 
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,17 +9,22 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       username: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
       },
       mdp: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       role: {
-      type: Sequelize.ENUM('Admin', 'Formateur', 'Apprenant'),
-        allowNull: false,
+        type: Sequelize.ENUM('Admin', 'Formateur', 'Apprenant'),
+        allowNull: false
       },
       dateInscr: {
         type: Sequelize.DATE
@@ -36,12 +40,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      deletedAt: {
-        type: Sequelize.DATE,
-      },
+      deletedAt: {  // ✅ Soft delete support
+        type: Sequelize.DATE
+      }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('user');
+    await queryInterface.dropTable('Users');
   }
 };
