@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const { sequelize } = require('./db/models');
 const formationRoutes = require('./routes/formationRoutes');
 
 const sequelize = require('./config/database');
@@ -8,12 +9,14 @@ const db = require('./db/models');
 
 app.use(express.json()); // Pour parser le JSON
 
-app.get('/', (req, res) => {
+app.use('/users', userRoute );
+
+app.get('/', (req,res)=> {
     res.status(200).json({
-        status: 'success',
-        message: 'Welcome to our API',
-    });
-});
+        status:'success',
+        message:'welcome to our api',
+    })
+})
 
 /*
 db.sequelize.sync()

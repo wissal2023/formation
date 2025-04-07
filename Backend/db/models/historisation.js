@@ -1,6 +1,7 @@
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
 
+
 module.exports = (sequelize, DataTypes) => {
   const Historisation = sequelize.define('Historisation', {
     id: {
@@ -9,8 +10,12 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    action: { 
+    action: { // Description of the historical action
       type: DataTypes.STRING,
+      allowNull: false
+    },
+    deleted_data: { // 🔥 Full data of the deleted item (e.g., a Document)
+      type: DataTypes.JSONB,
       allowNull: false
     },
     createdAt: {
@@ -27,14 +32,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE
     }
   }, {
-    paranoid: true,
-    freezeTableName: true
+    paranoid: true, // Enables soft delete (for historisation itself)
+    freezeTableName: true, // Keeps table name as 'Historisation'
+    modelName: 'historisation'
   });
-
-  // Associations
-  Historisation.associate = (models) => {
-    Historisation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
-  };
+ // ✅ Register Associations
+ Historisation.associate = (models) => {
+  Historisation.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+};
 
   return Historisation;
 };

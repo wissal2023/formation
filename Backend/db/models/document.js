@@ -39,11 +39,10 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     freezeTableName: true
   });
-
-  // Associations
-  Document.associate = (models) => {
-    Document.belongsTo(models.Formation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-  };
   
+Document.associate = (models) => {
+  Document.belongsTo(models.Formation, { foreignKey: 'formation_id' });
+}
+
     return Document;
 };
