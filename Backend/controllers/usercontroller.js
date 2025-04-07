@@ -20,7 +20,7 @@ exports.getUserByName = async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   };
-// 🔹 Get user by ID
+//  Get user by ID
 exports.getDocumentById = async (req, res) => {
   try {
     const doc = await Document.findByPk(req.params.id);
