@@ -16,7 +16,16 @@ module.exports = (sequelize, DataTypes) => {
     thematique: { type: DataTypes.STRING },
     datedebut: { type: DataTypes.DATE },
     datefin: { type: DataTypes.DATE },
-    verouillee: { type: DataTypes.BOOLEAN, defaultValue: false }
+    verouillee: { type: DataTypes.BOOLEAN, defaultValue: false },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'User',
+        key: 'id'
+      }
+    }
+
   }, {
     timestamps: true,
     paranoid: true,
