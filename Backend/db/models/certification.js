@@ -1,7 +1,6 @@
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Quiz = require('./quiz');
 
 
 module.exports = (sequelize, DataTypes) => {
@@ -40,12 +39,11 @@ module.exports = (sequelize, DataTypes) => {
   }
 }, {
   paranoid: true, 
-  freezeTableName: true, 
-  modelName: 'certification'
+  freezeTableName: true
 });
 
 Certification.associate = (models) => {
-  Certification.belongsTo(models.Quiz, { foreignKey: 'user_id' });
+  Certification.belongsTo(models.Quiz, { foreignKey: 'QuizId', onDelete: 'CASCADE' });
 };
 
 return Certification;

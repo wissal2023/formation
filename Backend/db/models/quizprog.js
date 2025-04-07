@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     primaryKey: true,
     type: DataTypes.INTEGER
   },
-  completed: {  // Fixed spelling
+  completed: { 
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.DATE,
     allowNull: true
   },
-  pointGagne: {  // Fixed spelling
+  pointGagne: {  
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0
@@ -43,14 +43,12 @@ module.exports = (sequelize, DataTypes) => {
   }
 }, {
   paranoid: true, // Enables soft delete
-  freezeTableName: true, // Keeps table name as 'quizProg'
-  modelName: 'quizProg'
+  freezeTableName: true
 });
 
+// Associations
 QuizProg.associate = (models) => {
-  QuizProg.belongsTo(models.Quiz, { foreignKey: 'user_id' });
-  
+  QuizProg.belongsTo(models.Quiz, { foreignKey: 'QuizId', onDelete: 'CASCADE' });
 };
-
 return QuizProg;
 };
