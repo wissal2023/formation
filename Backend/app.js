@@ -1,23 +1,19 @@
+// app.js
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const { sequelize } = require('./db/models');
+const db = require('./db/models');
+const cors = require('cors');
 
-//const { sequelize } = require('./db/models');
 const formationRoutes = require('./routes/formationRoutes');
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
-
-
-
-const { sequelize } = require('./db/models');
-const db = require('./db/models');
-
-
-
-
-
+const otpRoutes = require('./routes/otpRoutes');
 
 app.use(express.json()); 
+app.use(cors());
+
 /*
 db.sequelize.sync()
   .then(() => console.log("Database schema updated"))
@@ -33,12 +29,11 @@ app.get('/', (req,res)=> {
     })
 })
 
-
-
-app.use('/users', userRoute );
+// ******************* HEAD ROUTES *******************
 app.use('/formations', formationRoutes);
+app.use('/users', userRoutes);
+app.use('/api/otp', otpRoutes);
 app.use('/documents', docRoute );
-
 
 app.use('*', (req, res) => {
     res.status(404).json({

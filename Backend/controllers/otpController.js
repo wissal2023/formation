@@ -1,8 +1,8 @@
-const { sendOtpEmail } = require('../utils/emailService');  // Assure-toi que ce fichier existe et contient une fonction pour envoyer des emails
-const { generateOtp } = require('../services/otpService'); // Assure-toi que ce fichier contient une fonction pour générer un OTP
-const otpModel = require('../Models/otpModel'); // Modèle pour gérer les OTPs
-const speakeasy = require('speakeasy'); // Pour générer et vérifier les OTPs avec Google Authenticator
-const qrcode = require('qrcode'); // Pour générer des QR Codes
+const { sendOtpEmail } = require('../utils/emailService');  
+const { generateOtp } = require('../services/otpService'); 
+const otpModel = require('../services/otpModel'); 
+const speakeasy = require('speakeasy'); 
+const qrcode = require('qrcode'); 
 
 // Générer un OTP aléatoire et l'envoyer par email
 const sendOtp = async (req, res) => {

@@ -1,6 +1,6 @@
 
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt'); // if you hashed passwords
+const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const User = db.User;
 
@@ -31,7 +31,7 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 };
-=======
+
 const supabase = require('../supabaseClient');
 const { generateOtp, otpDatabase } = require('../services/otpService');
 const { sendOtpEmail } = require('../utils/emailService');
