@@ -1,15 +1,17 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const { sequelize } = require('./db/models');
+//const { sequelize } = require('./db/models');
 const formationRoutes = require('./routes/formationRoutes');
+const userRoute = require('./routes/userRoute'); 
+const docRoute = require('./routes/docRoute'); 
 
-const sequelize = require('./config/database');
+
 const db = require('./db/models');
 
 app.use(express.json()); // Pour parser le JSON
 
-app.use('/users', userRoute );
+
 
 app.get('/', (req,res)=> {
     res.status(200).json({
@@ -23,9 +25,9 @@ db.sequelize.sync()
   .then(() => console.log("Database schema updated"))
   .catch(err => console.error("Error updating database:", err));
 */
-
-// ✅ Use the correct variable
+app.use('/users', userRoute );
 app.use('/formations', formationRoutes);
+app.use('/documents', docRoute );
 
 
 

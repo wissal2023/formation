@@ -1,19 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const userController = require('../controllers/usercontroller'); // change le chemin selon ton projet
 
-const {
-  getUsers,
-  createUser,
-  updateUser,
-  deleteUser,
-  getUserByName
-} = require('../controllers/usercontroller');
+router.get('/', userController.getAllUsers);
+router.get('/:name', userController.getUserByName);
+router.post('/addUser', userController.createUser);
+router.put('/:id', userController.updateUser);
+router.delete('/:id', userController.deleteUser);
 
-// CRUD Routes
-router.get('/', getUsers);            // GET all users
-router.get('/name/:name', getUserByName);// GET user by ID
-router.post('/add', createUser);         // POST new user
-router.put('/:id', updateUser);       // PUT update user
-router.delete('/:id', deleteUser);    // DELETE user
-
-module.exports = router;
+module.exports = router;
