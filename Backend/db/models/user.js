@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     paranoid: true,
     freezeTableName: true,
-    tableName: 'User',
+    tableName: 'user',
   });
 
   // Associations

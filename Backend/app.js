@@ -1,11 +1,21 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+
+//const { sequelize } = require('./db/models');
+const formationRoutes = require('./routes/formationRoutes');
+const userRoute = require('./routes/userRoute'); 
+const docRoute = require('./routes/docRoute'); 
+
+
+
 const { sequelize } = require('./db/models');
 const db = require('./db/models');
 
-const formationRoutes = require('./routes/formationRoutes');
-const userRoutes = require('./routes/userRoute'); 
+
+
+
+
 
 app.use(express.json()); 
 /*
@@ -14,6 +24,7 @@ db.sequelize.sync()
   .catch(err => console.error("Error updating database:", err));
 */
 
+
 // ******************* ALL ROUTES *******************
 app.get('/', (req,res)=> {
     res.status(200).json({
@@ -21,9 +32,12 @@ app.get('/', (req,res)=> {
         message:'welcome to our api',
     })
 })
-// ******************* HEAD ROUTES *******************
-app.use('/users', userRoutes);
+
+
+
+app.use('/users', userRoute );
 app.use('/formations', formationRoutes);
+app.use('/documents', docRoute );
 
 
 app.use('*', (req, res) => {
