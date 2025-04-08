@@ -5,12 +5,20 @@ const Formation = db.Formation;
 // CREATE
 exports.createFormation = async (req, res) => {
   try {
-    const formation = await Formation.create(req.body);
+    const userId = req.user.id; // from JWT payload
+
+    const formation = await Formation.create({
+      ...req.body,
+      userId // associate it with current user
+    });
+
     res.status(201).json(formation);
   } catch (error) {
+    console.error('Erreur lors de la création de formation:', error);
     res.status(500).json({ message: 'Erreur lors de la création', error });
   }
 };
+
 
 // READ - all
 exports.getAllFormations = async (req, res) => {

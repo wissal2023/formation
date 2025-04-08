@@ -1,6 +1,7 @@
 // routes/formation.routes.js
 const express = require('express');
 const router = express.Router();
+const auth = require('../config/auth');
 const formationController = require('../controllers/formationController');
 
 router.post('/AddFormation', formationController.createFormation);
