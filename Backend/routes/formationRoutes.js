@@ -4,7 +4,7 @@ const router = express.Router();
 const auth = require('../config/auth');
 const formationController = require('../controllers/formationController');
 
-router.post('/', formationController.createFormation);
+router.post('/AddFormation', formationController.createFormation);
 router.get('/', formationController.getAllFormations);
 router.get('/:id', formationController.getFormationById);
 router.put('/:id', formationController.updateFormation);
