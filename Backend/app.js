@@ -5,9 +5,11 @@ const app = express();
 const { sequelize } = require('./db/models');
 const db = require('./db/models');
 const cors = require('cors');
-const otpRoutes = require('./routes/otpRoutes');
+
 const formationRoutes = require('./routes/formationRoutes');
-const userRoutes = require('./routes/userRoute'); 
+const userRoute = require('./routes/userRoute'); 
+const docRoute = require('./routes/docRoute'); 
+const otpRoutes = require('./routes/otpRoutes');
 
 app.use(express.json()); 
 app.use(cors());
@@ -17,6 +19,7 @@ db.sequelize.sync()
   .then(() => console.log("Database schema updated"))
   .catch(err => console.error("Error updating database:", err));
 */
+
 
 // ******************* ALL ROUTES *******************
 app.get('/', (req,res)=> {
@@ -30,6 +33,7 @@ app.get('/', (req,res)=> {
 app.use('/formations', formationRoutes);
 app.use('/users', userRoutes);
 app.use('/api/otp', otpRoutes);
+app.use('/documents', docRoute );
 
 app.use('*', (req, res) => {
     res.status(404).json({
