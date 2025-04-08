@@ -29,19 +29,11 @@ module.exports = {
         deletedAt: {
           type: Sequelize.DATE,
         },
-<<<<<<< HEAD:Backend/db/migrations/20250312134824-create-document.js
-        user_id: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          references: {
-            model: 'formation', 
-=======
         formationId: {
           type: Sequelize.INTEGER,
           allowNull: false,
           references: {
             model: 'Formations', 
->>>>>>> f91c1f96cc63d2779bb44373875e7e077acb7bb6:Backend/db/migrations/20250312123655-create-document.js
             key: 'id'
           },
           onDelete: 'CASCADE'
