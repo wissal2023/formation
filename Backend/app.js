@@ -31,7 +31,7 @@ app.get('/', (req,res)=> {
 
 // ******************* HEAD ROUTES *******************
 app.use('/formations', formationRoutes);
-app.use('/users', userRoutes);
+app.use('/users', userRoute);
 app.use('/api/otp', otpRoutes);
 app.use('/documents', docRoute );
 
