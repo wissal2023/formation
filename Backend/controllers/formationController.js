@@ -1,15 +1,41 @@
 // controllers/formation.controller.js
 const db = require('../db/models');
 const Formation = db.Formation;
+const User = db.User;
 
-// CREATE
 exports.createFormation = async (req, res) => {
   try {
-    const userId = req.user.id; // from JWT payload
+    const userId = req.body.userId;
 
+    // Fetch the user details by userId
+    const user = await User.findByPk(userId);
+
+    // Check if the user exists and has the correct role
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Only allow "formateur" or "admin" to create formations
+    if (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin') {
+      return res.status(403).json({ message: 'Vous n\'avez pas la permission de créer une formation.' });
+    }
+
+    // Parse and format the dates as ISO strings
+    const datedebut = new Date(req.body.datedebut).toISOString();
+    const datefin = new Date(req.body.datefin).toISOString();
+
+    // Validate the date objects
+    if (isNaN(new Date(datedebut)) || isNaN(new Date(datefin))) {
+      console.log(req.body.datedebut, req.body.datefin);
+      return res.status(400).json({ message: 'Les dates sont invalides.' });
+    }
+
+    // Create the formation
     const formation = await Formation.create({
       ...req.body,
-      userId // associate it with current user
+      datedebut, 
+      datefin,
+      userId, // associated with the user
     });
 
     res.status(201).json(formation);
@@ -18,6 +44,8 @@ exports.createFormation = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la création', error });
   }
 };
+
+
 
 
 // READ - all
