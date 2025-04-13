@@ -21,6 +21,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    nbreSection: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    formationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Formations',
+        key: 'id'
+      }
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,

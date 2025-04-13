@@ -14,9 +14,18 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     allowNull: false
   },
-  is_correct: {  
+  isCorrect: {  
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  questId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Question', 
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
   },
   createdAt: {
     allowNull: false,
@@ -29,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     defaultValue: Sequelize.NOW
   }
 }, {
-  paranoid: true, // Enables soft delete
+  paranoid: true, 
   freezeTableName: true
 });
 

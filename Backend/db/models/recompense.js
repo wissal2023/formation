@@ -44,6 +44,15 @@ module.exports = (sequelize, DataTypes) => {
     allowNull: false,
     defaultValue: 0
   },
+  quizId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Quiz', 
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
+  },
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
