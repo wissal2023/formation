@@ -1,8 +1,12 @@
-
+// backend/controllers/authController
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const User = db.User;
+const supabase = require('../supabaseClient');
+const { generateOtp, otpDatabase } = require('../services/otpService');
+const { sendOtpEmail } = require('../utils/emailService');
+
 
 exports.login = async (req, res) => {
   const { email, mdp } = req.body;
@@ -31,10 +35,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 };
-
-const supabase = require('../supabaseClient');
-const { generateOtp, otpDatabase } = require('../services/otpService');
-const { sendOtpEmail } = require('../utils/emailService');
 
 // Inscription
 exports.signup = async (req, res) => {
