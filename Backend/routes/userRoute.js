@@ -10,7 +10,7 @@ router.post('/register', addUserController);
 router.post('/login', loginUserController);
 
 // Route pour récupérer tous les utilisateurs
-router.get('/getAll', getAllUsers);
+router.get('/getAll', getAllUsers); // update to get user from BD
 
 // Route pour récupérer un seul utilisateur par ID
 router.get('/getOnce/:id', getOnceUser);

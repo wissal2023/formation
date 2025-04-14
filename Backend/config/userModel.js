@@ -1,9 +1,9 @@
-// config/userModel.js
+// backend/config/userModel.js
 const supabase = require('../supabaseClient.js');  
 
 const userModel = {
     supabase: supabase,
-    tableName: 'Users',
+    tableName: 'users',
 };
 
 module.exports = userModel;
