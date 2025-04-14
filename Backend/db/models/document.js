@@ -21,6 +21,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       defaultValue: Sequelize.NOW
     },
+    formationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Formations',
+        key: 'id'
+      }
+    },  
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,

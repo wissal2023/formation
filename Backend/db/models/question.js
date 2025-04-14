@@ -14,6 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     allowNull: false
   },
+  quizId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Quiz', 
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
+  },
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
@@ -31,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
 
 // Associations
 Question.associate = (models) => {
-  Question.belongsTo(models.Quiz, { foreignKey: 'QuizId', onDelete: 'CASCADE' });
+  Question.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
 };
 return Question;
 };

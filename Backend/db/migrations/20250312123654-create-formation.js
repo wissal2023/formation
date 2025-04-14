@@ -1,4 +1,5 @@
 'use strict';
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Formations', { 
@@ -32,7 +33,10 @@ module.exports = {
       verouillee: {
         type: Sequelize.BOOLEAN
       },
-      userId: {  // ✅ Foreign key linking to Users
+      typeFlag: { 
+        type: Sequelize.ENUM('facultat', 'obligatoire'), 
+        allowNull: false,},
+      userId: { 
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
