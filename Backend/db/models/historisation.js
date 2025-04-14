@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    action: { // Description of the historical action
+    action: { 
       type: DataTypes.STRING,
       allowNull: false
     },
-    deleted_data: { // 🔥 Full data of the deleted item (e.g., a Document)
+    deleted_data: { 
       type: DataTypes.JSONB,
       allowNull: false
     },
@@ -33,12 +33,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     paranoid: true, // Enables soft delete (for historisation itself)
-    freezeTableName: true, // Keeps table name as 'Historisation'
-    modelName: 'historisation'
+    freezeTableName: true,
+    modelName: 'Historisations'
   });
- // ✅ Register Associations
+
+ // Associations
  Historisation.associate = (models) => {
-  Historisation.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+  Historisation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
 };
 
   return Historisation;
