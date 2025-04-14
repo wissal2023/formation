@@ -1,5 +1,4 @@
-// db/models/formation.js
-'use strict';
+
 const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -18,8 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     datedebut: { type: DataTypes.DATE },
     datefin: { type: DataTypes.DATE },
     verouillee: { type: DataTypes.BOOLEAN, defaultValue: false },
-    typeFlag: { type: DataTypes.ENUM('facultat', 'obligatoire'), allowNull: false,},
-    userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'User', key: 'id'}}
+    typeFlag: { type: DataTypes.ENUM('facultat', 'obligatoire'), allowNull: false, },
+    userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'User', key: 'id' } }
   }, {
     timestamps: true,
     paranoid: true,
@@ -30,13 +29,14 @@ module.exports = (sequelize, DataTypes) => {
   // Associations
   Formation.associate = (models) => {
     Formation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
-    Formation.hasOne(models.FormationDetails, { foreignKey: 'formationId', onDelete: 'CASCADE'});    
+    Formation.hasOne(models.FormationDetails, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Video, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Evaluation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.NoteDigitale, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Document, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Quiz, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-};
+    Formation.hasMany(models.Certification, { foreignKey: 'formationId', onDelete: 'CASCADE' }); // Added the reverse association
+  };
 
   return Formation;
 };
