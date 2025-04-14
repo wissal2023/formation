@@ -3,7 +3,7 @@ import HeaderOne from "../../../layouts/headers/HeaderOne"
 import BreadcrumbOne from "../../common/breadcrumb/BreadcrumbOne"
 import LoginArea from "./LoginArea"
 
-const Login = () => {
+const Login1 = () => {
    return (
       <>
          <HeaderOne />
@@ -16,5 +16,5 @@ const Login = () => {
    )
 }
 
-export default Login
+export default Login1;
 
