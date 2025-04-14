@@ -1,3 +1,4 @@
+// db/models/user.js
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
 
@@ -25,15 +26,21 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false, 
       validate: { len: [6, 255] } 
     },
-    role: {
+    roleUtilisateur: {
       type: DataTypes.ENUM('Admin', 'Formateur', 'Apprenant'),
       allowNull: false,
-    }
+    },
+    dateInscr: {
+      type: DataTypes.DATE
+    },
+    derConnx: {
+      type: DataTypes.DATE
+    },
   }, {
     timestamps: true,
     paranoid: true,
-    freezeTableName: true,
-    tableName: 'user',
+    freezeTableName: true, 
+    tableName: 'Users'
   });
 
   // Associations

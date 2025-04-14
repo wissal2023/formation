@@ -18,6 +18,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    formationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Formations',
+        key: 'id'
+      }
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -30,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     timestamps: true,
-    paranoid: true, // Enables soft delete
+    paranoid: true, 
     freezeTableName: true
   });
 

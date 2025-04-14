@@ -12,6 +12,15 @@ module.exports = {
       questionText: {
         type: Sequelize.STRING
       },
+      quizId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Quiz', 
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -32,6 +41,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('question');
+    await queryInterface.dropTable('Questions');
   }
 };
