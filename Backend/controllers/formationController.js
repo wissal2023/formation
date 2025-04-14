@@ -35,7 +35,7 @@ exports.createFormation = async (req, res) => {
       ...req.body,
       datedebut, 
       datefin,
-      userId, // associated with the user
+      userId, 
     });
 
     res.status(201).json(formation);
