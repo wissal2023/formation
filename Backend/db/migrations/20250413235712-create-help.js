@@ -38,7 +38,7 @@ module.exports = {
       role: {
         type: Sequelize.ENUM('Admin', 'Formateur', 'Apprenant'),
         allowNull: false,
-        defaultValue: 'Tous',
+        defaultValue: 'Admin',
         comment: 'User role this help tip is for'
       },
       isActive: {

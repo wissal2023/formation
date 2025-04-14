@@ -8,9 +8,6 @@ router.get('/generate-secret', generateSecret); // Utilisation directe après la
 // Route pour vérifier l'OTP de Google Authenticator
 router.post('/verify-google-otp', verifyGoogleOtp);
 
-// Route pour envoyer l'OTP
-router.post('/sendOtp', sendOtp);
-
 // Route pour vérifier l'OTP
 router.post('/verifyOtp', verifyOtp);
 
