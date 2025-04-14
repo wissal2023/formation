@@ -1,70 +1,24 @@
-import { useState } from "react";
-import ReactPaginate from "react-paginate";
-import BlogSidebar from "../blog-common/BlogSidebar";
-import inner_blog_data from "../../../data/inner-data/BlogData";
-import { Link } from "react-router-dom";
+import React from 'react';
 
-interface BlogPropd {
-   style_1: boolean;
+interface BlogAreaProps {
+  style_1: boolean;
 }
 
-const BlogArea = ({ style_1 }: BlogPropd) => {
+const BlogArea: React.FC<BlogAreaProps> = ({ style_1 }) => {
+  return (
+    <div className={`blog-area ${style_1 ? 'style-1' : ''}`}>
+      <h2>Articles récents</h2>
+      {/* Ton contenu de blog ici */}
+      <div className="blog-post">
+        <h3>Article 1</h3>
+        <p>Contenu de l'article 1</p>
+      </div>
+      <div className="blog-post">
+        <h3>Article 2</h3>
+        <p>Contenu de l'article 2</p>
+      </div>
+    </div>
+  );
+};
 
-   const blog = inner_blog_data;
-
-   const itemsPerPage = 12;
-   const [itemOffset, setItemOffset] = useState(0);
-   const endOffset = itemOffset + itemsPerPage;
-   const currentItems = blog.slice(itemOffset, endOffset);
-   const pageCount = Math.ceil(blog.length / itemsPerPage);
-   // click to request another page.
-   const handlePageClick = (event: { selected: number }) => {
-      const newOffset = (event.selected * itemsPerPage) % blog.length;
-      setItemOffset(newOffset);
-   };
-
-   return (
-      <section className="blog-area section-py-120">
-         <div className="container">
-            <div className="row">
-               <div className={`col-xl-9 col-lg-8 ${style_1 ? "order-0 order-lg-2" : ""}`}>
-                  <div className="row gutter-20">
-                     {currentItems.map((item) => (
-                        <div key={item.id} className="col-xl-4 col-md-6">
-                           <div className="blog__post-item shine__animate-item">
-                              <div className="blog__post-thumb">
-                                 <Link to="/blog-details" className="shine__animate-link"><img src={item.thumb} alt="img" /></Link>
-                                 <Link to="/blog" className="post-tag">{item.tag}</Link>
-                              </div>
-                              <div className="blog__post-content">
-                                 <div className="blog__post-meta">
-                                    <ul className="list-wrap">
-                                       <li><i className="flaticon-calendar"></i>{item.date}</li>
-                                       <li><i className="flaticon-user-1"></i>by <Link to="/blog-details">Admin</Link></li>
-                                    </ul>
-                                 </div>
-                                 <h4 className="title"><Link to="/blog-details">{item.title}</Link></h4>
-                              </div>
-                           </div>
-                        </div>
-                     ))}
-                  </div>
-                  <nav className="pagination__wrap mt-25">
-                     <ReactPaginate
-                        breakLabel="..."
-                        onPageChange={handlePageClick}
-                        pageRangeDisplayed={3}
-                        pageCount={pageCount}
-                        renderOnZeroPageCount={null}
-                        className="list-wrap"
-                     />
-                  </nav>
-               </div>
-               <BlogSidebar style_1={style_1} />
-            </div>
-         </div>
-      </section>
-   )
-}
-
-export default BlogArea
+export default BlogArea;

@@ -103,7 +103,7 @@ const menu_data: MenuItem[] = [
                     { link: "/blog-details", title: "Blog Details" },
                 ]
             },
-            { link: "/login", title: "Student Login" },
+            // { link: "/login", title: "Student Login" },
             { link: "/registration", title: "Student Registration" },
             { link: "/404", title: "404 Page" },
             { link: "/contact", title: "Contact" },
