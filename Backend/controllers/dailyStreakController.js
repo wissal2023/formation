@@ -1,26 +1,9 @@
 const db = require('../db/models');
 const DailyStreak = db.DailyStreak;
 
-// ✅ Create a daily streak
-exports.createDailyStreak = async (req, res) => {
-  try {
-    const { nombreStreak, userId } = req.body;
-    const streak = await DailyStreak.create({ nombreStreak, userId });
-    res.status(201).json(streak);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
-// ✅ Get all daily streaks
-exports.getAllDailyStreaks = async (req, res) => {
-  try {
-    const streaks = await DailyStreak.findAll({ include: db.User });
-    res.json(streaks);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+
+
 
 // ✅ Get a streak by ID
 exports.getDailyStreakById = async (req, res) => {
