@@ -48,6 +48,9 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Formation, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Historisation, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasOne(models.DailyStreak, { foreignKey: 'userId', onDelete: 'CASCADE' });
+    User.hasMany(models.Trace, { foreignKey: 'userId', onDelete: 'CASCADE' });
+    User.hasMany(models.Help, { foreignKey: 'userId', onDelete: 'CASCADE' });
+
   };
 
   return User;

@@ -14,7 +14,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Utilisateur non trouvé' });
     }
 
-    const isMatch = await bcrypt.compare(mdp, user.mdp); // compare hashed password
+    const isMatch = await bcrypt.compare(mdp, user.mdp); 
     if (!isMatch) {
       return res.status(401).json({ message: 'Mot de passe incorrect' });
     }
