@@ -28,6 +28,15 @@ module.exports = (sequelize, DataTypes) => {
     allowNull: false,
     defaultValue: 0
   },
+  quizId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Quiz', 
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
+  },
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
@@ -42,13 +51,13 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.DATE
   }
 }, {
-  paranoid: true, // Enables soft delete
+  paranoid: true, 
   freezeTableName: true
 });
 
 // Associations
 QuizProg.associate = (models) => {
-  QuizProg.belongsTo(models.Quiz, { foreignKey: 'QuizId', onDelete: 'CASCADE' });
+  QuizProg.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
 };
 return QuizProg;
 };
