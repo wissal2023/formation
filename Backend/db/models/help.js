@@ -31,8 +31,8 @@ module.exports = (sequelize, DataTypes) => {
       comment: 'Language code (e.g., fr, en, ar)'
     },
     role: {
-      type: DataTypes.ENUM('Admin', 'Formateur', 'Apprenant', 'Tous'),
-      defaultValue: 'Tous',
+      type: DataTypes.ENUM('Admin', 'Formateur', 'Apprenant'),
+      defaultValue: 'Admin',
       allowNull: false,
       comment: 'User role this help tip is for'
     },
