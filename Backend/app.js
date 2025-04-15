@@ -1,5 +1,6 @@
 // app.js
 require('dotenv').config();
+require('./utils/cron'); 
 const express = require('express');
 const app = express();
 const { sequelize } = require('./db/models');
