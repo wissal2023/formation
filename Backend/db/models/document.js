@@ -25,10 +25,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Formations',
+        model: 'Formations',  // Ensure this references the 'Formations' table
         key: 'id'
-      }
-    },  
+      },
+      onDelete: 'CASCADE'  // Ensure the document is deleted if the associated formation is deleted
+    },
+    file_data: {  // This will store the actual document content as binary (BLOB)
+      type: DataTypes.BLOB('long'),  // BLOB (long) for larger files
+      allowNull: true
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -43,14 +48,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
     }
   }, {
-    paranoid: true,
-    timestamps: true,
-    freezeTableName: true
+    paranoid: true,  // Enables soft delete
+    timestamps: true,  // Automatically adds createdAt and updatedAt timestamps
+    freezeTableName: true,  // Prevents Sequelize from pluralizing table name
   });
-  
-Document.associate = (models) => {
-  Document.belongsTo(models.Formation, { foreignKey: 'formation_id' });
-}
 
-    return Document;
+  // Associations
+  Document.associate = (models) => {
+    // A document belongs to a formation (course)
+    Document.belongsTo(models.Formation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+  };
+
+  return Document;
 };

@@ -17,7 +17,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     evaluation: {
       type: DataTypes.FLOAT,
-      defaultValue: 0
+      defaultValue: 0, validate: {
+        min: 0,  // Minimum value
+        max: 5 // Maximum value
+      }
     },
     plan: {
       type: DataTypes.JSON, // or DataTypes.ARRAY (am using PostgreSQL)

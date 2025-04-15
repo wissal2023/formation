@@ -12,7 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     titre: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING },
     duree: { type: DataTypes.INTEGER },
-    evaluation: { type: DataTypes.FLOAT, defaultValue: 0 },
+    evaluation: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0, validate: {
+        min: 0,  // Minimum value
+        max: 5 // Maximum value
+      } },
     thematique: { type: DataTypes.STRING },
     datedebut: { type: DataTypes.DATE },
     datefin: { type: DataTypes.DATE },
