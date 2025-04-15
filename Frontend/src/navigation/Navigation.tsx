@@ -50,8 +50,9 @@ import StudentSetting from '../pages/StudentSetting';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from '../PrivateRoute';
 import SignIn from '../SignIn';
-
-
+import ResetPassword from '../ResetPassword';
+import OTPVerification from '../OTPVerification';
+import QrCodeDisplay from '../QrCodeDisplay';
 // ...autres imports...
 
 const AppNavigation = () => {
@@ -90,6 +91,9 @@ const AppNavigation = () => {
       <Route path="/blog-3" element={<BlogThree />} />
       <Route path="/blog-details" element={<BlogDetails />} />
       <Route path="/SignIn" element={<SignIn />} />
+      <Route path="/ResetPassword" element={<ResetPassword />} />
+      <Route path="/OTPVerification" element={<OTPVerification />} />
+      <Route path="/QrCodeDisplay" element={<QrCodeDisplay />} />
       <Route path="/registration" element={<Registration />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/instructor-dashboard" element={<InstructorDashboard />} />

@@ -5,7 +5,9 @@ import { Provider } from 'react-redux';
 import store from './redux/store';
 import AppNavigation from './navigation/Navigation';
 import SignIn from './SignIn';
-
+import OTPVerification from './OTPVerification';
+import ResetPassword from './ResetPassword';
+import QrCodeDisplay from './QrCodeDisplay';
 function App() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
@@ -22,12 +24,14 @@ function App() {
               path="/" 
               element={isLoggedIn ? <Navigate to="/SignIn" /> : <SignIn />} 
             />
-            
+            <Route path="/OTPVerification" element={<OTPVerification />} />
             {/* Pour toutes les autres routes, vérifier si l'utilisateur est connecté */}
             <Route 
               path="/*" 
               element={isLoggedIn ? <AppNavigation /> : <Navigate to="/" />} 
             />
+            <Route path="/ResetPassword" element={<ResetPassword />} />
+            <Route path="/QrCodeDisplay" element={<QrCodeDisplay />} />
           </Routes>
         </Router>
       </HelmetProvider>
