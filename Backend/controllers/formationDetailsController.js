@@ -1,68 +1,47 @@
-const db = require('../db/models');
-const FormationDetails = db.FormationDetails;
+const { Formation, FormationDetails, Document, Video, Certification, Historisation, User } = require('../models');
 
-// ✅ Create
-exports.createFormationDetails = async (req, res) => {
+// Soft delete Formation and related data, storing in Historisation
+exports.deleteFormation = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const data = await FormationDetails.create(req.body);
-    res.status(201).json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating formation details", error });
-  }
-};
-
-// ✅ Read all
-exports.getAllFormationDetails = async (req, res) => {
-  try {
-    const details = await FormationDetails.findAll();
-    res.status(200).json(details);
-  } catch (error) {
-    res.status(500).json({ message: "Error retrieving formation details", error });
-  }
-};
-
-// ✅ Read one by ID
-exports.getFormationDetailsById = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const detail = await FormationDetails.findByPk(id);
-
-    if (!detail) return res.status(404).json({ message: "Not found" });
-
-    res.status(200).json(detail);
-  } catch (error) {
-    res.status(500).json({ message: "Error retrieving formation details", error });
-  }
-};
-
-// ✅ Update
-exports.updateFormationDetails = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const [updated] = await FormationDetails.update(req.body, {
-      where: { id }
+    // Fetch the Formation to be deleted, including related data
+    const formation = await Formation.findByPk(id, {
+      include: [
+        { model: FormationDetails },
+        { model: Document },
+        { model: Video },
+        { model: Certification },
+      ],
     });
 
-    if (!updated) return res.status(404).json({ message: "Not found" });
+    if (!formation) {
+      return res.status(404).json({ message: 'Formation not found' });
+    }
 
-    const updatedDetails = await FormationDetails.findByPk(id);
-    res.status(200).json(updatedDetails);
+    // Gather all related data (Formation, FormationDetails, Documents, Videos, Certifications)
+    const deletedData = {
+      formation: formation.toJSON(),  // Get the formation as JSON
+      formationDetails: formation.FormationDetails.map(detail => detail.toJSON()),
+      documents: formation.Documents.map(doc => doc.toJSON()),
+      videos: formation.Videos.map(video => video.toJSON()),
+      certifications: formation.Certifications.map(cert => cert.toJSON())
+    };
+
+    // Store the deleted data in Historisation
+    await Historisation.create({
+      action: 'deleted',
+      deleted_data: deletedData,  // Store all related data that is being deleted
+      formationId: formation.id,  // Link to the Formation being deleted
+      userId: req.user.id  // User performing the deletion (assuming user info is in req.user)
+    });
+
+    // Delete the Formation and related data (it will be deleted with `CASCADE`)
+    await formation.destroy();
+
+    res.status(200).json({ message: 'Formation and related data deleted and stored in Historisation' });
   } catch (error) {
-    res.status(500).json({ message: "Error updating formation details", error });
-  }
-};
-
-// ✅ Delete
-exports.deleteFormationDetails = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const deleted = await FormationDetails.destroy({ where: { id } });
-
-    if (!deleted) return res.status(404).json({ message: "Not found" });
-
-    res.status(200).json({ message: "Formation details deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting formation details", error });
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting formation and storing in Historisation', error });
   }
 };
