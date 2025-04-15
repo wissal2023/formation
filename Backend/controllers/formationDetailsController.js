@@ -1,4 +1,4 @@
-const { Formation, FormationDetails, Document, Video, Certification, Historisation, User } = require('../models');
+const { Formation, FormationDetails, Document, Video, Certification, Historisation, User } = require('../db/models');
 
 // Soft delete Formation and related data, storing in Historisation
 exports.deleteFormation = async (req, res) => {
@@ -11,7 +11,7 @@ exports.deleteFormation = async (req, res) => {
         { model: FormationDetails },
         { model: Document },
         { model: Video },
-        { model: Certification },
+       
       ],
     });
 
@@ -24,8 +24,8 @@ exports.deleteFormation = async (req, res) => {
       formation: formation.toJSON(),  // Get the formation as JSON
       formationDetails: formation.FormationDetails.map(detail => detail.toJSON()),
       documents: formation.Documents.map(doc => doc.toJSON()),
-      videos: formation.Videos.map(video => video.toJSON()),
-      certifications: formation.Certifications.map(cert => cert.toJSON())
+      videos: formation.Videos.map(video => video.toJSON())
+      
     };
 
     // Store the deleted data in Historisation
