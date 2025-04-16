@@ -53,7 +53,7 @@ const AppNavigation = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Login />} />
         <Route path="/home-two" element={<HomeTwo />} />
         <Route path="/home-three" element={<HomeThree />} />
         <Route path="/home-four" element={<HomeFour />} />
@@ -78,7 +78,6 @@ const AppNavigation = () => {
         <Route path="/blog-2" element={<BlogTwo />} />
         <Route path="/blog-3" element={<BlogThree />} />
         <Route path="/blog-details" element={<BlogDetails />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/instructor-dashboard" element={<InstructorDashboard />} />

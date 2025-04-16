@@ -15,13 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    evaluation: {
-      type: DataTypes.FLOAT,
-      defaultValue: 0, validate: {
-        min: 0,  // Minimum value
-        max: 5 // Maximum value
-      }
-    },
     plan: {
       type: DataTypes.JSON, // or DataTypes.ARRAY (am using PostgreSQL)
       allowNull: true
@@ -33,6 +26,20 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Formations',
         key: 'id'
       }
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     timestamps: true,
@@ -43,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Association
   FormationDetails.associate = (models) => {
+    FormationDetails.hasMany(models.Video, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
     FormationDetails.belongsTo(models.Formation, {foreignKey: 'formationId', onDelete: 'CASCADE'});
   };
 

@@ -1,4 +1,4 @@
-// services/otpService.js
+/* services/otpService.js
 const crypto = require('crypto');
 const otpDatabase = {}; // Simuler une base de données temporaire pour stocker les OTP
 
@@ -30,3 +30,5 @@ module.exports = {
     verifyOtp,
     otpDatabase
 };
+
+*/

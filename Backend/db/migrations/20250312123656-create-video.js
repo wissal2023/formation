@@ -29,11 +29,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      formationId: {
+      deletedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      formationDetailsId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Formations', 
+          model: 'FormationDetails', 
           key: 'id'
         },
         onDelete: 'CASCADE'
