@@ -33,11 +33,11 @@ module.exports = {
       points: {
         type: Sequelize.INTEGER
       },
-      quizId: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Quiz', 
+          model: 'Users', 
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -52,15 +52,6 @@ module.exports = {
       },
       deletedAt: {
         type: Sequelize.DATE,
-      },
-      quizId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Quiz', 
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
       }
     });
   },

@@ -41,8 +41,8 @@ module.exports = (sequelize, DataTypes) => {
     Formation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
     Formation.hasOne(models.FormationDetails, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Evaluation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-    Formation.hasMany(models.NoteDigitale, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-    Formation.hasMany(models.Document, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+    Formation.hasMany(models.NoteDigitale, { foreignKey: 'formationId', onDelete: 'CASCADE' });    
+    Formation.hasOne(models.Historisation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Quiz, { foreignKey: 'formationId', onDelete: 'CASCADE' });
   };
 
