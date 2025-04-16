@@ -5,6 +5,8 @@ const db = require('../db/models');
 const { generateOtp, otpDatabase } = require('../services/otpService');
 const { sendOtpEmail } = require('../utils/emailService');
 const userModel = require('../config/userModel');
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.JWT_SECRET_KEY;
 const User = db.User;
 //const { validateUser } = require('../utils/validationService');
 
@@ -17,14 +19,7 @@ const addUserController = async (req, res) => {
         const hashedPassword = await bcrypt.hash(mdp, 10);
 
         // 2. Register user in Supabase Auth
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-            email,
-            password: mdp,
-        });
-
-        if (authError) {
-            return res.status(400).json({ error: authError.message });
-        }
+     
 
         // 3. Save user data to local Postgres DB via Sequelize
         // The authData contains user information, including the user ID.
@@ -35,7 +30,7 @@ const addUserController = async (req, res) => {
             roleUtilisateur,
             dateInscr: new Date(),
             derConnx: new Date(),
-            supabaseUserId: authData.user.id, // Add the Supabase Auth user ID to your Postgres DB
+           
         });
 
         return res.status(201).json({
@@ -49,86 +44,75 @@ const addUserController = async (req, res) => {
 // Connexion + OTP
 const loginUserController = async (req, res) => {
     const { email, mdp } = req.body;
-
+  
     try {
-        // Récupérer l'utilisateur par email
-        const { data, error } = await userModel.supabase
-            .from(userModel.tableName)
-            .select('*')
-            .eq('email', email)
-            .single();
-
-        if (error) {
-            throw new Error(error.message);
-        }
-
-        // Comparer le mot de passe haché
-        const isMatch = await bcrypt.compare(mdp, data.mdp);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Mot de passe incorrect' });
-        }
-
-        // Réponse si la connexion est réussie
-        res.status(200).json({
-            message: 'Utilisateur connecté avec succès',
-            user: data,
-        });
+      const { data, error } = await userModel.supabase
+        .from(userModel.tableName)
+        .select('*')
+        .eq('email', email)
+        .single();
+  
+      if (error || !data) {
+        return res.status(400).json({ message: 'Utilisateur non trouvé' });
+      }
+  
+      const isMatch = await bcrypt.compare(mdp, data.mdp);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Mot de passe incorrect' });
+      }
+  
+      // 🪙 Créer un token JWT
+      const token = jwt.sign(
+        { id: data.id, email: data.email }, // payload
+        secretKey,
+        { expiresIn: '2h' }
+      );
+  
+      res.status(200).json({
+        message: 'Connexion réussie',
+        token, // 🪙 envoyer le token
+        user: { id: data.id, email: data.email },
+      });
     } catch (error) {
-        res.status(500).json({
-            message: 'Erreur lors de la connexion de l\'utilisateur.',
-            error: error.message,
-        });
+      res.status(500).json({
+        message: 'Erreur de connexion',
+        error: error.message,
+      });
     }
-};
+  };
 // GET ALL
 const getAllUsers = async (req, res) => {
     try {
-        const { data, error } = await supabase
-            .from(userModel.tableName)
-            .select('*');
+        const users = await User.findAll();
 
-        if (error) {
-            return res.status(500).json({
-                message: 'Erreur lors de la récupération des utilisateurs.',
-                error: error.message,
-            });
-        }
-
-        if (!data || data.length === 0) {
+        if (!users || users.length === 0) {
             return res.status(404).json({ message: 'Aucun utilisateur trouvé' });
         }
 
-        res.status(200).json(data);
-
+        res.status(200).json(users);
     } catch (err) {
         res.status(500).json({
-            message: 'Erreur serveur.',
+            message: 'Erreur lors de la récupération des utilisateurs.',
             error: err.message,
         });
     }
 };
-
 //GET BY ID
 const getOnceUser = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const { data, error } = await supabase
-            .from(userModel.tableName)
-            .select('*')
-            .eq('id', id)
-            .single();
+        const user = await User.findByPk(id); // ⁠ findByPk ⁠ = find by primary key
 
-        if (error) {
+        if (!user) {
             return res.status(404).json({
                 message: 'Utilisateur non trouvé.',
-                error: error.message,
             });
         }
 
         res.status(200).json({
             message: 'Utilisateur récupéré avec succès.',
-            user: data,
+            user,
         });
 
     } catch (err) {
@@ -138,7 +122,29 @@ const getOnceUser = async (req, res) => {
         });
     }
 };
+//get user by name 
+const getUserByName = async (req, res) => {
+    const { name } = req.params;
 
+    try {
+        const user = await User.findOne({ where: { username: name } });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+        }
+
+        res.status(200).json({
+            message: 'Utilisateur récupéré avec succès.',
+            user,
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: 'Erreur lors de la récupération de l\'utilisateur.',
+            error: err.message,
+        });
+    }
+};
 //update user 
 exports.updateUser = async (req, res) => {
     try {
@@ -180,6 +186,7 @@ exports.updateUser = async (req, res) => {
   };
   
 //delete user (soft delete)
+
 exports.deleteUser = async (req, res) => {
     try {
     const { id } = req.params;
@@ -199,21 +206,10 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: err.message });
     }
 };
-
-//get user by name 
-exports.getUserByName = async (req, res) => {
-try {
-    const user = await User.findOne({ where: { username: req.params.name } });
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.status(200).json(user);
-} catch (err) {
-    res.status(500).json({ error: err.message });
-}
-};
-
 module.exports = {
     addUserController,
     loginUserController,
     getAllUsers,
-    getOnceUser
+    getOnceUser,
+    getUserByName
 };
