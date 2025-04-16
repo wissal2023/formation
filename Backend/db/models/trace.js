@@ -1,27 +1,25 @@
 'use strict';
-const { Sequelize, DataTypes } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
   const Trace = sequelize.define('Trace', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER
     },
-    userId: {
+    userId: {  // User who performed the action
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    page: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    action: {
+    action: {  // Action type (e.g., 'create', 'update', 'delete')
       type: DataTypes.STRING,
       allowNull: false
     },
-    metadata: {
+    model: {  // Model name (e.g., 'Formation', 'FormationDetails')
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    data: {
       type: DataTypes.JSONB, 
       allowNull: true,
     },
@@ -45,8 +43,10 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'Traces', 
   });
 
+  // Association: A Trace belongs to a User (the actor performing the action)
   Trace.associate = (models) => {
-    Trace.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE'});};
+    Trace.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
+  };
 
   return Trace;
 };

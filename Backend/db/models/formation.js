@@ -1,5 +1,4 @@
-// db/models/formation.js
-'use strict';
+
 const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -29,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     deletedAt: {
       type: DataTypes.DATE,
       allowNull: true
-      }
+      }   
   }, {
     timestamps: true,
     paranoid: true,
@@ -40,12 +39,12 @@ module.exports = (sequelize, DataTypes) => {
   // Associations
   Formation.associate = (models) => {
     Formation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
-    Formation.hasOne(models.FormationDetails, { foreignKey: 'formationId', onDelete: 'CASCADE'});    
+    Formation.hasOne(models.FormationDetails, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Evaluation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.NoteDigitale, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Document, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Quiz, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-};
+  };
 
   return Formation;
 };

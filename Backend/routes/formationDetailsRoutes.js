@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const formationDetailsController = require('../controllers/formationDetailsController');
+const formationController = require('../controllers/formationController');
+
 
 router.get('/', formationDetailsController.getAllFormationDetails);
 router.get('/:id', formationDetailsController.getFormationDetailsById);
 router.put('/:id', formationDetailsController.updateFormationDetails);
-router.delete('/:id', formationDetailsController.deleteFormationDetails);
+//router.delete('/:id', formationController.deleteFormation);
 
 module.exports = router;
