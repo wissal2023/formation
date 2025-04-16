@@ -24,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     deletedAt: {
       type: DataTypes.DATE
@@ -42,17 +42,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Associations
   Historisation.associate = (models) => {
-    // Associating with Formation (general course info)
     Historisation.belongsTo(models.Formation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-    
-    // Associating with FormationDetails (for video or document content)
-    Historisation.belongsTo(models.FormationDetails, { foreignKey: 'formationDetailId', onDelete: 'CASCADE' });
-
-    // Associating with Document (for actual document data)
-    Historisation.belongsTo(models.Document, { foreignKey: 'documentId', onDelete: 'CASCADE' });
-
-    // Optionally associate with User if you want to track the user who archived the course
-    Historisation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
   };
 
   return Historisation;

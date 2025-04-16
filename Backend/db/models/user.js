@@ -51,11 +51,10 @@ module.exports = (sequelize, DataTypes) => {
   // Associations
   User.associate = (models) => {
     User.hasMany(models.Formation, { foreignKey: 'userId', onDelete: 'CASCADE' });
-    User.hasMany(models.Historisation, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasOne(models.DailyStreak, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Trace, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Help, { foreignKey: 'userId', onDelete: 'CASCADE' });
-
+    User.hasOne(models.Recompense, { foreignKey: 'userId', onDelete: 'CASCADE' });
   };
 
   return User;

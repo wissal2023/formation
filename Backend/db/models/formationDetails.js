@@ -51,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
   // Association
   FormationDetails.associate = (models) => {
     FormationDetails.hasMany(models.Video, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
+    FormationDetails.hasMany(models.Document, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
     FormationDetails.belongsTo(models.Formation, {foreignKey: 'formationId', onDelete: 'CASCADE'});
   };
 
