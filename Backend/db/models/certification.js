@@ -25,35 +25,33 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    onDelete: 'CASCADE'
-  },,
-  quizId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Quiz', 
-      key: 'id'
+    quizId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Quiz', 
+        key: 'id'
+      },
+      onDelete: 'CASCADE'
     },
-    onDelete: 'CASCADE'
-  },
-  createdAt: {
-    allowNull: false,
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  },
-  updatedAt: {
-    allowNull: false,
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  },
-  deletedAt: {
-    type: DataTypes.DATE,
-    allowNull: true
-    }
-}, {
-  paranoid: true, 
-  freezeTableName: true
-});
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
+      }
+  }, {
+    paranoid: true, 
+    freezeTableName: true
+  });
 
 
   // Define associations
