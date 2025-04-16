@@ -1,5 +1,6 @@
 // app.js
 require('dotenv').config();
+require('./utils/cron'); 
 const express = require('express');
 const app = express();
 const { sequelize } = require('./db/models');
@@ -11,7 +12,7 @@ const formationDetailsRoutes = require('./routes/formationDetailsRoutes');
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
 const otpRoutes = require('./routes/otpRoutes');
-const certificationRoutes = require('./routes/certificationRoutes');
+const certificationRoutes = require('./routes/certifRoutes');
 const dailyStreakRoutes = require('./routes/dailyStreakRoutes');
 const evaluationRoutes = require('./routes/evaluationRoutes');
 const noteDigitaleRoutes = require('./routes/noteDigitaleRoutes');
@@ -44,7 +45,7 @@ app.get('/', (req,res)=> {
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
-app.use('/formation-details', formationDetailsRoutes);
+app.use('/formation-details', formationDetailsRoutes)
 app.use('/documents', docRoute );
 app.use('/certifications', certificationRoutes);
 app.use('/streaks', dailyStreakRoutes);
