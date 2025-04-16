@@ -1,3 +1,4 @@
+/*
 const supabase = require('../supabaseClient');
 
 exports.storeOtp = async (email, otp) => {
@@ -13,3 +14,4 @@ exports.getOtp = async (email) => {
     }
     return data.otp;
 };
+*/

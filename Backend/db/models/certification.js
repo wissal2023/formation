@@ -25,29 +25,36 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    formationId: {  // Changed to formationId to link certification with the course
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Formation', 
-        key: 'id'
-      },
-      onDelete: 'CASCADE'
+    onDelete: 'CASCADE'
+  },,
+  quizId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Quiz', 
+      key: 'id'
     },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW  // Sequelize.NOW is the correct way to set the default value
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW  // Sequelize.NOW is the correct way to set the default value
+    onDelete: 'CASCADE'
+  },
+  createdAt: {
+    allowNull: false,
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  },
+  updatedAt: {
+    allowNull: false,
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  },
+  deletedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
     }
-  }, {
-    paranoid: true,  // Soft delete
-    freezeTableName: true
-  });
+}, {
+  paranoid: true, 
+  freezeTableName: true
+});
+
 
   // Define associations
   Certification.associate = (models) => {

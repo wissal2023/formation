@@ -1,9 +1,7 @@
 const { Formation, FormationDetails, Document, Video, Certification, Historisation, User } = require('../db/models');
-
 // Soft delete Formation and related data, storing in Historisation
 exports.deleteFormation = async (req, res) => {
   const { id } = req.params;
-
   try {
     // Fetch the Formation to be deleted, including related data
     const formation = await Formation.findByPk(id, {

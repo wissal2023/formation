@@ -1,12 +1,12 @@
+// backend/utils/emailSevice
 const nodemailer = require('nodemailer');
 
-// Fonction d'envoi d'OTP par email
 exports.sendOtpEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'bouhjarons27@gmail.com',
-            pass: 'qvek fcan exxv hzoq'
+            user: process.env.EMAIL_USER, 
+            pass: process.env.EMAIL_PASS
         }
     });
 

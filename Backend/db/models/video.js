@@ -25,36 +25,40 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    formationId: {
+    formationDetailsId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Formations',
+        model: 'FormationDetails',
         key: 'id'
       }
     },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
     }
   }, {
     paranoid: true,
     timestamps: true,
-    freezeTableName: true
+    freezeTableName: true,
+    tableName: 'Videos'
+
   });
 
   // Associations
   Video.associate = (models) => {
-    Video.belongsTo(models.Formation, { 
-      foreignKey: { name: 'formationId', allowNull: false },
-      onDelete: 'CASCADE' 
-    });
+    Video.belongsTo(models.FormationDetails, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
   };
   
   
