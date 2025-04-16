@@ -11,9 +11,75 @@ const User = db.User;
 //const { validateUser } = require('../utils/validationService');
 
 // ADD
+const addUserController = async (req, res) => {
+    const { username, email, mdp, roleUtilisateur } = req.body;
 
+    try {
+        // 1. Hash the password for local DB
+        const hashedPassword = await bcrypt.hash(mdp, 10);
+
+        // 2. Register user in Supabase Auth
+     
+
+        // 3. Save user data to local Postgres DB via Sequelize
+        // The authData contains user information, including the user ID.
+        const newUser = await User.create({
+            username,
+            email,
+            mdp: hashedPassword,
+            roleUtilisateur,
+            dateInscr: new Date(),
+            derConnx: new Date(),
+           
+        });
+
+        return res.status(201).json({
+            message: 'User registered successfully in both Supabase and Postgres',
+            user: newUser,
+        });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
 // Connexion + OTP
-
+const loginUserController = async (req, res) => {
+    const { email, mdp } = req.body;
+  
+    try {
+      const { data, error } = await userModel.supabase
+        .from(userModel.tableName)
+        .select('*')
+        .eq('email', email)
+        .single();
+  
+      if (error || !data) {
+        return res.status(400).json({ message: 'Utilisateur non trouvé' });
+      }
+  
+      const isMatch = await bcrypt.compare(mdp, data.mdp);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Mot de passe incorrect' });
+      }
+  
+      // 🪙 Créer un token JWT
+      const token = jwt.sign(
+        { id: data.id, email: data.email }, // payload
+        secretKey,
+        { expiresIn: '2h' }
+      );
+  
+      res.status(200).json({
+        message: 'Connexion réussie',
+        token, // 🪙 envoyer le token
+        user: { id: data.id, email: data.email },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Erreur de connexion',
+        error: error.message,
+      });
+    }
+  };
 // GET ALL
 const getAllUsers = async (req, res) => {
     try {
