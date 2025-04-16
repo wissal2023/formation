@@ -19,30 +19,30 @@ module.exports = (sequelize, DataTypes) => {
     },
     uploadedDate: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
-    formationId: {
+    formationDetailsId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Formations',  // Ensure this references the 'Formations' table
+        model: 'FormationDetails', 
         key: 'id'
       },
-      onDelete: 'CASCADE'  // Ensure the document is deleted if the associated formation is deleted
+      onDelete: 'CASCADE'  
     },
-    file_data: {  // This will store the actual document content as binary (BLOB)
-      type: DataTypes.BLOB('long'),  // BLOB (long) for larger files
+    file_data: {  
+      type: DataTypes.BLOB('long'),  
       allowNull: true
     },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     deletedAt: {
       type: DataTypes.DATE,
@@ -55,8 +55,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Associations
   Document.associate = (models) => {
-    // A document belongs to a formation (course)
-    Document.belongsTo(models.Formation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+    Document.belongsTo(models.FormationDetails, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
   };
 
   return Document;

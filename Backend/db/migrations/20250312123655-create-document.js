@@ -29,11 +29,11 @@ module.exports = {
         deletedAt: {
           type: Sequelize.DATE,
         },
-        formationId: {
+        formationDetailsId: {
           type: Sequelize.INTEGER,
           allowNull: false,
           references: {
-            model: 'Formations', 
+            model: 'FormationDetails', 
             key: 'id'
           },
           onDelete: 'CASCADE'
