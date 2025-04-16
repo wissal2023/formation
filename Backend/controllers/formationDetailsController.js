@@ -1,16 +1,7 @@
 const db = require('../db/models');
 const FormationDetails = db.FormationDetails;
 
-// ✅ Create
-exports.createFormationDetails = async (req, res) => {
-  try {
-    const data = await FormationDetails.create(req.body);
-    res.status(201).json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating formation details", error });
-  }
-};
+
 
 // ✅ Read all
 exports.getAllFormationDetails = async (req, res) => {

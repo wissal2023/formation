@@ -1,51 +1,70 @@
 // controllers/formation.controller.js
-const db = require('../db/models');
-const Formation = db.Formation;
-const User = db.User;
+const { sequelize, Formation, FormationDetails, Video, Trace, User } = require('../db/models');
 
 exports.createFormation = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const userId = req.body.userId;
-
-    // Fetch the user details by userId
     const user = await User.findByPk(userId);
 
-    // Check if the user exists and has the correct role
-    if (!user) {
-      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
-    }
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    if (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin')
+      return res.status(403).json({ message: 'Permission refusée.' });
 
-    // Only allow "formateur" or "admin" to create formations
-    if (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin') {
-      return res.status(403).json({ message: 'Vous n\'avez pas la permission de créer une formation.' });
-    }
+    const { formationData, detailsData, createEmptyVideo = false } = req.body;
 
-    // Parse and format the dates as ISO strings
-    const datedebut = new Date(req.body.datedebut).toISOString();
-    const datefin = new Date(req.body.datefin).toISOString();
-
-    // Validate the date objects
-    if (isNaN(new Date(datedebut)) || isNaN(new Date(datefin))) {
-      console.log(req.body.datedebut, req.body.datefin);
-      return res.status(400).json({ message: 'Les dates sont invalides.' });
-    }
-
-    // Create the formation
+    // Step 1: Create Formation
     const formation = await Formation.create({
-      ...req.body,
-      datedebut, 
-      datefin,
-      userId, 
-    });
+      ...formationData,
+      userId
+    }, { transaction });
 
-    res.status(201).json(formation);
+    // Step 2: Create FormationDetails
+    const formationDetails = await FormationDetails.create({
+      ...detailsData,
+      formationId: formation.id
+    }, { transaction });
+
+    // Step 3: Optionally create a blank Video and link to FormationDetails
+    let videoId = null;
+    if (createEmptyVideo) {
+      const emptyVideo = await Video.create({
+        titre: '', // placeholder
+        duree: 0,
+        nomSection: '',
+        nbreSection: '',
+        formationDetailsId: formationDetails.id // ✅ link to FormationDetails
+      }, { transaction });
+
+      videoId = emptyVideo.id;
+    }
+
+    // Step 4: Trace the creation
+    await Trace.create({
+      userId,
+      page: 'Formation',
+      action: 'Création de formation',
+      metadata: {
+        formationId: formation.id,
+        titre: formation.titre,
+        formationDetailsId: formationDetails.id,
+        videoId
+      }
+    }, { transaction });
+
+    await transaction.commit();
+    return res.status(201).json({
+      message: 'Formation, FormationDetails et vidéo (placeholder) créés',
+      formation,
+      formationDetails,
+      videoId
+    });
   } catch (error) {
-    console.error('Erreur lors de la création de formation:', error);
-    res.status(500).json({ message: 'Erreur lors de la création', error });
+    await transaction.rollback();
+    console.error('Erreur lors de la création:', error);
+    return res.status(500).json({ message: 'Erreur lors de la création', error });
   }
 };
-
-
 
 
 // READ - all
