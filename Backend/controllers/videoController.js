@@ -3,15 +3,6 @@ const db = require('../db/models');
 const Video = db.Video;
 
 
-// Create a new Video
-exports.createVideo = async (req, res) => {
-  try {
-    const video = await Video.create(req.body);
-    res.status(201).json(video);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
 
 // Get all Videos
 exports.getAllVideos = async (req, res) => {

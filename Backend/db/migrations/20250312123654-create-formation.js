@@ -12,30 +12,20 @@ module.exports = {
       titre: {
         type: Sequelize.STRING
       },
-      description: {
-        type: Sequelize.STRING
-      },
-      duree: {
-        type: Sequelize.INTEGER
-      },
-      evaluation: {
-        type: Sequelize.INTEGER
-      },
       thematique: {
         type: Sequelize.STRING
-      },
-      datedebut: {
-        type: Sequelize.DATE
-      },
-      datefin: {
-        type: Sequelize.DATE
       },
       verouillee: {
         type: Sequelize.BOOLEAN
       },
       typeFlag: { 
         type: Sequelize.ENUM('facultat', 'obligatoire'), 
-        allowNull: false,},
+        allowNull: false,
+      },
+      status: { 
+        type: Sequelize.ENUM('enrolled', 'in_progress', 'completed'), 
+        allowNull: false,
+      },
       userId: { 
         type: Sequelize.INTEGER,
         allowNull: false,

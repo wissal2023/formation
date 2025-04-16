@@ -19,8 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     action: {
       type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: 'view'
+      allowNull: false
     },
     metadata: {
       type: DataTypes.JSONB, 
@@ -29,19 +28,21 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW,
+      defaultValue: DataTypes.NOW,
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW,
+      defaultValue: DataTypes.NOW,
     },
-deletedAt: {
-    type: DataTypes.DATE
-  }
+    deletedAt: {
+        type: DataTypes.DATE
+      }
   }, {
+    paranoid: true,
+    timestamps: true,
     freezeTableName: true,
-    paranoid: false
+    tableName: 'Traces', 
   });
 
   Trace.associate = (models) => {

@@ -11,15 +11,25 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     titre: { type: DataTypes.STRING },
-    description: { type: DataTypes.STRING },
-    duree: { type: DataTypes.INTEGER },
-    evaluation: { type: DataTypes.FLOAT, defaultValue: 0 },
     thematique: { type: DataTypes.STRING },
-    datedebut: { type: DataTypes.DATE },
-    datefin: { type: DataTypes.DATE },
     verouillee: { type: DataTypes.BOOLEAN, defaultValue: false },
-    typeFlag: { type: DataTypes.ENUM('facultat', 'obligatoire'), allowNull: false,},
-    userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'User', key: 'id'}}
+    typeFlag: { type: DataTypes.ENUM('Obligatoire', 'Facultat'), allowNull: false,},
+    status: { type: DataTypes.ENUM('enrolled', 'in_progress', 'completed'), allowNull: false,},
+    userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'User', key: 'id'}},
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
+      }
   }, {
     timestamps: true,
     paranoid: true,
@@ -31,7 +41,6 @@ module.exports = (sequelize, DataTypes) => {
   Formation.associate = (models) => {
     Formation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
     Formation.hasOne(models.FormationDetails, { foreignKey: 'formationId', onDelete: 'CASCADE'});    
-    Formation.hasMany(models.Video, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Evaluation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.NoteDigitale, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Document, { foreignKey: 'formationId', onDelete: 'CASCADE' });
