@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const User = db.User;
-const supabase = require('../supabaseClient');
+//const supabase = require('../supabaseClient');
 const { generateOtp, otpDatabase } = require('../services/otpService');
 const { sendOtpEmail } = require('../utils/emailService');
 
@@ -35,7 +35,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 };
-
 // Inscription
 exports.signup = async (req, res) => {
     const { email, password } = req.body;
@@ -48,7 +47,6 @@ exports.signup = async (req, res) => {
 
     res.status(201).json({ message: 'Utilisateur inscrit avec succès', data });
 };
-
 // Connexion avec envoi automatique de l'OTP par email
 const loginUserController = async (req, res) => {
     const { email, password } = req.body;
