@@ -53,7 +53,7 @@ const AppNavigation = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home-two" element={<HomeTwo />} />
         <Route path="/home-three" element={<HomeThree />} />
         <Route path="/home-four" element={<HomeFour />} />

@@ -1,3 +1,4 @@
+// // ../components/inner-pages/login/LoginArea.jsx
 import { Link } from "react-router-dom"
 import LoginForm from "../../../forms/LoginForm"
 
@@ -8,8 +9,8 @@ const LoginArea = () => {
             <div className="row justify-content-center">
                <div className="col-xl-6 col-lg-8">
                   <div className="singUp-wrap">
-                     <h2 className="title">Welcome back!</h2>
-                     <p>Hey there! Ready to log in? Just enter your username and password below and you&apos;ll be back in action in no time. Let&apos;s go!</p>
+                     <h2 className="title">Welcome</h2>
+                     <p>Hey there! Ready to log in? Just enter your email and password below and you&apos;ll be back in action in no time. Let&apos;s go!</p>
                      <div className="account__social">
                         <Link to="#" className="account__social-btn">
                            <img src="/assets/img/icons/google.svg" alt="img" />

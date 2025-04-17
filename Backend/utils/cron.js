@@ -3,7 +3,7 @@ const { Trace } = require('../db/models');  // Import Trace model
 const { Op } = require('sequelize');
 
 // Schedule a task to run every minute
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule(' 0 0 * * *', async () => {
   try {
     // Permanently delete traces older than 5 minutes
     const result = await Trace.destroy({
