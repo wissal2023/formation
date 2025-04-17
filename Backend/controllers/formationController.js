@@ -1,5 +1,5 @@
 // controllers/formation.controller.js
-const { sequelize, Formation, FormationDetails, Video, Trace, User } = require('../db/models');
+const { sequelize, Formation, FormationDetails, Video, Trace, User, Document } = require('../db/models');
 
 exports.createFormation = async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -65,7 +65,6 @@ exports.createFormation = async (req, res) => {
     return res.status(500).json({ message: 'Erreur lors de la création', error });
   }
 };
-
 
 // READ - all
 exports.getAllFormations = async (req, res) => {

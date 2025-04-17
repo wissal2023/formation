@@ -41,13 +41,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      deletedAt: {  // ✅ Soft delete support
+      deletedAt: { 
         type: Sequelize.DATE
-      },
-      supabaseUserId: {
-        type: Sequelize.UUID,
-        allowNull: false,
-        unique: true
       }
     });
   },

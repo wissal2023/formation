@@ -1,9 +1,11 @@
+// ../../../forms/LoginForm.jsx
 import { toast } from 'react-toastify';
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import BtnArrow from '../svg/BtnArrow';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const schema = yup
    .object({
@@ -20,8 +22,39 @@ const LoginForm = () => {
       formState: { errors },
    } = useForm({ resolver: yupResolver(schema) });
 
-   const onSubmit = () => {
-      toast('Login successfully', { position: 'top-center' });
+   const navigate = useNavigate();
+
+   const onSubmit = async (data) => {
+      try {
+         const response = await axios.post('http://localhost:3000/users/login', {
+            email: data.email,
+            mdp: data.password,
+         });
+
+         if (response.status === 200) {
+            const { token, roleUtilisateur, userId } = response.data;
+
+            toast.success('Login successful', { position: 'top-center' });
+
+            // Store token and user info
+            localStorage.setItem('authToken', token);
+            localStorage.setItem('roleUtilisateur', roleUtilisateur);
+            localStorage.setItem('userId', userId);
+
+            // Redirect based on role
+            if (roleUtilisateur === 'Formateur' || roleUtilisateur === 'Admin') {
+               navigate('/instructor-dashboard');
+            } else if (roleUtilisateur === 'Apprenant') {
+               navigate('/student-dashboard');
+            } else {
+               toast.error('Unknown role. Please contact support.', { position: 'top-center' });
+            }
+         }
+      } catch (error) {
+         console.error('Login error:', error);
+         toast.error('Login failed. Please check your credentials.', { position: 'top-center' });
+      }
+
       reset();
    };
 
