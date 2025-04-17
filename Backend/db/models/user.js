@@ -35,12 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     derConnx: {
       type: DataTypes.DATE
-    },
-    supabaseUserId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      unique: true
-    }    
+    }  
   }, {
     timestamps: true,
     paranoid: true,
