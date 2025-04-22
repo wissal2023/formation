@@ -1,6 +1,4 @@
-'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
 
 module.exports = (sequelize, DataTypes) => {
   const Reponse = sequelize.define('Reponse', {
@@ -14,25 +12,39 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     allowNull: false
   },
-  is_correct: {  
+  isCorrect: {  
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  questId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Questions', 
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
   },
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   updatedAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
+  },
+  deletedAt: {
+    type: DataTypes.DATE
   }
 }, {
-  paranoid: true, // Enables soft delete
+  paranoid: true, 
   freezeTableName: true
 });
 
-
+Reponse.associate = (models) => {
+  Reponse.belongsTo(models.Question, { foreignKey: 'questionId', onDelete: 'CASCADE' });
+};
 return Reponse;
 };
