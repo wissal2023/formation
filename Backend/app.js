@@ -44,6 +44,7 @@ app.use((req, res, next) => {
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
+
 app.use('/documents', docRoute );
 app.use('/certifications', certificationRoutes);
 app.use('/streaks', dailyStreakRoutes);
