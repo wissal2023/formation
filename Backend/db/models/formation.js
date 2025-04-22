@@ -1,4 +1,4 @@
-'use strict';
+
 const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -10,22 +10,25 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     titre: { type: DataTypes.STRING },
-    description: { type: DataTypes.STRING },
-    duree: { type: DataTypes.INTEGER },
-    evaluation: { type: DataTypes.FLOAT, defaultValue: 0 },
     thematique: { type: DataTypes.STRING },
-    datedebut: { type: DataTypes.DATE },
-    datefin: { type: DataTypes.DATE },
     verouillee: { type: DataTypes.BOOLEAN, defaultValue: false },
-    userId: {
-      type: DataTypes.INTEGER,
+    typeFlag: { type: DataTypes.ENUM('obligatoire', 'facultat'), allowNull: false,},
+    status: { type: DataTypes.ENUM('enrolled', 'in_progress', 'completed'), allowNull: false,},
+    userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'User', key: 'id'}},
+    createdAt: {
       allowNull: false,
-      references: {
-        model: 'User',
-        key: 'id'
-      }
-    }
-
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
+      }   
   }, {
     timestamps: true,
     paranoid: true,
@@ -36,12 +39,12 @@ module.exports = (sequelize, DataTypes) => {
   // Associations
   Formation.associate = (models) => {
     Formation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
-    Formation.hasMany(models.Video, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+    Formation.hasOne(models.FormationDetails, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Evaluation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-    Formation.hasMany(models.NoteDigitale, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-    Formation.hasMany(models.Document, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+    Formation.hasMany(models.NoteDigitale, { foreignKey: 'formationId', onDelete: 'CASCADE' });    
+    Formation.hasOne(models.Historisation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Quiz, { foreignKey: 'formationId', onDelete: 'CASCADE' });
-};
+  };
 
   return Formation;
 };

@@ -53,7 +53,6 @@ module.exports = (sequelize, DataTypes) => {
     Quiz.belongsTo(models.Formation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Quiz.hasOne(models.Certification, { foreignKey: 'quizId', onDelete: 'CASCADE' });
     Quiz.hasMany(models.Question, { foreignKey: 'quizId', onDelete: 'CASCADE' });
-    Quiz.hasOne(models.Recompense, { foreignKey: 'quizId', onDelete: 'CASCADE' });
     Quiz.hasMany(models.QuizProg, { foreignKey: 'quizId', onDelete: 'CASCADE' });
  
   };

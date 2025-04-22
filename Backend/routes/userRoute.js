@@ -1,28 +1,21 @@
+// routes/userRoute.js
 const express = require('express');
 const router = express.Router();
-const { addUserController, loginUserController, getAllUsers, getOnceUser } = require('../controllers/userController'); // On utilise maintenant userController pour tout
-
-// Route pour l'enregistrement d'un utilisateur (avec Supabase)
-router.post('/register', addUserController);
-
-// Route pour la connexion d'un utilisateur (avec envoi OTP)
+const {User} = require("../db/models");
+const authenticateToken = require('../utils/authMiddleware');
+const { addUserController, loginUserController, logoutUserController, updatePasswordController, getAllUsers, getOnceUser, getUserByName } = require('../controllers/userController'); // On utilise maintenant userController pour tout
+router.get('/login', authenticateToken, (req, res) => {
+  res.json({ message: 'Bienvenue sur le dashboard admin', user: req.user });
+});
 router.post('/login', loginUserController);
+router.post("/change-password", authenticateToken, updatePasswordController);
+router.post('/register', authenticateToken, addUserController);
+router.post('/logout', logoutUserController);
+router.get('/getOnce', authenticateToken, getOnceUser);
 
-// Route pour récupérer tous les utilisateurs
-router.get('/getAll', getAllUsers);
 
-// Route pour récupérer un seul utilisateur par ID
-router.get('/getOnce/:id', getOnceUser);
+router.get('/getAll', authenticateToken, getAllUsers);
+router.get('/:name', getUserByName);
 
-/** user of wissal & siwar
- * const userController = require('../controllers/userController'); // change le chemin selon ton projet
- 
- router.get('/', userController.getAllUsers);
- router.get('/:name', userController.getUserByName);
- router.post('/addUser', userController.createUser);
- router.put('/:id', userController.updateUser);
- router.delete('/:id', userController.deleteUser);
- 
- module.exports = router;
- */
+
 module.exports = router;

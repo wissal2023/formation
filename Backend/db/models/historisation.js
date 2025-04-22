@@ -1,7 +1,6 @@
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
 
-
 module.exports = (sequelize, DataTypes) => {
   const Historisation = sequelize.define('Historisation', {
     id: {
@@ -10,36 +9,41 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    action: { // Description of the historical action
+    action: { 
       type: DataTypes.STRING,
       allowNull: false
     },
-    deleted_data: { // 🔥 Full data of the deleted item (e.g., a Document)
-      type: DataTypes.JSONB,
+    deleted_data: { 
+      type: DataTypes.JSONB,  // This will store metadata related to videos and documents
       allowNull: false
+    },
+    file_data: {  // This will store the actual file content as BLOB (Binary Large Object)
+      type: DataTypes.BLOB('long'),  // 'long' for large binary data
+      allowNull: true
     },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     deletedAt: {
       type: DataTypes.DATE
     }
   }, {
     paranoid: true, // Enables soft delete (for historisation itself)
-    freezeTableName: true, // Keeps table name as 'Historisation'
-    modelName: 'historisation'
+    freezeTableName: true,
+    modelName: 'Historisations'
   });
- // ✅ Register Associations
- Historisation.associate = (models) => {
-  Historisation.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-};
+
+  // Associations
+  Historisation.associate = (models) => {
+    Historisation.belongsTo(models.Formation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+  };
 
   return Historisation;
 };

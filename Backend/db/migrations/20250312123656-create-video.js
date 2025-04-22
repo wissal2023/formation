@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('video', {
+    await queryInterface.createTable('Videos', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,6 +18,9 @@ module.exports = {
       nomSection: {
         type: Sequelize.STRING
       },
+      nbreSection: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -26,11 +29,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      formationId: {
+      deletedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      formationDetailsId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Formations', 
+          model: 'FormationDetails', 
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -38,6 +45,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('video');
+    await queryInterface.dropTable('Videos');
   }
 };
