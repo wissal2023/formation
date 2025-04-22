@@ -1,13 +1,12 @@
-import Wrapper from '../layouts/Wrapper';
-import CourseMain from '../components/courses/course';
-import SEO from '../components/SEO';
+import DashboardLayout from '../layouts/DashboardLayout';
+import CourseArea from "../components/courses/course/CourseArea"
+
 
 const Course = () => {
   return (
-    <Wrapper>
-      <SEO pageTitle={'SkillGro Course'} />
-      <CourseMain />
-    </Wrapper>
+      <DashboardLayout pageTitle="all formation">
+          <CourseArea />
+      </DashboardLayout>
   );
 };
 

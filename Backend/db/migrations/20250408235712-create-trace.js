@@ -18,16 +18,15 @@ module.exports = {
         },
         onDelete: 'CASCADE'
       },
-      page: {
+      model: {
         type: Sequelize.STRING,
         allowNull: false,
       },
       action: {
         type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: 'view'
+        allowNull: false
       },
-      metadata: {
+      data: {
         type: Sequelize.JSONB, 
         allowNull: true,
       },

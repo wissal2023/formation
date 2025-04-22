@@ -26,9 +26,13 @@ const videoRoutes = require('./routes/videoRoutes');
 const helpRoutes = require('./routes/helpRoutes');
 const helpTranslationRoutes = require('./routes/helpTranslationRoutes');
 
-app.use(cookieParser());
 app.use(express.json()); 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // my frontend URL
+    credentials: true,
+}));
+app.use(cookieParser());
+
 
 // ******************* middelware *******************
 app.use((req, res, next) => {
@@ -37,12 +41,6 @@ app.use((req, res, next) => {
   });
 
 // ******************* HEAD ROUTES *******************
-app.get('/', (req,res)=> {
-    res.status(200).json({
-        status:'success',
-        message:'welcome to our api',
-    })
-})
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
@@ -74,14 +72,3 @@ app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
     createFirstAdminUser(); 
 });
-
-
-
-
-
-/*
-db.sequelize.sync()
-  .then(() => console.log("Database schema updated"))
-  .catch(err => console.error("Error updating database:", err));
-*/
-

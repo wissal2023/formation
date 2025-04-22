@@ -1,15 +1,17 @@
-import DashboardBreadcrumb from '../../../components/common/breadcrumb/DashboardBreadcrumb'
+import Breadcrumb from '../../../components/common/breadcrumb/DashboardBreadcrumb'
 import FooterOne from '../../../layouts/footers/FooterOne'
-import HeaderOne from '../../../layouts/headers/HeaderOne'
-import DashboardHomeArea from './DashboardHomeArea'
+import HeaderFour from '../../../layouts/headers/HeaderFour'
+import HomeArea from './DashboardHomeArea'
+import React from 'react';
 
 const DashboardHome = () => {
+  
   return (
     <>
-      <HeaderOne />
+      <HeaderFour />
       <main className="main-area fix">
-        <DashboardBreadcrumb />
-        <DashboardHomeArea />
+        <Breadcrumb />
+        <HomeArea />
       </main>
       <FooterOne />
     </>
