@@ -1,69 +1,41 @@
-// controllers/recompenseController.js
-const db = require('../db/models');
-const Recompense = db.Recompense;
+const { Recompense, DailyStreak } = require('../db/models');
 
-
-// Create a new Recompense
-exports.createRecompense = async (req, res) => {
+// Method to check if the user has a 7-day streak and award a badge
+exports.weeklyStreakBadge = async (userId) => {
   try {
-    const recompense = await Recompense.create(req.body);
-    res.status(201).json(recompense);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
+    // Fetch the most recent streak record for the user
+    const streak = await DailyStreak.findOne({
+      where: { userId },
+      order: [['createdAt', 'DESC']],  // Get the most recent streak record
+    });
 
-// Get all Recompenses
-exports.getAllRecompenses = async (req, res) => {
-  try {
-    const recompenses = await Recompense.findAll();
-    res.status(200).json(recompenses);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// Get a single Recompense by ID
-exports.getRecompenseById = async (req, res) => {
-  try {
-    const recompense = await Recompense.findByPk(req.params.id);
-    if (!recompense) {
-      return res.status(404).json({ message: "Recompense not found" });
-    }
-    res.status(200).json(recompense);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// Update a Recompense by ID
-exports.updateRecompense = async (req, res) => {
-  try {
-    const recompense = await Recompense.findByPk(req.params.id);
-    if (!recompense) {
-      return res.status(404).json({ message: "Recompense not found" });
+    if (!streak || streak.streakCount !== 7) {
+      return; // Do nothing if streak count is not 7
     }
 
-    // Update fields with new values from request body
-    await recompense.update(req.body);
-    res.status(200).json(recompense);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
+    // Check if the user already has the badge
+    const existingReward = await Recompense.findOne({
+      where: {
+        userId,
+        name: 'Weekly Streak Badge',
+      },
+    });
 
-// Soft delete a Recompense by ID (paranoid soft delete)
-exports.deleteRecompense = async (req, res) => {
-  try {
-    const recompense = await Recompense.findByPk(req.params.id);
-    if (!recompense) {
-      return res.status(404).json({ message: "Recompense not found" });
+    if (existingReward) {
+      return; // If the user already has the badge, do nothing
     }
 
-    // Soft delete
-    await recompense.destroy();
-    res.status(200).json({ message: "Recompense deleted successfully" });
+    // Award the "Weekly Streak Badge"
+    const recompense = await Recompense.create({
+      name: 'Weekly Streak Badge',
+      type: 'badge',
+      description: 'Awarded for logging in for 7 consecutive days.',
+      isUnlocked: true,
+      userId,
+    });
+
+    console.log('User awarded Weekly Streak Badge:', recompense);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error awarding Weekly Streak Badge:', error);
   }
 };

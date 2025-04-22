@@ -1,4 +1,3 @@
-
 const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -12,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     titre: { type: DataTypes.STRING },
     thematique: { type: DataTypes.STRING },
     verouillee: { type: DataTypes.BOOLEAN, defaultValue: false },
-    typeFlag: { type: DataTypes.ENUM('Obligatoire', 'Facultat'), allowNull: false,},
+    typeFlag: { type: DataTypes.ENUM('obligatoire', 'facultat'), allowNull: false,},
     status: { type: DataTypes.ENUM('enrolled', 'in_progress', 'completed'), allowNull: false,},
     userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'User', key: 'id'}},
     createdAt: {
@@ -46,5 +45,5 @@ module.exports = (sequelize, DataTypes) => {
     Formation.hasMany(models.Quiz, { foreignKey: 'formationId', onDelete: 'CASCADE' });
   };
 
-  return Formation;
+  return Formation;
 };

@@ -45,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
   freezeTableName: true
 });
 
+Reponse.associate = (models) => {
+Reponse.belongsTo(models.Question, { foreignKey: 'questId', onDelete: 'CASCADE' });
+};
 
 return Reponse;
 };

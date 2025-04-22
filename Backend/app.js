@@ -8,7 +8,7 @@ const db = require('./db/models');
 const cors = require('cors');
 
 const formationRoutes = require('./routes/formationRoutes');
-const formationDetailsRoutes = require('./routes/formationDetailsRoutes');
+
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
 const otpRoutes = require('./routes/otpRoutes');
@@ -24,6 +24,7 @@ const reponseRoutes = require('./routes/reponseRoutes');
 const videoRoutes = require('./routes/videoRoutes');
 const helpRoutes = require('./routes/helpRoutes');
 const helpTranslationRoutes = require('./routes/helpTranslationRoutes');
+
 
 
 app.use(express.json()); 
@@ -45,10 +46,10 @@ app.get('/', (req,res)=> {
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
-app.use('/formation-details', formationDetailsRoutes)
+
 app.use('/documents', docRoute );
 app.use('/certifications', certificationRoutes);
-app.use('/streaks', dailyStreakRoutes);
+app.use('/daily-streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/notedigitales', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);

@@ -1,9 +1,11 @@
 const cron = require('node-cron');
-const { Trace } = require('../db/models');  // Import Trace model
+const { Trace, User } = require('../db/models');  // Import Trace and User models
 const { Op } = require('sequelize');
+const moment = require('moment');  // For date comparisons
+const { checkInactiveUsers } = require('../services/userService');  // Import checkInactiveUsers method
 
-// Schedule a task to run every minute
-cron.schedule('*/1 * * * *', async () => {
+// Schedule a task to run every minute to delete old trace logs
+cron.schedule('0 0 * * *', async () => {  // Run every minute
   try {
     // Permanently delete traces older than 5 minutes
     const result = await Trace.destroy({
@@ -17,5 +19,15 @@ cron.schedule('*/1 * * * *', async () => {
     console.log(`${result} trace logs permanently deleted.`);
   } catch (error) {
     console.error('Error while pruning old traces:', error);
+  }
+});
+
+// Schedule a task to run every day at midnight to check inactive users
+cron.schedule('0 0 * * *', async () => {  // Run every day at midnight
+  try {
+    // Call the method to check and deactivate inactive users
+    await checkInactiveUsers();
+  } catch (error) {
+    console.error('Error while checking inactive users:', error);
   }
 });
