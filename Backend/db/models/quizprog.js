@@ -1,10 +1,5 @@
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
-
-// Import related models
-const Quiz = require('./quiz');
-const User = require('./user');
 
 module.exports = (sequelize, DataTypes) => {
   const QuizProg = sequelize.define('QuizProg', {
@@ -40,12 +35,12 @@ module.exports = (sequelize, DataTypes) => {
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   updatedAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   deletedAt: {
     type: DataTypes.DATE

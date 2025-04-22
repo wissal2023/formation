@@ -1,5 +1,5 @@
+// frontend/src/navigation/Navigation.jsx
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Home from '../pages/Home';
 import HomeTwo from '../pages/HomeTwo';
 import HomeEight from '../pages/HomeEight';
 import HomeSeven from '../pages/HomeSeven';
@@ -24,11 +24,8 @@ import Blog from '../pages/Blog';
 import BlogTwo from '../pages/BlogTwo';
 import BlogThree from '../pages/BlogThree';
 import BlogDetails from '../pages/BlogDetails';
-import Login from '../pages/Login';
 import Registration from '../pages/Registration';
 import Contact from '../pages/Contact';
-import InstructorDashboard from '../pages/InstructorDashboard';
-import InstructorProfile from '../pages/InstructorProfile';
 import InstructorEnrollCourse from '../pages/InstructorEnrolledCourses';
 import InstructorWishlist from '../pages/InstructorWishlist';
 import InstructorReview from '../pages/InstructorReview';
@@ -49,11 +46,29 @@ import StudentHistory from '../pages/StudentHistory';
 import StudentSetting from '../pages/StudentSetting';
 import NotFound from '../pages/NotFound';
 
+import Login from '../pages/Login';
+import InstructorDashboard from '../pages/InstructorDashboard';
+import InstructorProfile from '../pages/InstructorProfile';
+import ChangePassword from '../pages/ChangePassword';
+import WelcomePage from '../pages/WelcomePage'
+
 const AppNavigation = () => {
   return (
     <Router>
       <Routes>
+         {/* public */}
         <Route path="/login" element={<Login />} />
+
+        <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="/instructor-dashboard" element={<InstructorDashboard />} />        
+        <Route path="/formations" element={<Course />} />
+        
+        <Route path="/course-details" element={<CourseDetails />} />
+        <Route path="/lesson" element={<Lesson />} />
+        <Route path="/instructor-profile" element={<InstructorProfile />} />
+
+        <Route path="/instructor-setting" element={<InstructorSetting />} />
         <Route path="/home-two" element={<HomeTwo />} />
         <Route path="/home-three" element={<HomeThree />} />
         <Route path="/home-four" element={<HomeFour />} />
@@ -61,10 +76,7 @@ const AppNavigation = () => {
         <Route path="/home-six" element={<HomeSix />} />
         <Route path="/home-seven" element={<HomeSeven />} />
         <Route path="/home-eight" element={<HomeEight />} />
-        <Route path="/courses" element={<Course />} />
-        <Route path="/course-details" element={<CourseDetails />} />
-        <Route path="/lesson" element={<Lesson />} />
-        <Route path="/about-us" element={<About />} />
+         <Route path="/about-us" element={<About />} />
         <Route path="/instructors" element={<Instructor />} />
         <Route path="/instructor-details" element={<InstructorDetails />} />
         <Route path="/events" element={<Event />} />
@@ -80,8 +92,6 @@ const AppNavigation = () => {
         <Route path="/blog-details" element={<BlogDetails />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/instructor-dashboard" element={<InstructorDashboard />} />
-        <Route path="/instructor-profile" element={<InstructorProfile />} />
         <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
         <Route path="/instructor-wishlist" element={<InstructorWishlist />} />
         <Route path="/instructor-review" element={<InstructorReview />} />
@@ -91,7 +101,6 @@ const AppNavigation = () => {
         <Route path="/instructor-announcement" element={<InstructorAnnouncement />} />
         <Route path="/instructor-quiz" element={<InstructorQuiz />} />
         <Route path="/instructor-assignment" element={<InstructorAssignment />} />
-        <Route path="/instructor-setting" element={<InstructorSetting />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
         <Route path="/student-enrolled-courses" element={<StudentEnrollCourse />} />

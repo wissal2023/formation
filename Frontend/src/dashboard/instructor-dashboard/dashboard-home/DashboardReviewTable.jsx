@@ -1,63 +1,53 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
-const table_data = [
-   {
-      id: 1,
-      name: "Accounting",
-      enroll: 120
-   },
-   {
-      id: 2,
-      name: "Marketing",
-      enroll: 95
-   },
-   {
-      id: 3,
-      name: "Web Design",
-      enroll: 150
-   },
-   {
-      id: 4,
-      name: "Graphic",
-      enroll: 80
-   },
-];
-
 const DashboardReviewTable = () => {
-   return (
-      <table className="table table-borderless">
-         <thead>
-            <tr>
-               <th>Course Name</th>
-               <th>Enrolled</th>
-               <th>Rating</th>
-            </tr>
-         </thead>
-         <tbody>
-            {table_data.map((list) => (
-               <tr key={list.id}>
-                  <td>
-                     <Link to="/course-details">{list.name}</Link>
-                  </td>
-                  <td>
-                     <p className="color-black">{list.enroll}</p>
-                  </td>
-                  <td>
-                     <div className="review__wrap">
-                        <div className="rating">
-                           <i className="fas fa-star"></i>
-                           <i className="fas fa-star"></i>
-                           <i className="fas fa-star"></i>
-                           <i className="fas fa-star"></i>
-                           <i className="fas fa-star"></i>
-                        </div>
-                     </div>
-                  </td>
-               </tr>
-            ))}
-         </tbody>
-      </table>
-   );
-}
+  const [users, setUsers] = useState([]);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/users/getAll", {
+          withCredentials: true, 
+        });
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des utilisateurs", error);
+        setErrorMsg("Erreur ou accès refusé");
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  if (errorMsg) {
+    return <p style={{ color: "red" }}>{errorMsg}</p>;
+  }
+
+  return (
+    <table className="table table-borderless">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Rôle</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.map((user) => (
+          <tr key={user.id}>
+            <td>
+              <Link to={`/user/${user.id}`}>{user.username}</Link>
+            </td>
+            <td>{user.email}</td>
+            <td>{user.roleUtilisateur}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 export default DashboardReviewTable;

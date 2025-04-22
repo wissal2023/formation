@@ -1,18 +1,23 @@
-// backend/utils/authMiddleware
 const jwt = require('jsonwebtoken');
+const { User } = require('../db/models');
 
-const authenticateToken = (req, res, next) => {
-    const token = req.cookies.token || req.headers['authorization']?.split(' ')[1];
+module.exports = async function authenticateToken(req, res, next) {
   
-    if (!token) {
-      return res.status(401).json({ message: 'Token manquant' });
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: 'Token manquant ou invalide (cookie).' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findByPk(decoded.id);
+    if (!user) {
+      return res.status(401).json({ message: 'Utilisateur non trouvé.' });
     }
-  
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) return res.status(403).json({ message: 'Token invalide' });
-      req.user = user;
-      next();
-    });
-  };
 
-module.exports = authenticateToken;
+    req.user = user;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Échec d\'authentification.', error: err.message });
+  }
+};

@@ -29,34 +29,33 @@ const LoginForm = () => {
          const response = await axios.post('http://localhost:3000/users/login', {
             email: data.email,
             mdp: data.password,
-         });
+         }, { withCredentials: true });
+   
+         localStorage.setItem('username', response.data.username); 
+         localStorage.setItem('roleUtilisateur', response.data.roleUtilisateur);
 
          if (response.status === 200) {
-            const { token, roleUtilisateur, userId } = response.data;
-
+            const { mustUpdatePassword } = response.data;
+   
             toast.success('Login successful', { position: 'top-center' });
-
-            // Store token and user info
-            localStorage.setItem('authToken', token);
-            localStorage.setItem('roleUtilisateur', roleUtilisateur);
-            localStorage.setItem('userId', userId);
-
-            // Redirect based on role
-            if (roleUtilisateur === 'Formateur' || roleUtilisateur === 'Admin') {
-               navigate('/instructor-dashboard');
-            } else if (roleUtilisateur === 'Apprenant') {
-               navigate('/student-dashboard');
-            } else {
-               toast.error('Unknown role. Please contact support.', { position: 'top-center' });
+   
+            if (mustUpdatePassword) {
+               navigate('/change-password');
+               return;
             }
+   
+            // ✅ Redirect to welcome page first, then it will auto-navigate to dashboard
+            navigate('/welcome');
          }
+   
       } catch (error) {
          console.error('Login error:', error);
          toast.error('Login failed. Please check your credentials.', { position: 'top-center' });
       }
-
+   
       reset();
    };
+   
 
    return (
       <form onSubmit={handleSubmit(onSubmit)} className="account__form">
