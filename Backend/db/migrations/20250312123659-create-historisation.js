@@ -1,4 +1,5 @@
 'use strict';
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Historisations', {
@@ -8,11 +9,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      action: {  // ✅ Action description
+      action: { 
         type: Sequelize.STRING,
         allowNull: false
       },
-      userId: {  // ✅ Foreign key linking to Users
+      userId: { 
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -29,7 +30,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      deletedAt: {  // ✅ Soft delete support
+      deletedAt: { 
         type: Sequelize.DATE
       }
     });
