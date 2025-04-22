@@ -1,5 +1,6 @@
 // db/models/user.js
 'use strict';
+const { USER_ROLES } = require('../constants/roles'); 
 const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -27,14 +28,32 @@ module.exports = (sequelize, DataTypes) => {
       validate: { len: [6, 255] } 
     },
     roleUtilisateur: {
-      type: DataTypes.ENUM('Admin', 'Formateur', 'Apprenant'),
+      type: DataTypes.ENUM(...USER_ROLES),
       allowNull: false,
     },
-    dateInscr: {
-      type: DataTypes.DATE
+    photo: { 
+      type: DataTypes.STRING, 
+      allowNull: true
     },
+    tel: { 
+      type: DataTypes.STRING, 
+      allowNull: true
+    },
+    isActive: { 
+      type: DataTypes.BOOLEAN,
+      allowNull: false 
+    },
+    defaultMdp: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },    
+    mustUpdatePassword: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true 
+    },    
     derConnx: {
-      type: DataTypes.DATE
+      type: DataTypes.DATE,
+      allowNull: true
     }  
   }, {
     timestamps: true,

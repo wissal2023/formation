@@ -1,6 +1,5 @@
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
 
 module.exports = (sequelize, DataTypes) => {
   const Question = sequelize.define('Question', {
@@ -14,11 +13,11 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     allowNull: false
   },
-  quizId: {
+  questionId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Quiz', 
+      model: 'Questions', 
       key: 'id'
     },
     onDelete: 'CASCADE'
@@ -40,7 +39,8 @@ module.exports = (sequelize, DataTypes) => {
 
 // Associations
 Question.associate = (models) => {
-  Question.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
+  Question.hasMany(models.Quiz, { foreignKey: 'questionId', onDelete: 'CASCADE' });
 };
+
 return Question;
 };

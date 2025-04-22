@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
+
 async function createFirstAdminUser() {
   try {
     const existingAdmin = await User.findOne({ where: { roleUtilisateur: 'Admin' } });
@@ -20,13 +21,15 @@ async function createFirstAdminUser() {
     const adminUser = await User.create({
       email: process.env.ADMIN_EMAIL,
       mdp: hashedPassword,
-      username: 'First_Admin',
-      roleUtilisateur: 'Admin'
+      defaultMdp: hashedPassword,
+      username: 'Default_Admin',
+      roleUtilisateur: 'Admin',
+      isActive: true
     });
 
     console.log('Admin user created successfully');
 
-    // 🔐 Generate JWT token
+    // Generate JWT token
     const token = jwt.sign(
       { id: adminUser.id, role: adminUser.roleUtilisateur },
       process.env.JWT_SECRET,
@@ -44,7 +47,7 @@ async function createFirstAdminUser() {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: adminUser.email,
-      subject: 'Your Admin Account Credentials',
+      subject: 'Your Account Credentials',
       text: `Welcome to the platform!\n\nEmail: ${adminUser.email}\nPassword: ${randomPassword}\n\nAuth Token: ${token}`
     });
 
