@@ -4,25 +4,6 @@ const otpModel = require('../services/otpModel');
 const speakeasy = require('speakeasy'); 
 const qrcode = require('qrcode'); 
 
-// Générer un OTP aléatoire et l'envoyer par email
-const sendOtp = async (req, res) => {
-  const { email } = req.body;
-
-  // Générer un OTP aléatoire
-  const otp = generateOtp();
-
-  try {
-    // Envoyer l'OTP par email
-    await sendOtpEmail(email, otp);
-
-    // Enregistrer l'OTP dans la base de données
-    await otpModel.storeOtp(email, otp);
-
-    res.status(200).json({ message: 'OTP envoyé avec succès à votre email.' });
-  } catch (error) {
-    res.status(500).json({ message: "Erreur lors de l'envoi de l'OTP.", error: error.message });
-  }
-};
 
 // Vérifier l'OTP envoyé par email
 const verifyOtp = async (req, res) => {
@@ -89,4 +70,4 @@ const verifyGoogleOtp = (req, res) => {
 };
 
 // Exporter les fonctions
-module.exports = { sendOtp, verifyOtp, generateSecret, verifyGoogleOtp };
+module.exports = { verifyOtp, generateSecret, verifyGoogleOtp };

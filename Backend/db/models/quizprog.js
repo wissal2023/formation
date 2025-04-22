@@ -1,10 +1,5 @@
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
-
-// Import related models
-const Quiz = require('./quiz');
-const User = require('./user');
 
 module.exports = (sequelize, DataTypes) => {
   const QuizProg = sequelize.define('QuizProg', {
@@ -28,27 +23,36 @@ module.exports = (sequelize, DataTypes) => {
     allowNull: false,
     defaultValue: 0
   },
+  quizId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Quiz', 
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
+  },
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   updatedAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   deletedAt: {
     type: DataTypes.DATE
   }
 }, {
-  paranoid: true, // Enables soft delete
+  paranoid: true, 
   freezeTableName: true
 });
 
 // Associations
 QuizProg.associate = (models) => {
-  QuizProg.belongsTo(models.Quiz, { foreignKey: 'QuizId', onDelete: 'CASCADE' });
+  QuizProg.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
 };
 return QuizProg;
 };
