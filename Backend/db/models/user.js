@@ -30,17 +30,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('Admin', 'Formateur', 'Apprenant'),
       allowNull: false,
     },
-    dateInscr: {
-      type: DataTypes.DATE
+    photo: { 
+      type: DataTypes.STRING, 
+      allowNull: true
+    },
+    tel: { 
+      type: DataTypes.STRING, 
+      allowNull: true
+    },
+    isActive: { 
+      type: DataTypes.BOOLEAN,
+      allowNull: false 
     },
     derConnx: {
-      type: DataTypes.DATE
-    },
-    supabaseUserId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      unique: true
-    }    
+      type: DataTypes.DATE,
+      allowNull: true
+    }
   }, {
     timestamps: true,
     paranoid: true,

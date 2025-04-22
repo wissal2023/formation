@@ -66,5 +66,5 @@ module.exports = (sequelize, DataTypes) => {
     Help.hasMany(models.HelpTranslation, { foreignKey: 'helpId', onDelete: 'CASCADE' });
     Help.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE'});};
 
-  return Help;
+  return Help;
 };
