@@ -1,3 +1,4 @@
+// pages/Login.jsx
 import Wrapper from '../layouts/Wrapper';
 import LoginMain from '../components/inner-pages/login';
 import SEO from '../components/SEO';
@@ -5,7 +6,7 @@ import SEO from '../components/SEO';
 const Login = () => {
    return (
       <Wrapper>
-         <SEO pageTitle={'SkillGro Login'} />
+         <SEO pageTitle={'login page'} />
          <LoginMain />
       </Wrapper>
    );

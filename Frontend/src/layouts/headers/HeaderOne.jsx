@@ -1,13 +1,5 @@
-import HeaderTopOne from "./menu/HeaderTopOne"
-import NavMenu from "./menu/NavMenu"
-import React, { useState } from "react"
-import MobileSidebar from "./menu/MobileSidebar"
-import UseSticky from "../../hooks/UseSticky"
-import { Link } from "react-router-dom"
-import InjectableSvg from "../../hooks/InjectableSvg"
 import CustomSelect from "../../ui/CustomSelect"
 import TotalWishlist from "../../components/common/TotalWishlist"
-import TotalCart from "../../components/common/TotalCart"
 
 const HeaderOne = () => {
 
@@ -23,7 +15,6 @@ const HeaderOne = () => {
    return (
       <>
          <header>
-            <HeaderTopOne style={null} />
             <div id="header-fixed-height"></div>
             <div id="sticky-header" className={`tg-header__area ${sticky ? "sticky-menu": ""}`}>
                <div className="container custom-container">

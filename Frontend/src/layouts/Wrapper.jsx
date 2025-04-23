@@ -1,3 +1,4 @@
+// frontend/src/layouts/Wrapper.jsx
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import AOS from "aos";

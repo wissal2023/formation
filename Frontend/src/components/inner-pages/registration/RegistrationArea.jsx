@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom"
 import RegistrationForm from "../../../forms/RegistrationForm"
 
 const RegistrationArea = () => {
@@ -8,21 +7,8 @@ const RegistrationArea = () => {
             <div className="row justify-content-center">
                <div className="col-xl-6 col-lg-8">
                   <div className="singUp-wrap">
-                     <h2 className="title">Create Your Account</h2>
-                     <p>Hey there! Ready to join the party? We just need a few details from you to get <br /> started. Let&apos;s do this!</p>
-                     <div className="account__social">
-                        <Link to="#" className="account__social-btn">
-                           <img src="/assets/img/icons/google.svg" alt="img" />
-                           Continue with google
-                        </Link>
-                     </div>
-                     <div className="account__divider">
-                        <span>or</span>
-                     </div>
+                     <h2 className="title">Add a new user</h2>
                      <RegistrationForm />
-                     <div className="account__switch">
-                        <p>Already have an account?<Link to="/login">Login</Link></p>
-                     </div>
                   </div>
                </div>
             </div>

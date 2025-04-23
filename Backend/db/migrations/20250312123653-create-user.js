@@ -23,6 +23,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      defaultMdp: {
+        type: Sequelize.STRING,
+        allowNull: true
+      }, 
       roleUtilisateur: {
         type: Sequelize.ENUM('Admin', 'Formateur', 'Apprenant'),
         allowNull: false
@@ -42,6 +46,10 @@ module.exports = {
       derConnx: {
         type: Sequelize.DATE
       },
+      mustUpdatePassword: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true 
+      }, 
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
