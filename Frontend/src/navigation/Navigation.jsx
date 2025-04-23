@@ -1,12 +1,15 @@
+// navigation/Navigation.jsx
+import Blog from '../pages/Blog';
+
 // frontend/src/navigation/Navigation.jsx
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import HomeTwo from '../pages/HomeTwo';
-import HomeEight from '../pages/HomeEight';
-import HomeSeven from '../pages/HomeSeven';
-import HomeSix from '../pages/HomeSix';
-import HomeFive from '../pages/HomeFive';
-import HomeFour from '../pages/HomeFour';
 import HomeThree from '../pages/HomeThree';
+import HomeFour from '../pages/HomeFour';
+import HomeFive from '../pages/HomeFive';
+import HomeSix from '../pages/HomeSix';
+import HomeSeven from '../pages/HomeSeven';
+import HomeEight from '../pages/HomeEight';
 import Course from '../pages/Course';
 import Lesson from '../pages/Lesson';
 import CourseDetails from '../pages/CourseDetails';
@@ -20,7 +23,6 @@ import ShopDetails from '../pages/ShopDetails';
 import Cart from '../pages/Cart';
 import Wishlist from '../pages/Wishlist';
 import CheckOut from '../pages/CheckOut';
-import Blog from '../pages/Blog';
 import BlogTwo from '../pages/BlogTwo';
 import BlogThree from '../pages/BlogThree';
 import BlogDetails from '../pages/BlogDetails';
@@ -45,6 +47,12 @@ import StudentAttempt from '../pages/StudentAttempt';
 import StudentHistory from '../pages/StudentHistory';
 import StudentSetting from '../pages/StudentSetting';
 import NotFound from '../pages/NotFound';
+import PrivateRoute from '../PrivateRoute';
+import SignIn from '../SignIn';
+import ResetPassword from '../ResetPassword';
+import OTPVerification from '../OTPVerification';
+import QrCodeDisplay from '../QrCodeDisplay';
+// ...autres imports...
 
 import Login from '../pages/Login';
 import InstructorDashboard from '../pages/InstructorDashboard';
@@ -54,6 +62,7 @@ import WelcomePage from '../pages/WelcomePage'
 
 const AppNavigation = () => {
   return (
+
     <Router>
       <Routes>
          {/* public */}

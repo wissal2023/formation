@@ -44,9 +44,10 @@ app.use((req, res, next) => {
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
+
 app.use('/documents', docRoute );
 app.use('/certifications', certificationRoutes);
-app.use('/streaks', dailyStreakRoutes);
+app.use('/daily-streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/notedigitales', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
