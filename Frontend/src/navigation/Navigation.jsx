@@ -38,7 +38,7 @@ import InstructorAnnouncement from '../pages/InstructorAnnouncement';
 import InstructorAssignment from '../pages/InstructorAssignment';
 import InstructorSetting from '../pages/InstructorSetting';
 import InstructorAttempt from '../pages/InstructorAttempt';
-import StudentDashboard from '../pages/StudentDashboard';
+import StudentDashboard from '../dashboard/student-dashboard/student-dashboard/StudentDashboardArea';
 import StudentProfile from '../pages/StudentProfile';
 import StudentEnrollCourse from '../pages/StudentEnrolledCourses';
 import StudentWishlist from '../pages/StudentWishlist';
