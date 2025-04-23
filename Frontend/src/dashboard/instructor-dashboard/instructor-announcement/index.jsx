@@ -6,12 +6,8 @@ import InstructorAnnouncementArea from './InstructorAnnouncementArea'
 const InstructorAnnouncement = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+        
             <InstructorAnnouncementArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

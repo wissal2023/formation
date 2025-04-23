@@ -1,6 +1,5 @@
 # Environnement virtuel
 myenv/
-.env/
 
 # Fichiers Python
 __pycache__/

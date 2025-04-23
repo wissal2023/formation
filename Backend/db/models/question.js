@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: 'CASCADE',
     }
-  }, {
+  }, 
     freezeTableName: true, 
   });
 

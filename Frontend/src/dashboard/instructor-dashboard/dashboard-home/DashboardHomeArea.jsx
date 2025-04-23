@@ -18,6 +18,8 @@ const DashboardHomeArea = () => {
             </div>
          </div>         
          <DashboardCourse />
+         <DashboardReviewTable />
+
           {/* 
          <div className="dashboard__content-wrap">
             <div className="dashboard__content-title">
@@ -26,7 +28,6 @@ const DashboardHomeArea = () => {
             <div className="row">
                <div className="col-12">
                   <div className="dashboard__review-table">
-                     <DashboardReviewTable />
                   </div>
                </div>
             </div>
