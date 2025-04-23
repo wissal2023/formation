@@ -4,6 +4,7 @@ const router = express.Router();
 const {User} = require("../db/models");
 const authenticateToken = require('../utils/authMiddleware');
 const { addUserController, loginUserController, logoutUserController, updatePasswordController, getAllUsers, getOnceUser, getUserByName } = require('../controllers/userController'); // On utilise maintenant userController pour tout
+
 router.get('/login', authenticateToken, (req, res) => {
   res.json({ message: 'Bienvenue sur le dashboard admin', user: req.user });
 });
