@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { sendOtp, verifyOtp, generateSecret, verifyGoogleOtp } = require('../Controllers/otpController');
+const { sendOtp, verifyOtp, generateSecret, verifyGoogleOtp } = require('../controllers/otpController');
 
 // Route pour générer le QR code et secret
 router.get('/generate-secret', generateSecret); // Utilisation directe après la déstructuration
