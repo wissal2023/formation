@@ -1,4 +1,5 @@
 import DashboardBreadcrumb from '../../../components/common/breadcrumb/DashboardBreadcrumb'
+import DashboardLayout from '../../../layouts/DashboardLayout'
 import FooterOne from '../../../layouts/footers/FooterOne'
 import HeaderOne from '../../../layouts/headers/HeaderOne'
 import StudentDashboardArea from './StudentDashboardArea'
@@ -6,13 +7,12 @@ import StudentDashboardArea from './StudentDashboardArea'
 const StudentDashboard = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+
+         <DashboardLayout>
             <StudentDashboardArea />
-         </main>
-         <FooterOne />
+         </DashboardLayout>
       </>
+
    )
 }
 
