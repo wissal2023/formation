@@ -11,7 +11,7 @@ const WelcomePage = () => {
 
   const handleNavigation = () => {
     if (role === 'Formateur' || role === 'Admin') {
-      navigate('/instructor-dashboard');
+      navigate('/dashboard');
     } else if (role === 'Apprenant') {
       navigate('/student-dashboard');
     } else {

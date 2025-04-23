@@ -11,40 +11,24 @@ module.exports = {
       },
       page: {
         type: Sequelize.STRING,
-        allowNull: false,
-        comment: 'The route or component/page this help entry is for'
-      },
-      section: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        comment: 'Optional section or element within the page'
+        allowNull: false
       },
       title: {
         type: Sequelize.STRING,
-        allowNull: false,
-        comment: 'Short title or headline for the help tip'
+        allowNull: false
       },
       content: {
         type: Sequelize.TEXT,
-        allowNull: false,
-        comment: 'Detailed help message shown to the user'
+        allowNull: false
       },
       language: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: 'fr',
-        comment: 'Language code (e.g., fr, en, ar)'
-      },
-      role: {
-        type: Sequelize.ENUM('Admin', 'Formateur', 'Apprenant'),
-        allowNull: false,
-        defaultValue: 'Admin',
-        comment: 'User role this help tip is for'
+        defaultValue: 'en'
       },
       isActive: {
         type: Sequelize.BOOLEAN,
-        defaultValue: true,
-        comment: 'Used to deactivate help without deleting'
+        defaultValue: true
       },
       userId: {
         type: Sequelize.INTEGER,

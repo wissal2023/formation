@@ -26,12 +26,26 @@ exports.getHelpByPage = async (req, res) => {
 // 🔹 Create Help
 exports.createHelp = async (req, res) => {
   try {
-    const help = await Help.create(req.body);
+    const { page, title, content, language } = req.body;
+
+    if (!page || !title || !content) {
+      return res.status(400).json({ message: "Les champs requis sont manquants." });
+    }
+
+    const help = await Help.create({
+      page,
+      title,
+      content,
+      language: language || 'en',
+      userId: req.user.id // Attach the logged-in user
+    });
+
     res.status(201).json(help);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: "Erreur lors de la création de l'aide.", error: error.message });
   }
 };
+
 
 // 🔹 Get All Helps (filtered by language)
 exports.getAllHelps = async (req, res) => {
