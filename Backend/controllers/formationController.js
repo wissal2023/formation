@@ -1,13 +1,18 @@
-// controllers/formation.controller.js
 const { sequelize, Formation, FormationDetails, Video, Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
+
+
+const { USER_ROLES } = require('../db/constants/roles');
+
 
 exports.createFormation = async (req, res) => {
   const transaction = await sequelize.transaction();
-  try {
-    const userId = req.body.userId;
-    const user = await User.findByPk(userId);
+  
+  try {      
+      const user = req.user;
+      const userId = user.id;
 
-    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    if (!user) 
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     if (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin')
       return res.status(403).json({ message: 'Permission refusée.' });
 
@@ -42,9 +47,9 @@ exports.createFormation = async (req, res) => {
     // Step 4: Trace the creation
     await Trace.create({
       userId,
-      page: 'Formation',
+      model: 'Formation',
       action: 'Création de formation',
-      metadata: {
+      data: {
         formationId: formation.id,
         titre: formation.titre,
         formationDetailsId: formationDetails.id,
@@ -54,7 +59,7 @@ exports.createFormation = async (req, res) => {
 
     await transaction.commit();
     return res.status(201).json({
-      message: 'Formation, FormationDetails et vidéo (placeholder) créés',
+      message: 'Formation, FormationDetails et vidéo vide créés',
       formation,
       formationDetails,
       videoId
@@ -66,18 +71,33 @@ exports.createFormation = async (req, res) => {
   }
 };
 
-
-// READ - all
+// get all
 exports.getAllFormations = async (req, res) => {
   try {
-    const formations = await Formation.findAll();
-    res.status(200).json(formations);
+    const user = req.user;
+
+    // Tous les utilisateurs authentifiés peuvent voir toutes les formations
+    if (USER_ROLES.includes(user.roleUtilisateur)) {
+      const formations = await Formation.findAll({
+        include: {
+          model: User,
+          attributes: ['username'], // only get the username
+        },
+      }
+
+      );
+      return res.status(200).json(formations);
+    }
+
+    return res.status(403).json({ message: 'Rôle utilisateur non autorisé.' });
+
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération', error });
+    res.status(500).json({ message: 'Erreur lors de la récupération des formations', error });
   }
 };
 
-// READ - one
+
+// get by id
 exports.getFormationById = async (req, res) => {
   try {
     const formation = await Formation.findByPk(req.params.id);

@@ -1,5 +1,5 @@
-/*
-const supabase = require('../supabaseClient');
+
+// services/otpModels.js
 
 exports.storeOtp = async (email, otp) => {
     // Stocke l'OTP dans la base de données
@@ -14,4 +14,3 @@ exports.getOtp = async (email) => {
     }
     return data.otp;
 };
-*/
