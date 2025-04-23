@@ -13,11 +13,11 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     allowNull: false
   },
-  questionId: {
+  quizId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Questions', 
+      model: 'Quiz', 
       key: 'id'
     },
     onDelete: 'CASCADE'
@@ -39,7 +39,8 @@ module.exports = (sequelize, DataTypes) => {
 
 // Associations
 Question.associate = (models) => {
-  Question.hasMany(models.Quiz, { foreignKey: 'questionId', onDelete: 'CASCADE' });
+
+  Question.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
 };
 
 return Question;

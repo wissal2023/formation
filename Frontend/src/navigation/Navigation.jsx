@@ -61,7 +61,7 @@ const AppNavigation = () => {
 
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/welcome" element={<WelcomePage />} />
-        <Route path="/instructor-dashboard" element={<InstructorDashboard />} />        
+        <Route path="/dashboard" element={<InstructorDashboard />} />        
         <Route path="/formations" element={<Course />} />
         
         <Route path="/course-details" element={<CourseDetails />} />

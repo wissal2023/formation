@@ -16,8 +16,9 @@ const DashboardHomeArea = () => {
             <div className="row">
                <DashboardCounter />
             </div>
-         </div>
+         </div>         
          <DashboardCourse />
+          {/* 
          <div className="dashboard__content-wrap">
             <div className="dashboard__content-title">
                <h4 className="title">My users</h4>
@@ -33,6 +34,7 @@ const DashboardHomeArea = () => {
                <Link to="#" className="link-btn">Browse All Course <BtnArrow /></Link>
             </div>
          </div>
+         */}
       </div>
    );
 };
