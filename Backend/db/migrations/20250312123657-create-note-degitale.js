@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('NoteDegitales', {
+    await queryInterface.createTable('NoteDigitales', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,7 +10,21 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       titre: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      content: {  // Added content field to store the body of the note
+        type: Sequelize.TEXT,
+        allowNull: false
+      },
+      formationId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Formations',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -19,19 +33,10 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      },
-      formationId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Formations', 
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
-      },
+      }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('NoteDegitales');
+    await queryInterface.dropTable('NoteDigitales');
   }
 };

@@ -14,6 +14,11 @@ module.exports = {
         allowNull: false,
         defaultValue: 0
       },
+      streakCount: {  // New attribute to track the consecutive login days
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
       userId: { 
         type: Sequelize.INTEGER,
         allowNull: false,
