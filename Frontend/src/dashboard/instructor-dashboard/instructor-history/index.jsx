@@ -6,12 +6,7 @@ import InstructorHistoryArea from './InstructorHistoryArea'
 const InstructorHistory = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
             <InstructorHistoryArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

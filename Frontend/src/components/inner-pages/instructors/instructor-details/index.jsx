@@ -5,14 +5,10 @@ import InstructorDetailsArea from "./InstructorDetailsArea"
 
 const InstructorsDetails = () => {
    return (
-      <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <BreadcrumbTwo title="Robert Fox" sub_title="Instructors" />
-            <InstructorDetailsArea />
-         </main>
-         <FooterOne style={false} style_2={false} />
-      </>
+        
+        <InstructorDetailsArea />
+        
+        
    )
 }
 

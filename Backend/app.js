@@ -44,7 +44,6 @@ app.use((req, res, next) => {
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
-
 app.use('/documents', docRoute );
 app.use('/certifications', certificationRoutes);
 app.use('/daily-streak', dailyStreakRoutes);
@@ -68,7 +67,7 @@ app.use('*', (req, res) => {
 
 
 
-const PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.APP_PORT || 4000;
 app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
     createFirstAdminUser(); 
