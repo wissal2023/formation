@@ -26,7 +26,7 @@ const LoginForm = () => {
 
    const onSubmit = async (data) => {
       try {
-         const response = await axios.post('http://localhost:3000/users/login', {
+         const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, {
             email: data.email,
             mdp: data.password,
          }, { withCredentials: true });
@@ -50,8 +50,14 @@ const LoginForm = () => {
    
       } catch (error) {
          console.error('Login error:', error);
-         toast.error('Login failed. Please check your credentials.', { position: 'top-center' });
+      
+         if (error.response) {
+            toast.error(error.response.data.message || 'Erreur inconnue.', { position: 'top-center' });
+         } else {
+            toast.error('Erreur de connexion au serveur.', { position: 'top-center' });
+         }
       }
+      
    
       reset();
    };
@@ -75,7 +81,7 @@ const LoginForm = () => {
                <label htmlFor="terms-check" className="form-check-label">Remember me</label>
             </div>
             <div className="account__check-forgot">
-               <Link to="/registration">Forgot Password?</Link>
+               <Link to="#">Forgot Password?</Link>
             </div>
          </div>
          <button type="submit" className="btn btn-two arrow-btn">

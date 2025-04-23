@@ -4,10 +4,7 @@ import SEO from '../components/SEO';
 
 const BlogDetails = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Blog Details'} />
          <BlogDetailsMain />
-      </Wrapper>
    );
 };
 

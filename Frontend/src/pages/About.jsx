@@ -1,13 +1,10 @@
-import Wrapper from '../layouts/Wrapper';
 import AboutMain from '../components/inner-pages/about-us';
-import SEO from '../components/SEO';
+import DashboardLayout from '../layouts/DashboardLayout';
 
 const About = () => {
   return (
-    <Wrapper>
-      <SEO pageTitle={'SkillGro About'} />
+   
       <AboutMain />
-    </Wrapper>
   );
 };
 
