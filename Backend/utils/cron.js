@@ -2,6 +2,8 @@
 const cron = require('node-cron');
 const { User, Trace } = require('../db/models');
 const { Op } = require('sequelize');
+const moment = require('moment');  // For date comparisons
+const { checkInactiveUsers } = require('../services/userService');  // Import checkInactiveUsers method
 
 // Run every day at midnight
 cron.schedule('0 0 * * *', async () => {
@@ -35,5 +37,15 @@ cron.schedule('0 0 * * *', async () => {
 
   } catch (error) {
     console.error('Cron job error:', error);
+  }
+});
+
+// Schedule a task to run every day at midnight to check inactive users
+cron.schedule('0 0 * * *', async () => {  // Run every day at midnight
+  try {
+    // Call the method to check and deactivate inactive users
+    await checkInactiveUsers();
+  } catch (error) {
+    console.error('Error while checking inactive users:', error);
   }
 });

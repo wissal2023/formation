@@ -1,6 +1,8 @@
-// controllers/formationController.js
-const { sequelize, Formation, FormationDetails, Video, Trace, User, Document } = require('../db/models');
+const { sequelize, Formation, FormationDetails, Video, Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
+
+
 const { USER_ROLES } = require('../db/constants/roles');
+
 
 exports.createFormation = async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -123,16 +125,19 @@ exports.updateFormation = async (req, res) => {
 };
 
 // Delete
+
 exports.deleteFormation = async (req, res) => {
   const { id } = req.params;
+  const transaction = await sequelize.transaction();  // Ensure atomic operations
   try {
-    // Fetch the Formation to be deleted, including related data
+    // Step 1: Find the Formation to delete, along with associated data
     const formation = await Formation.findByPk(id, {
       include: [
         { model: FormationDetails },
-        { model: Document },
-        { model: Video },
-       
+        { model: Evaluation },
+        { model: NoteDigitale },
+        { model: Quiz },
+        { model: Historisation }
       ],
     });
 
@@ -140,29 +145,43 @@ exports.deleteFormation = async (req, res) => {
       return res.status(404).json({ message: 'Formation not found' });
     }
 
-    // Gather all related data (Formation, FormationDetails, Documents, Videos, Certifications)
+    // Step 2: Archive the formation in the Historisation table
     const deletedData = {
       formation: formation.toJSON(),  // Get the formation as JSON
       formationDetails: formation.FormationDetails.map(detail => detail.toJSON()),
-      documents: formation.Documents.map(doc => doc.toJSON()),
-      videos: formation.Videos.map(video => video.toJSON())
-      
+      evaluations: formation.Evaluations.map(eval => eval.toJSON()),
+      noteDigitale: formation.NoteDigitales.map(note => note.toJSON()),
+      quizzes: formation.Quizzes.map(quiz => quiz.toJSON())
     };
 
-    // Store the deleted data in Historisation
     await Historisation.create({
       action: 'deleted',
       deleted_data: deletedData,  // Store all related data that is being deleted
       formationId: formation.id,  // Link to the Formation being deleted
       userId: req.user.id  // User performing the deletion (assuming user info is in req.user)
-    });
+    }, { transaction });
 
-    // Delete the Formation and related data (it will be deleted with `CASCADE`)
-    await formation.destroy();
+    // Step 3: Trace the deletion action in the Trace table
+    await Trace.create({
+      userId: req.user.id,  // User performing the deletion
+      action: 'deleted',  // Action performed
+      model: 'Formation',  // The model being modified
+      data: {
+        formationId: formation.id,
+        titre: formation.titre,
+        deletedData: deletedData,  // Including deleted data as part of the trace
+      },
+    }, { transaction });
 
-    res.status(200).json({ message: 'Formation and related data deleted and stored in Historisation' });
+    // Step 4: Delete the formation and its associated records (they will be deleted with CASCADE)
+    await formation.destroy({ transaction });
+
+    await transaction.commit();  // Commit the transaction
+
+    res.status(200).json({ message: 'Formation and related data archived, deleted and traced successfully' });
   } catch (error) {
+    await transaction.rollback();  // Rollback the transaction in case of error
     console.error(error);
-    res.status(500).json({ message: 'Error deleting formation and storing in Historisation', error });
+    res.status(500).json({ message: 'Error deleting formation, storing in Historisation, or tracing', error });
   }
 };
