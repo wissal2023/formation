@@ -1,4 +1,3 @@
-// db/models/user.js
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
 
@@ -35,13 +34,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     derConnx: {
       type: DataTypes.DATE
-    },
-    supabaseUserId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      unique: true
-    }    
-  }, {
+    }
+    // ✅ supabaseUserId supprimé
+  },
+  {
     timestamps: true,
     paranoid: true,
     freezeTableName: true, 
@@ -55,7 +51,6 @@ module.exports = (sequelize, DataTypes) => {
     User.hasOne(models.DailyStreak, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Trace, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Help, { foreignKey: 'userId', onDelete: 'CASCADE' });
-
   };
 
   return User;

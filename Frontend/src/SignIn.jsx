@@ -18,7 +18,7 @@ const SignIn = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch('http://localhost:3000/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: login, mdp: password }),
@@ -26,13 +26,14 @@ const SignIn = () => {
 
       const result = await response.json();
 
-      if (response.ok) {
-        // Stocker l'état de connexion
+      if (response.ok && result.user) {
+        // Stockage dans le localStorage
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userEmail', result.user.email); // facultatif
-        navigate('/blog'); // Redirection
+        localStorage.setItem('userEmail', result.user.email);
+        // Redirection vers la page de reset du mot de passe
+        navigate('/ResetPassword');
       } else {
-        alert(result.message || 'Erreur de connexion');
+        alert(result.message || 'Email ou mot de passe incorrect');
       }
     } catch (error) {
       console.error('Erreur lors de la connexion :', error);
@@ -47,7 +48,7 @@ const SignIn = () => {
   return (
     <div className="login-wrapper">
       <div className="login-container">
-        <img src="/logo.png" alt="Logo" className="logo" />
+        <img src="/Users/ons/Desktop/giiit-baaack/formation/Frontend/public/assets/img/logo/Image2.png" alt="Logo" className="logo" />
         <h2 className="title">Teamwill</h2>
         <h3 className="subtitle">CONNEXION</h3>
 
@@ -84,7 +85,10 @@ const SignIn = () => {
           <button type="submit" className="submit-btn">Valider</button>
         </form>
 
-        <a href="#" className="forgot-password">Mot de passe oublié</a>
+        {/* Lien désactivé, car on ne veut pas qu'il redirige */}
+        <span className="forgot-password" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+          Mot de passe oublié
+        </span>
       </div>
     </div>
   );

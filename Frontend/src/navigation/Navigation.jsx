@@ -51,7 +51,7 @@ import StudentHistory from '../pages/StudentHistory';
 import StudentSetting from '../pages/StudentSetting';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from '../PrivateRoute.jsx';
-import SignIn from "/Users/ons/Desktop/giiit baaack/formation/Frontend/src/signIn";
+import SignIn from "/Users/ons/Desktop/giiit-baaack/formation/Frontend/src/SignIn";
 
 const AppNavigation = () => {
   return (

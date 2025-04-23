@@ -1,11 +1,14 @@
-// App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+
 import AppNavigation from './navigation/Navigation';
-import SignIn from '/src/SignIn';
+import SignIn from './SignIn';
+import OTPVerification from './OtpVerification';
+import ResetPassword from './ResetPassword';
+import QrCodeDisplay from './QrCodeDisplay';
 
 function App() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -15,14 +18,17 @@ function App() {
       <HelmetProvider>
         <Router>
           <Routes>
-            {/* Si l'utilisateur n'est pas connecté et essaie d'accéder à une route autre que "/", 
-                rediriger vers la page de connexion */}
+            {/* Redirection conditionnelle sur la page d'accueil */}
             <Route 
               path="/" 
-              element={isLoggedIn ? <Navigate to="/SignIn" /> : <SignIn />} 
+              element={isLoggedIn ? <Navigate to="/signin" /> : <SignIn />} 
             />
-            
-            {/* Pour toutes les autres routes, vérifier si l'utilisateur est connecté */}
+
+            <Route path="/otpverification" element={<OTPVerification />} />
+            <Route path="/ResetPassword" element={<ResetPassword />} />
+            <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
+
+            {/* Routes protégées par isLoggedIn */}
             <Route 
               path="/*" 
               element={isLoggedIn ? <AppNavigation /> : <Navigate to="/" />} 
