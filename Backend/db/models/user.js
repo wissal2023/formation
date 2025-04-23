@@ -1,4 +1,3 @@
-// db/models/user.js
 'use strict';
 const { USER_ROLES } = require('../constants/roles'); 
 const { Sequelize, DataTypes } = require('sequelize');
@@ -52,10 +51,14 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: true 
     },    
     derConnx: {
-      type: DataTypes.DATE,
-      allowNull: true
-    } 
-  }, {
+
+      type: DataTypes.DATE
+    }
+  
+  },
+
+   {
+
     timestamps: true,
     paranoid: true,
     freezeTableName: true, 
@@ -68,7 +71,9 @@ module.exports = (sequelize, DataTypes) => {
     User.hasOne(models.DailyStreak, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Trace, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Help, { foreignKey: 'userId', onDelete: 'CASCADE' });
+
     User.hasOne(models.Recompense, { foreignKey: 'userId', onDelete: 'CASCADE' });
+
   };
 
   return User;

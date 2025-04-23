@@ -24,7 +24,12 @@ const verifyOtp = (email, otp) => {
     }
     return false; // OTP invalide
 };
+<<<<<<< HEAD
+
+
+=======
 */
+
 module.exports = {
     generateOtp
 };

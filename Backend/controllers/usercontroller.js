@@ -1,31 +1,47 @@
 // controllers/userController.js
 const bcrypt = require('bcrypt');
 const db = require('../db/models');
+const { generateOtp, otpDatabase } = require('../services/otpService');
+const { sendOtpEmail } = require('../utils/emailService');
+const userModel = require('../config/userModel');
 const jwt = require('jsonwebtoken');
+const secretKey = process.env.JWT_SECRET_KEY;
+
+
+
 const crypto = require("crypto");
 const { sendAccountEmail } = require('../utils/emailService');
 const { User, Trace } = db;
+
 
 const generateRandomPassword = (length = 12) => {
     return crypto.randomBytes(length).toString("base64").slice(0, length);
   };
 
-//login
+
+
+
 const loginUserController = async (req, res) => {
     const { email, mdp } = req.body;
 
     try {
+
+      
         const user = await User.findOne({ where: { email } });
 
         if (!user || !user.isActive) {
             return res.status(403).json({ message: 'Votre compte est inactif ou introuvable.' });
         }
 
-        const isMatch = await bcrypt.compare(mdp, user.mdp);
+     
+
         if (!isMatch) {
             return res.status(400).json({ message: 'Mot de passe incorrect' });
         }
 
+
+      
+      
          // Update derConnx
         user.derConnx = new Date();
         await user.save();
@@ -55,6 +71,7 @@ const loginUserController = async (req, res) => {
             secure: process.env.NODE_ENV !== 'development', // Fix here!
             maxAge: 3600000,
             sameSite: 'Lax',
+
         });
 
         res.status(200).json({
@@ -68,11 +85,17 @@ const loginUserController = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            message: 'Erreur lors de la connexion.',
+
+            message: 'Erreur de connexion',
+
+           
+
             error: error.message,
         });
     }
 };
+
+
 
 // ADD
 const addUserController = async (req, res) => {
@@ -162,41 +185,14 @@ const logoutUserController = async (req, res) => {
         res.status(500).json({
             message: 'Erreur lors de la déconnexion.',
             error: error.message,
+
         });
     }
 };
-// update mdp
-const updatePasswordController = async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
-    const userId = req.user.id;
-  
-    try {
-      const user = await User.findByPk(userId);
-      const isMatch = await bcrypt.compare(currentPassword, user.mdp);
-  
-      if (!isMatch) {
-        return res.status(400).json({ message: "Mot de passe actuel incorrect" });
-      }
-  
-      user.mdp = await bcrypt.hash(newPassword, 10);
-      user.mustUpdatePassword = false;
-      await user.save();
-  
-      await Trace.create({
-        userId: user.id,
-        model: 'User',
-        action: 'user changed passwrod',
-        data: {
-          userId: user.id,
-          username: user.username
-        }
-      });
 
-      res.status(200).json({ message: "passwoed changed successfully" });
-    } catch (err) {
-      res.status(500).json({ message: "Server error", error: err.message });
-    }
-};
+
+
+
  //GET BY ID
  const getOnceUser = async (req, res) => {
     try {
@@ -282,7 +278,9 @@ try {
 };
 
 
-//get user by name 
+
+
+// GET BY NAME
 const getUserByName = async (req, res) => {
     const { name } = req.params;
 
@@ -297,7 +295,6 @@ const getUserByName = async (req, res) => {
             message: 'Utilisateur récupéré avec succès.',
             user,
         });
-
     } catch (err) {
         res.status(500).json({
             message: 'Erreur lors de la récupération de l\'utilisateur.',
@@ -306,67 +303,56 @@ const getUserByName = async (req, res) => {
     }
 };
 
-//update user 
+
+// UPDATE
 exports.updateUser = async (req, res) => {
     try {
-      const { username, email, mdp, role } = req.body;
-      const { id } = req.params;
-  
-      const user = await User.findByPk(id);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      if (email && !isValidEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
-      }
-  
-      if (role && !['Admin', 'Formateur', 'Apprenant'].includes(role)) {
-        return res.status(400).json({ message: 'Invalid role' });
-      }
-  
-      const updatedFields = {
-        username: username ?? user.username,
-        email: email ?? user.email,
-        role: role ?? user.role
-      };
-  
-      if (mdp) {
-        updatedFields.mdp = await bcrypt.hash(mdp, 10);
-      }
-  
-      await User.update(updatedFields, { where: { id } });
-  
-      const updatedUser = await User.findByPk(id);
-  
-      res.status(200).json({ message: 'User updated successfully', user: updatedUser });
-  
+        const { username, email, mdp, role } = req.body;
+        const { id } = req.params;
+
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const updatedFields = {
+            username: username ?? user.username,
+            email: email ?? user.email,
+            role: role ?? user.role
+        };
+
+        if (mdp) {
+            updatedFields.mdp = await bcrypt.hash(mdp, 10);
+        }
+
+        await User.update(updatedFields, { where: { id } });
+
+        const updatedUser = await User.findByPk(id);
+
+        res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+
     } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  };
-  
-//delete user (soft delete)
-exports.deleteUser = async (req, res) => {
-    try {
-    const { id } = req.params;
-
-    // First check if user exists
-    const user = await User.findByPk(id);
-    if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Perform soft delete (sets deletedAt timestamp)
-    await user.destroy();
-
-    res.status(200).json({ message: 'User deleted successfully (soft delete)' });
-    
-    } catch (err) {
-    res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 };
 
+// DELETE (soft)
+exports.deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        await user.destroy();
+
+        res.status(200).json({ message: 'User deleted successfully (soft delete)' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
 module.exports = {
     addUserController,
@@ -375,8 +361,8 @@ module.exports = {
     updateUserController,
     toggleUserActivation,
     updatePasswordController,
-
     getAllUsers,
+    getOnceUser,
     getOnceUser, 
     getUserByName
 };
