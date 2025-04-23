@@ -47,7 +47,7 @@ app.use('/formations', formationRoutes);
 
 app.use('/documents', docRoute );
 app.use('/certifications', certificationRoutes);
-app.use('/streaks', dailyStreakRoutes);
+app.use('/daily-streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/notedigitales', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);

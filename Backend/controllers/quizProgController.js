@@ -1,61 +1,86 @@
-const db = require('../db/models');
-const QuizProg = db.QuizProg;
+const { QuizProg, Quiz, User, Trace } = require('../db/models');
 
-// Create a new QuizProg
-exports.create = async (req, res) => {
+exports.createQuizProgress = async (req, res) => {
+  const { userId, quizId } = req.body;
   try {
-    const { completed, completedAt, pointGagne, quizId } = req.body;
-    const newQuizProg = await QuizProg.create({ completed, completedAt, pointGagne, quizId });
-    res.status(201).json(newQuizProg);
+    const quizProg = await QuizProg.create({
+      userId,
+      quizId,
+      completed: false,
+      pointGagne: 0,
+    });
+    return res.status(201).json({ message: 'Quiz progress created successfully', quizProg });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error creating quiz progress:', error);
+    return res.status(500).json({ message: 'Error creating quiz progress', error });
   }
 };
 
-// Get all QuizProgs
-exports.getAll = async (req, res) => {
+exports.updateQuizProgress = async (req, res) => {
+  const { userId, quizId, completed, pointGagne } = req.body;
   try {
-    const quizProgs = await QuizProg.findAll({ include: db.Quiz });
-    res.status(200).json(quizProgs);
+    const quizProg = await QuizProg.findOne({ where: { userId, quizId } });
+    if (!quizProg) {
+      return res.status(404).json({ message: 'Quiz progress not found' });
+    }
+    quizProg.completed = completed;
+    quizProg.completedAt = completed ? new Date() : null;
+    quizProg.pointGagne = pointGagne;
+    await quizProg.save();
+    return res.status(200).json({ message: 'Quiz progress updated successfully', quizProg });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error updating quiz progress:', error);
+    return res.status(500).json({ message: 'Error updating quiz progress', error });
   }
 };
 
-// Get a QuizProg by ID
-exports.getById = async (req, res) => {
+exports.getQuizProgressForUser = async (req, res) => {
+  const { userId, quizId } = req.params;
   try {
-    const quizProg = await QuizProg.findByPk(req.params.id, { include: db.Quiz });
-    if (!quizProg) return res.status(404).json({ message: 'QuizProg not found' });
-    res.status(200).json(quizProg);
+    const quizProg = await QuizProg.findOne({
+      where: { userId, quizId },
+      include: [{ model: Quiz }]
+    });
+    if (!quizProg) {
+      return res.status(404).json({ message: 'Quiz progress not found' });
+    }
+    return res.status(200).json({ message: 'Quiz progress fetched successfully', quizProg });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching quiz progress:', error);
+    return res.status(500).json({ message: 'Error fetching quiz progress', error });
   }
 };
 
-// Update a QuizProg
-exports.update = async (req, res) => {
+exports.getAllQuizProgressForUser = async (req, res) => {
+  const userId = req.params.userId;
   try {
-    const { completed, completedAt, pointGagne } = req.body;
-    const quizProg = await QuizProg.findByPk(req.params.id);
-    if (!quizProg) return res.status(404).json({ message: 'QuizProg not found' });
-
-    await quizProg.update({ completed, completedAt, pointGagne });
-    res.status(200).json(quizProg);
+    const quizProgs = await QuizProg.findAll({
+      where: { userId },
+      include: [{ model: Quiz }]
+    });
+    if (quizProgs.length === 0) {
+      return res.status(404).json({ message: 'No quiz progress found for this user' });
+    }
+    return res.status(200).json({ message: 'All quiz progress fetched successfully', quizProgs });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching all quiz progress for user:', error);
+    return res.status(500).json({ message: 'Error fetching all quiz progress for user', error });
   }
 };
 
-// Soft Delete a QuizProg
-exports.remove = async (req, res) => {
+exports.getAllProgressForQuiz = async (req, res) => {
+  const quizId = req.params.quizId;
   try {
-    const quizProg = await QuizProg.findByPk(req.params.id);
-    if (!quizProg) return res.status(404).json({ message: 'QuizProg not found' });
-
-    await quizProg.destroy(); // will soft-delete because of `paranoid: true`
-    res.status(200).json({ message: 'QuizProg deleted' });
+    const quizProgs = await QuizProg.findAll({
+      where: { quizId },
+      include: [{ model: User }]
+    });
+    if (quizProgs.length === 0) {
+      return res.status(404).json({ message: 'No quiz progress found for this quiz' });
+    }
+    return res.status(200).json({ message: 'All quiz progress fetched successfully', quizProgs });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching all quiz progress for quiz:', error);
+    return res.status(500).json({ message: 'Error fetching all quiz progress for quiz', error });
   }
 };

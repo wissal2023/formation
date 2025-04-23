@@ -1,5 +1,5 @@
+'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');  // Corrected to use the sequelize instance
 
 module.exports = (sequelize, DataTypes) => {
   const Certification = sequelize.define('Certification', {
