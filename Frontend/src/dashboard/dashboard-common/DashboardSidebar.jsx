@@ -4,25 +4,25 @@ import { Link } from "react-router-dom";
 const sidebar_data = [
    {
       id: 1,
-      title: "Welcome, Jone Due",
+      title: "Welcome",
       sidebar_details: [
          {
             id: 1,
-            link: "/instructor-dashboard",
+            link: "/dashboard",
             icon: "fas fa-home",
             title: "Dashboard",
          },
          {
             id: 2,
-            link: "/instructor-profile",
+            link: "/users",
             icon: "skillgro-avatar",
-            title: "My Profile",
+            title: "Users",
          },
          {
             id: 3,
-            link: "/instructor-enrolled-courses",
+            link: "/formations",
             icon: "skillgro-book",
-            title: "Enrolled Courses",
+            title: "Formation",
          },
          {
             id: 4,

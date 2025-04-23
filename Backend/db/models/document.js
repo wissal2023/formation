@@ -19,38 +19,44 @@ module.exports = (sequelize, DataTypes) => {
     },
     uploadedDate: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
-    formationId: {
+    formationDetailsId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Formations',
+        model: 'FormationDetails', 
         key: 'id'
-      }
-    },  
+      },
+      onDelete: 'CASCADE'  
+    },
+    file_data: {  
+      type: DataTypes.BLOB('long'),  
+      allowNull: true
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     deletedAt: {
       type: DataTypes.DATE,
     }
   }, {
-    paranoid: true,
-    timestamps: true,
-    freezeTableName: true
+    paranoid: true,  // Enables soft delete
+    timestamps: true,  // Automatically adds createdAt and updatedAt timestamps
+    freezeTableName: true,  // Prevents Sequelize from pluralizing table name
   });
-  
-Document.associate = (models) => {
-  Document.belongsTo(models.Formation, { foreignKey: 'formation_id' });
-}
 
-    return Document;
+  // Associations
+  Document.associate = (models) => {
+    Document.belongsTo(models.FormationDetails, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
+  };
+
+  return Document;
 };

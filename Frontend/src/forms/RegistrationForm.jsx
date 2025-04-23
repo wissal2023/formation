@@ -3,19 +3,17 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import BtnArrow from '../svg/BtnArrow';
+import axios from 'axios';
+import { USER_ROLES } from "../constants/roles";
 
-// Optional: Describe the fields expected in comments if needed
-// const defaultValues = { fname: '', lname: '', email: '', password: '', cpassword: '' };
-
-const schema = yup
-   .object({
-      fname: yup.string().required("First name is required"),
-      lname: yup.string().required("Last name is required"),
-      email: yup.string().email("Invalid email").required("Email is required"),
-      password: yup.string().required("Password is required"),
-      cpassword: yup.string().required("Password confirmation is required"),
-   })
-   .required();
+// Validation schema
+const schema = yup.object({
+    username: yup.string().required("Username is required"),
+    email: yup.string().email("Invalid email").required("Email is required"),
+    roleUtilisateur: yup.string()
+      .oneOf(USER_ROLES, "Choose a valid role")
+      .required("Role is required"),
+}).required();
 
 const RegistrationForm = () => {
    const {
@@ -25,49 +23,63 @@ const RegistrationForm = () => {
       formState: { errors },
    } = useForm({ resolver: yupResolver(schema) });
 
-   const onSubmit = () => {
-      toast('Registration successfully', { position: 'top-center' });
-      reset();
-   };
+   
+   const onSubmit = async (data) => {
+      try {
+       
+        // Send data without the password field (mdp is generated on the backend)
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/register`, {
+          username: data.username,
+          email: data.email,
+          roleUtilisateur: data.roleUtilisateur,
+        }, {
+          withCredentials: true,
+        });
+        
+  
+        toast.success(response.data.message || "User created successfully!", { position: 'top-center' });
+        reset();
+  
+      } catch (error) {
+        console.error(error);
+        toast.error(error.response?.data?.error || "Registration failed", { position: 'top-center' });
+      }
+    };
 
-   return (
-      <form onSubmit={handleSubmit(onSubmit)} className="account__form">
-         <div className="row gutter-20">
-            <div className="col-md-6">
-               <div className="form-grp">
-                  <label htmlFor="fast-name">First Name</label>
-                  <input type="text" {...register("fname")} id="fast-name" placeholder="First Name" />
-                  <p className="form_error">{errors.fname?.message}</p>
-               </div>
-            </div>
-            <div className="col-md-6">
-               <div className="form-grp">
-                  <label htmlFor="last-name">Last name</label>
-                  <input type="text" {...register("lname")} id="last-name" placeholder="Last name" />
-                  <p className="form_error">{errors.lname?.message}</p>
-               </div>
-            </div>
-         </div>
-         <div className="form-grp">
+    return (
+      <div className="instructor__profile-form-wrap">
+        <form onSubmit={handleSubmit(onSubmit)} className="instructor__profile-form">
+          <div className="form-grp">
+            <label htmlFor="username">Username</label>
+            <input type="text" {...register("username")} id="username" placeholder="Username" />
+            <p className="form_error">{errors.username?.message}</p>
+          </div>
+    
+          <div className="form-grp">
             <label htmlFor="email">Email</label>
-            <input type="email" {...register("email")} id="email" placeholder="email" />
+            <input type="email" {...register("email")} id="email" placeholder="Email" />
             <p className="form_error">{errors.email?.message}</p>
-         </div>
-         <div className="form-grp">
-            <label htmlFor="password">Password</label>
-            <input type="password" {...register("password")} id="password" placeholder="password" />
-            <p className="form_error">{errors.password?.message}</p>
-         </div>
-         <div className="form-grp">
-            <label htmlFor="confirm-password">Confirm Password</label>
-            <input type="password" {...register("cpassword")} id="confirm-password" placeholder="Confirm Password" />
-            <p className="form_error">{errors.cpassword?.message}</p>
-         </div>
-         <button type="submit" className="btn btn-two arrow-btn">
-            Sign Up <BtnArrow />
-         </button>
-      </form>
-   );
+          </div>        
+    
+          <div className="form-grp select">
+            <label htmlFor="roleUtilisateur">Role</label>
+            <select {...register("roleUtilisateur")} id="roleUtilisateur">
+              <option value="">-- choose the Role --</option>
+              {USER_ROLES.map(role => (
+                <option key={role} value={role}>
+                  {role}
+                </option>
+              ))}
+            </select>
+            <p className="form_error">{errors.roleUtilisateur?.message}</p>
+          </div>
+    
+          <button type="submit" className="btn btn-two arrow-btn">
+            Register  <BtnArrow />
+          </button>
+        </form>
+      </div>
+    );
 };
 
 export default RegistrationForm;

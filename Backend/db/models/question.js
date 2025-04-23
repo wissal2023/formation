@@ -1,6 +1,5 @@
 'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
 
 module.exports = (sequelize, DataTypes) => {
   const Question = sequelize.define('Question', {
@@ -21,26 +20,33 @@ module.exports = (sequelize, DataTypes) => {
       model: 'Quiz', 
       key: 'id'
     },
-    onDelete: 'CASCADE'
-  },
-  createdAt: {
-    allowNull: false,
-    type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
-  },
-  updatedAt: {
-    allowNull: false,
-    type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
-  }
-}, {
-  paranoid: true, // Enables soft delete
-  freezeTableName: true
-});
+    multipleChoice: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    quizId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Quiz',
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
+    }
+  }, 
+    freezeTableName: true, 
+  });
+
+  Question.associate = (models) => {
+    Question.hasMany(models.Reponse, { foreignKey: 'questId' });
+  };
+
 
 // Associations
 Question.associate = (models) => {
+
   Question.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
 };
 return Question;
 };
+

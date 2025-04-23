@@ -1,9 +1,16 @@
 // navigation/Navigation.jsx
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import Blog from '../pages/Blog';
 import Home from '../pages/Home';
+
+import Blog from '../pages/Blog';
+
+// frontend/src/navigation/Navigation.jsx
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+
 import HomeTwo from '../pages/HomeTwo';
 import HomeThree from '../pages/HomeThree';
 import HomeFour from '../pages/HomeFour';
@@ -11,7 +18,9 @@ import HomeFive from '../pages/HomeFive';
 import HomeSix from '../pages/HomeSix';
 import HomeSeven from '../pages/HomeSeven';
 import HomeEight from '../pages/HomeEight';
+
 import Course from '../pages/Course';
+
 import Lesson from '../pages/Lesson';
 import CourseDetails from '../pages/CourseDetails';
 import About from '../pages/About';
@@ -29,8 +38,6 @@ import BlogThree from '../pages/BlogThree';
 import BlogDetails from '../pages/BlogDetails';
 import Registration from '../pages/Registration';
 import Contact from '../pages/Contact';
-import InstructorDashboard from '../pages/InstructorDashboard';
-import InstructorProfile from '../pages/InstructorProfile';
 import InstructorEnrollCourse from '../pages/InstructorEnrolledCourses';
 import InstructorWishlist from '../pages/InstructorWishlist';
 import InstructorReview from '../pages/InstructorReview';
@@ -41,7 +48,7 @@ import InstructorAnnouncement from '../pages/InstructorAnnouncement';
 import InstructorAssignment from '../pages/InstructorAssignment';
 import InstructorSetting from '../pages/InstructorSetting';
 import InstructorAttempt from '../pages/InstructorAttempt';
-import StudentDashboard from '../pages/StudentDashboard';
+import StudentDashboard from '../dashboard/student-dashboard/student-dashboard/StudentDashboardArea';
 import StudentProfile from '../pages/StudentProfile';
 import StudentEnrollCourse from '../pages/StudentEnrolledCourses';
 import StudentWishlist from '../pages/StudentWishlist';
@@ -49,12 +56,23 @@ import StudentReview from '../pages/StudentReview';
 import StudentAttempt from '../pages/StudentAttempt';
 import StudentHistory from '../pages/StudentHistory';
 import StudentSetting from '../pages/StudentSetting';
+
+import Login from '../pages/Login';
+import InstructorDashboard from '../pages/InstructorDashboard';
+import InstructorProfile from '../pages/InstructorProfile';
+import ChangePassword from '../pages/ChangePassword';
+import WelcomePage from '../pages/WelcomePage'
+import Course from '../pages/Course';
+
 import NotFound from '../pages/NotFound';
 import PrivateRoute from '../PrivateRoute.jsx';
 import SignIn from "/Users/ons/Desktop/giiit-baaack/formation/Frontend/src/SignIn";
 
+
+
 const AppNavigation = () => {
   return (
+
     <Routes>
       <Route path="/blog" element={
         <PrivateRoute>
@@ -109,7 +127,51 @@ const AppNavigation = () => {
       <Route path="/student-history" element={<StudentHistory />} />
       <Route path="/student-setting" element={<StudentSetting />} />
       <Route path="*" element={<NotFound />} />
-    </Routes>
+   
+
+
+         {/* public */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/welcome" element={<WelcomePage />} />
+        
+        <Route path="/dashboard" element={<InstructorDashboard />} />        
+        <Route path="/formations" element={<Course />} />        
+        <Route path="/profile" element={<InstructorProfile />} />
+        
+        <Route path="/course-details" element={<CourseDetails />} />
+        <Route path="/lesson" element={<Lesson />} />
+
+        <Route path="/instructor-setting" element={<InstructorSetting />} />
+        <Route path="/instructor-details" element={<InstructorDetails />} />
+
+         
+        <Route path="/instructors" element={<Instructor />} />   {/* list formateur */}
+        <Route path="/events" element={<Event />} />{/* doc */}
+        
+        <Route path="/check-out" element={<CheckOut />} />       
+        <Route path="/blog-details" element={<BlogDetails />} />{/* evla rating commentaire  */}
+        <Route path="/registration" element={<Registration />} />
+        <Route path="/contact" element={<Contact />} /> {/* note dig  */}
+        <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
+        <Route path="/instructor-review" element={<InstructorReview />} />
+
+        <Route path="/instructor-attempts" element={<InstructorAttempt />} /> 
+        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status  */}
+
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
+        
+        <Route path="/student-wishlist" element={<StudentWishlist />} />
+
+        <Route path="/student-setting" element={<StudentSetting />} />
+        
+        {/* <Route path="/blog-details/" element={<DynamicBlogDeatils />} /> */}
+        <Route path="/about-us" element={<About />} />
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+   
+
   );
 };
 

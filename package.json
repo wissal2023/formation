@@ -1,0 +1,29 @@
+{
+    "name": "plateform-root",
+    "private": true,
+    "scripts": {
+        "start": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+        "start:backend": "npm run dev --prefix backend",
+        "start:frontend": "npm run dev --prefix frontend"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    },
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/wissal2023/formation.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/wissal2023/formation/issues"
+    },
+    "homepage": "https://github.com/wissal2023/formation#readme",
+    "description": "",
+    "dependencies": {
+        "react-chat-widget": "^3.1.4"
+    }
+}

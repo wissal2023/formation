@@ -1,13 +1,15 @@
 // app.js
 require('dotenv').config();
+require('./utils/cron');
 const express = require('express');
-const app = express();
+const cookieParser = require('cookie-parser');
+const app = express(); 
 const { sequelize } = require('./db/models');
 const db = require('./db/models');
 const cors = require('cors');
+const createFirstAdminUser = require('./utils/createFirstAdminUser');
 
 const formationRoutes = require('./routes/formationRoutes');
-const formationDetailsRoutes = require('./routes/formationDetailsRoutes');
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
 const otpRoutes = require('./routes/otpRoutes');
@@ -24,9 +26,13 @@ const videoRoutes = require('./routes/videoRoutes');
 const helpRoutes = require('./routes/helpRoutes');
 const helpTranslationRoutes = require('./routes/helpTranslationRoutes');
 
-
 app.use(express.json()); 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // my frontend URL
+    credentials: true,
+}));
+app.use(cookieParser());
+
 
 // ******************* middelware *******************
 app.use((req, res, next) => {
@@ -35,19 +41,12 @@ app.use((req, res, next) => {
   });
 
 // ******************* HEAD ROUTES *******************
-app.get('/', (req,res)=> {
-    res.status(200).json({
-        status:'success',
-        message:'welcome to our api',
-    })
-})
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
-app.use('/formation-details', formationDetailsRoutes)
 app.use('/documents', docRoute );
 app.use('/certifications', certificationRoutes);
-app.use('/streaks', dailyStreakRoutes);
+app.use('/daily-streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/notedigitales', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
@@ -59,7 +58,6 @@ app.use('/videos', videoRoutes);
 app.use('/helps', helpRoutes);
 app.use('/help-translations', helpTranslationRoutes);  
 
-
 app.use('*', (req, res) => {
     res.status(404).json({
         status: 'fail',
@@ -69,16 +67,8 @@ app.use('*', (req, res) => {
 
 
 
-const PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.APP_PORT || 4000;
 app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
+    createFirstAdminUser(); 
 });
-
-
-
-/*
-db.sequelize.sync()
-  .then(() => console.log("Database schema updated"))
-  .catch(err => console.error("Error updating database:", err));
-*/
-

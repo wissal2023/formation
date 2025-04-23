@@ -23,16 +23,33 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      defaultMdp: {
+        type: Sequelize.STRING,
+        allowNull: true
+      }, 
       roleUtilisateur: {
         type: Sequelize.ENUM('Admin', 'Formateur', 'Apprenant'),
         allowNull: false
       },
-      dateInscr: {
-        type: Sequelize.DATE
+      photo: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      tel: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      isActive: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
       },
       derConnx: {
         type: Sequelize.DATE
       },
+      mustUpdatePassword: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true 
+      }, 
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -41,13 +58,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      deletedAt: {  // ✅ Soft delete support
+      deletedAt: { 
         type: Sequelize.DATE
-      },
-      supabaseUserId: {
-        type: Sequelize.UUID,
-        allowNull: false,
-        unique: true
       }
     });
   },

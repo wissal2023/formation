@@ -1,6 +1,6 @@
 // services/otpService.js
 const crypto = require('crypto');
-const otpDatabase = {}; // Simuler une base de données temporaire pour stocker les OTP
+//const otpDatabase = {}; // Simuler une base de données temporaire pour stocker les OTP
 
 // Générer un OTP
 const generateOtp = () => {
@@ -8,7 +8,7 @@ const generateOtp = () => {
     return otp;
 };
 
-// Vérifier un OTP
+/* Vérifier un OTP
 const verifyOtp = (email, otp) => {
     const otpData = otpDatabase[email];
     if (otpData && otpData.otp === otp) {
@@ -24,10 +24,13 @@ const verifyOtp = (email, otp) => {
     }
     return false; // OTP invalide
 };
+<<<<<<< HEAD
 
+
+=======
+*/
 
 module.exports = {
-    generateOtp,
-    verifyOtp,
-    otpDatabase
+    generateOtp
 };
+

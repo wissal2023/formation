@@ -19,7 +19,6 @@ const HeaderThree = () => {
    return (
       <>
          <header>
-            <HeaderTopOne style={true} />
             <div id="header-fixed-height"></div>
             <div id="sticky-header" className={`tg-header__area tg-header__style-three ${sticky ? "sticky-menu" : ""}`}>
                <div className="container">
@@ -39,27 +38,13 @@ const HeaderThree = () => {
                                        <a href onClick={() => setIsSearch(true)} style={{ cursor:"pointer" }} className="search-open-btn">
                                           <i className="flaticon-search"></i>
                                        </a>
-                                    </li>
-                                    <li className="wishlist-icon">
-                                       <Link to="/wishlist" className="cart-count">
-                                          <InjectableSvg src="assets/img/icons/heart.svg" className="injectable" alt="img" />
-                                          <TotalWishlist />
-                                       </Link>
-                                    </li>
-                                    <li className="mini-cart-icon">
-                                       <Link to="/cart" className="cart-count">
-                                          <InjectableSvg src="assets/img/icons/cart.svg" className="injectable" alt="img" />
-                                          <TotalCart />
-                                       </Link>
-                                    </li>
-                                    <li className="header-btn">
-                                       <Link to="/login" className="btn arrow-btn">Apply Now <BtnArrow /></Link>
+                                    </li>    
+                                    <li className="header-btn login-btn">
+                                       <Link to="/login" className="btn arrow-btn">Logout</Link>
                                     </li>
                                  </ul>
-                              </div>
-                              <div className="mobile-login-btn">
-                                 <Link to="/login"><InjectableSvg src="/assets/img/icons/user.svg" alt="" className="injectable" /></Link>
-                              </div>
+                                 
+                              </div>                              
                               <div onClick={() => setIsActive(true)} className="mobile-nav-toggler"><i className="tg-flaticon-menu-1"></i></div>
                            </nav>
                         </div>
@@ -68,7 +53,6 @@ const HeaderThree = () => {
                </div>
             </div>
          </header>
-         <MobileSidebar isActive={isActive} setIsActive={setIsActive} />
          <HeaderSearch isSearch={isSearch} setIsSearch={setIsSearch} />
       </>
    )

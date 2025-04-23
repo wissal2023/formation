@@ -6,12 +6,9 @@ import InstructorAttemptsArea from './InstructorAttemptsArea'
 const InstructorAttempts = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+       
             <InstructorAttemptsArea />
-         </main>
-         <FooterOne />
+            
       </>
    )
 }

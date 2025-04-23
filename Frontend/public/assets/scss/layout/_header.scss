@@ -8,7 +8,7 @@
 	left: 0;
 	top: 0px;
 	width: 100%;
-	z-index: 9;
+	z-index: auto;
 	height: auto;
     @media #{$xs} {
         top: 0;

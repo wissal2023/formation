@@ -9,13 +9,16 @@ import SignIn from './SignIn';
 import OTPVerification from './OtpVerification';
 import ResetPassword from './ResetPassword';
 import QrCodeDisplay from './QrCodeDisplay';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ChatWidget from './components/chat/ChatWidget';
 function App() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   return (
     <Provider store={store}>
       <HelmetProvider>
+
         <Router>
           <Routes>
             {/* Redirection conditionnelle sur la page d'accueil */}
@@ -35,6 +38,19 @@ function App() {
             />
           </Routes>
         </Router>
+
+        <div className="main-page-wrapper">
+          <ToastContainer />
+          <AppNavigation />
+
+          {/* Section principale 
+          <main>
+            <h1>Bienvenue sur notre plateforme!</h1>
+          </main>
+           Widget de chat affiché partout pour l’instant */}
+          <ChatWidget />
+        </div>
+
       </HelmetProvider>
     </Provider>
   );
