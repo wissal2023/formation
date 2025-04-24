@@ -6,12 +6,8 @@ import InstructorSettingArea from './InstructorSettingArea'
 const InstructorSetting = () => {
    return (
       <>
-         <HeaderFour />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+       
             <InstructorSettingArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

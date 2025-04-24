@@ -4,6 +4,10 @@ const db = require('../db/models');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
 const { sendAccountEmail } = require('../utils/emailService');
+const { use } = require('../routes/userRoute');
+const path = require('path');
+const fs = require('fs');
+
 const { User, Trace } = db;
 
 const generateRandomPassword = (length = 12) => {
@@ -17,10 +21,12 @@ const loginUserController = async (req, res) => {
     try {
         const user = await User.findOne({ where: { email } });
 
-        if (!user || !user.isActive) {
-            return res.status(403).json({ message: 'Votre compte est inactif ou introuvable.' });
-        }
-
+        if (!user) {
+          return res.status(404).json({ message: "Aucun compte trouvé avec cet email." });
+      }      
+      if (!user.isActive) {
+          return res.status(403).json({ message: "Votre compte est désactivé. Veuillez contacter l'administrateur." });
+      }
         const isMatch = await bcrypt.compare(mdp, user.mdp);
         if (!isMatch) {
             return res.status(400).json({ message: 'Mot de passe incorrect' });
@@ -46,13 +52,13 @@ const loginUserController = async (req, res) => {
         const token = jwt.sign(
             { id: user.id, role: user.roleUtilisateur,  username: user.username  },
                 process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '9h' }
         );
 
         // Send token in HttpOnly cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development', // Fix here!
+            secure: process.env.NODE_ENV !== 'development',
             maxAge: 3600000,
             sameSite: 'Lax',
         });
@@ -73,7 +79,132 @@ const loginUserController = async (req, res) => {
         });
     }
 };
+// GET ALL users
+const getAllUsers = async (req, res) => {
+  try {
+    if (req.user.roleUtilisateur !== 'Admin') {
+      return res.status(403).json({ message: 'Accès refusé. Seuls les administrateurs peuvent voir tous les utilisateurs.' });
+    }
 
+    const users = await User.findAll();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'Aucun utilisateur trouvé' });
+    }
+
+    const usersWithPhotoUrls = users.map(user => {
+      // my images are served from 'backend/assets/uploads/'
+      if (user.photo) {
+        user.photo = `/assets/uploads/${user.photo}`;
+      }
+      return user;
+    });
+
+    res.status(200).json(usersWithPhotoUrls);
+  } catch (err) {
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des utilisateurs.',
+      error: err.message,
+    });
+  }
+};
+// get user by id
+const getUserByIdController = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (req.user.roleUtilisateur !== 'Admin') {
+      return res.status(403).json({ message: "Accès refusé. Seul un administrateur peut accéder à cet utilisateur." });
+    }
+
+    const user = await User.findByPk(id, {
+      attributes: ['id', 'username', 'email', 'roleUtilisateur', 'isActive', 'derConnx','photo', 'tel']
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    if (user.photo) {
+      user.photo = `/assets/uploads/${user.photo}`;
+    }
+
+    console.log(user.tel); 
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
+// update user as an admin
+const updateUserController = async (req, res) => {
+  const userId = req.params.id;
+
+  // Only admins can perform this update
+  if (req.user.roleUtilisateur !== 'Admin') {
+    return res.status(403).json({ message: 'Accès refusé. Seul l\'Admin peut mettre à jour tous les champs.' });
+  }
+
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+
+    // Vérifier email unique si modifié
+    if (req.body.email && req.body.email !== user.email) {
+      const existingEmail = await User.findOne({ where: { email: req.body.email } });
+      if (existingEmail) {
+        return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
+      }
+    }
+
+    // Vérifier username unique si modifié
+    if (req.body.username && req.body.username !== user.username) {
+      const existingUsername = await User.findOne({ where: { username: req.body.username } });
+      if (existingUsername) {
+        return res.status(400).json({ message: 'Ce nom d\'utilisateur est déjà pris.' });
+      }
+    }
+
+    // Update only allowed fields
+    const allowedFields = ['username', 'tel', 'roleUtilisateur', 'isActive', 'photo'];
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        user[field] = req.body[field];
+      }
+    });
+      
+    // Handle uploaded photo
+    if (req.file) {
+      // Optionally delete old photo from filesystem
+      if (user.photo) {
+        const oldPhotoPath = path.join(__dirname, '..', 'assets', 'uploads', user.photo);
+        if (fs.existsSync(oldPhotoPath)) {
+          fs.unlinkSync(oldPhotoPath); //delete the old file
+        }
+      }
+      // Update with new photo filename
+      user.photo = req.file.filename;
+    }
+    await user.save();
+
+    // add a trace
+    await Trace.create({
+      userId: req.user.id,
+      action: `Admin (${req.user.username}) updated user (${user.username})`,
+      model: 'User',
+      data: {
+        username: user.username,
+        role: user.roleUtilisateur,
+        tel: user.tel,
+        isActive: user.isActive,
+        photo: user.photo
+      }
+    });
+
+    return res.status(200).json({ message: 'user updated successfully.', user });
+  } catch (err) {
+    return res.status(500).json({ message: 'internally error', error: err.message });
+  }
+};
 // ADD
 const addUserController = async (req, res) => {
     const { username, email, roleUtilisateur  } = req.body;
@@ -197,7 +328,7 @@ const updatePasswordController = async (req, res) => {
       res.status(500).json({ message: "Server error", error: err.message });
     }
 };
- //GET BY ID
+ //GET the loged in user
  const getOnceUser = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -214,57 +345,49 @@ const updatePasswordController = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
       }
 };  
-// GET ALL users
-const getAllUsers = async (req, res) => {
+
+// update Profile as a formateur or apprenant
+const updateProfileController = async (req, res) => {
+  const userId = req.params.id;
+
+  if (!['Formateur', 'Apprenant'].includes(req.user.roleUtilisateur)) {
+    return res.status(403).json({ message: 'Accès refusé.' });
+  }
+
+  if (parseInt(userId) !== req.user.id) {
+    return res.status(403).json({ message: 'Vous ne pouvez modifier que votre propre profil.' });
+  }
+
+  const { username, photo, tel } = req.body;
+
   try {
-    if (req.user.roleUtilisateur !== 'Admin') {
-      return res.status(403).json({ message: 'Accès refusé. Seuls les administrateurs peuvent voir tous les utilisateurs.' });
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+
+    // Vérifier username unique si modifié
+    if (username && username !== user.username) {
+      const existingUsername = await User.findOne({ where: { username } });
+      if (existingUsername) {
+        return res.status(400).json({ message: 'Ce nom d\'utilisateur est déjà pris.' });
+      }
     }
 
-    const users = await User.findAll();
+    user.username = username || user.username;
+    user.photo = photo || user.photo;
+    user.tel = tel || user.tel;
 
-    if (!users || users.length === 0) {
-      return res.status(404).json({ message: 'Aucun utilisateur trouvé' });
-    }
-
-    res.status(200).json(users);
+    await user.save();
+    return res.status(200).json({ message: 'Profil mis à jour avec succès.', user });
   } catch (err) {
-    res.status(500).json({
-      message: 'Erreur lors de la récupération des utilisateurs.',
-      error: err.message,
-    });
+    return res.status(500).json({ message: 'Erreur interne.', error: err.message });
   }
 };
-
-
-
-
-
+ 
 
 
 
 //************************ NEEDS TO BE UPDATED ***************************/
 
-// update user
-const updateUserController = async (req, res) => {
-    const userId = req.params.id;
-    const { username, photo, tel } = req.body;
-  
-    try {
-      const user = await User.findByPk(userId);
-      if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
-  
-      user.username = username || user.username;
-      user.photo = photo || user.photo;
-      user.tel = tel || user.tel;
-  
-      await user.save();
-      return res.status(200).json({ message: 'Profil mis à jour', user });
-    } catch (err) {
-      return res.status(500).json({ error: err.message });
-    }
-  };
-  
 const toggleUserActivation = async (req, res) => {
 const userId = req.params.id;
 
@@ -375,6 +498,8 @@ module.exports = {
     updateUserController,
     toggleUserActivation,
     updatePasswordController,
+    updateProfileController,
+    getUserByIdController,
 
     getAllUsers,
     getOnceUser, 

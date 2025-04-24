@@ -4,17 +4,9 @@ import InstructorProfileContent from "../../instructor-dashboard/profile/Instruc
 
 const StudentProfileArea = () => {
    return (
-      <section className="dashboard__area section-pb-120">
-         <div className="container">
-            <DashboardBannerTwo />
-            <div className="dashboard__inner-wrap">
-               <div className="row">
-                  <DashboardSidebarTwo />
-                  <InstructorProfileContent style={true} />
-               </div>
-            </div>
-         </div>
-      </section>
+     
+         <InstructorProfileContent style={true} />
+              
    )
 }
 

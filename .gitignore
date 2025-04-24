@@ -10,3 +10,15 @@
 .history/
 /node_modules/
 
+
+# Fichiers Python
+__pycache__/
+*.pyc
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# Autres
+*.log
+.vscode
