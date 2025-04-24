@@ -9,7 +9,7 @@
 .idea/
 .history/
 /node_modules/
-
+myenv/
 
 # Fichiers Python
 __pycache__/
