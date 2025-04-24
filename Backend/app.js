@@ -52,8 +52,6 @@ app.use((err, req, res, next) => {
 app.use('/assets/uploads', express.static(path.join(__dirname, 'assets', 'uploads')));
 
 
-  
-
 // ******************* HEAD ROUTES *******************
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);

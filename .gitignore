@@ -1,24 +1,22 @@
-# Default ignored files
+
 /shelf/
 /workspace.xml
-# Editor-based HTTP Client requests
 /httpRequests/
-# Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
 .idea/
 .history/
 /node_modules/
+**/myenv/
 myenv/
 
-# Fichiers Python
 __pycache__/
 *.pyc
 
-# VSCode / PyCharm
 .vscode/
 .idea/
 
-# Autres
 *.log
 .vscode
+
+.gitignore

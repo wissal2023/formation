@@ -1,47 +1,32 @@
 // frontend/src/navigation/Navigation.jsx
+import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import HomeTwo from '../pages/HomeTwo';
-import HomeThree from '../pages/HomeThree';
-import HomeFour from '../pages/HomeFour';
-import HomeFive from '../pages/HomeFive';
-import HomeSix from '../pages/HomeSix';
-import HomeSeven from '../pages/HomeSeven';
-import HomeEight from '../pages/HomeEight';
+import Blog from '../pages/Blog';
+import Course from '../pages/Course';
 import Lesson from '../pages/Lesson';
 import CourseDetails from '../pages/CourseDetails';
 import About from '../pages/About';
 import Instructor from '../pages/Instructor';
 import InstructorDetails from '../pages/InstructorDetails';
 import Event from '../pages/Event';
-import EventDetails from '../pages/EventDetails';
-import Shop from '../pages/Shop';
-import ShopDetails from '../pages/ShopDetails';
-import Cart from '../pages/Cart';
-import Wishlist from '../pages/Wishlist';
 import CheckOut from '../pages/CheckOut';
-import BlogTwo from '../pages/BlogTwo';
-import BlogThree from '../pages/BlogThree';
 import BlogDetails from '../pages/BlogDetails';
 import Registration from '../pages/Registration';
 import Contact from '../pages/Contact';
 import InstructorEnrollCourse from '../pages/InstructorEnrolledCourses';
-import InstructorWishlist from '../pages/InstructorWishlist';
 import InstructorReview from '../pages/InstructorReview';
-import InstructorQuiz from '../pages/InstructorQuiz';
 import InstructorHistory from '../pages/InstructorHistory';
-import InstructorCourses from '../pages/InstructorCourses';
-import InstructorAnnouncement from '../pages/InstructorAnnouncement';
-import InstructorAssignment from '../pages/InstructorAssignment';
-import InstructorSetting from '../pages/InstructorSetting';
 import InstructorAttempt from '../pages/InstructorAttempt';
 import StudentDashboard from '../dashboard/student-dashboard/student-dashboard/StudentDashboardArea';
 import StudentProfile from '../pages/StudentProfile';
-import StudentEnrollCourse from '../pages/StudentEnrolledCourses';
 import StudentWishlist from '../pages/StudentWishlist';
-import StudentReview from '../pages/StudentReview';
-import StudentAttempt from '../pages/StudentAttempt';
-import StudentHistory from '../pages/StudentHistory';
 import StudentSetting from '../pages/StudentSetting';
+
+import OTPVerification from './OtpVerification';
+import ResetPassword from './ResetPassword';
+import QrCodeDisplay from './QrCodeDisplay';
+import SignIn from './SignIn';
+
 
 //*********** WISSAL************** */
 import Login from '../pages/Login';
@@ -57,9 +42,7 @@ import UserSetting from '../pages/UserSetting';
 const AppNavigation = () => {
   return (
     <Router>
-      <Routes>         
-        <Route path="/listUsers" element={<InstructorProfile />} />
-        <Route path="/editUser/:id" element={<UserSetting />} />
+      <Routes>  
          {/* public */}
         <Route path="/login" element={<Login />} />
         <Route path="/change-password" element={<ChangePassword />} />
@@ -67,10 +50,34 @@ const AppNavigation = () => {
         <Route path="/registration" element={<Registration />} />
         <Route path="/dashboard" element={<InstructorDashboard />} />        
         <Route path="/formations" element={<Course />} />  
+        <Route path="/listUsers" element={<InstructorProfile />} />
+        <Route path="/editUser/:id" element={<UserSetting />} /> 
 
-        <Route path="/student-setting" element={<StudentSetting />} />
+
+         {/* *********** ONS ************** */}
+        <Route path="/blog" element={
+        <PrivateRoute>
+          <Blog />
+        </PrivateRoute>
+      } />
+       {/* Redirection conditionnelle sur la page d'accueil */}
+       <Route 
+              path="/" 
+              element={isLoggedIn ? <Navigate to="/signin" /> : <SignIn />} 
+            />
+
+            <Route path="/otpverification" element={<OTPVerification />} />
+            <Route path="/ResetPassword" element={<ResetPassword />} />
+            <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
+
+            {/* Routes protégées par isLoggedIn */}
+            <Route 
+              path="/*" 
+              element={isLoggedIn ? <AppNavigation /> : <Navigate to="/" />} 
+            />
 
         {/*ROUTES TO BE USED */}
+        <Route path="/student-setting" element={<StudentSetting />} />
         <Route path="/instructor-setting" element={<StudentProfile />} />
         <Route path="/instructor-attempts" element={<InstructorAttempt />} /> 
         <Route path="/course-details" element={<CourseDetails />} />
@@ -90,6 +97,7 @@ const AppNavigation = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
+   
   );
 };
 

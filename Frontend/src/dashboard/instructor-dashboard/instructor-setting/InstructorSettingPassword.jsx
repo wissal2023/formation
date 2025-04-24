@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 
-
-const InstructorSettingPassword = ({ userId }) => {
-   const [user, setUser] = useState(null);
-
+const InstructorSettingPassword = () => {
 
    const [currentPassword, setCurrentPassword] = useState('');
    const [newPassword, setNewPassword] = useState('');

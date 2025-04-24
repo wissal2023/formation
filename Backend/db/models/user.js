@@ -52,10 +52,21 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: true 
     },    
     derConnx: {
+<<<<<<< HEAD
       type: DataTypes.DATE,
       allowNull: true
     } 
   }, {
+=======
+
+      type: DataTypes.DATE
+    }
+  
+  },
+
+   {
+
+>>>>>>> 1e23dff235148ea471067dc6098d4b690b35f8bd
     timestamps: true,
     paranoid: true,
     freezeTableName: true, 
@@ -68,8 +79,18 @@ module.exports = (sequelize, DataTypes) => {
     User.hasOne(models.DailyStreak, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Trace, { foreignKey: 'userId', onDelete: 'CASCADE' });
     User.hasMany(models.Help, { foreignKey: 'userId', onDelete: 'CASCADE' });
+<<<<<<< HEAD
     User.hasOne(models.Recompense, { foreignKey: 'userId', onDelete: 'CASCADE' });
   };
 
   return User;
 };
+=======
+
+    User.hasOne(models.Recompense, { foreignKey: 'userId', onDelete: 'CASCADE' });
+
+  };
+
+  return User;
+};
+>>>>>>> 1e23dff235148ea471067dc6098d4b690b35f8bd

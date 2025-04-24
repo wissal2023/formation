@@ -23,10 +23,14 @@ const InstructorSettingProfile = ({ userId , style }) => {
   
     if (!user) return <p>Loading...</p>;
 
+
    return (
       <>
          {style ? (
-            <div className="instructor__cover-bg">
+            <div
+               className="instructor__cover-bg"
+               style={{ backgroundImage:`url(/assets/img/bg/student_bg.jpg)` }}
+            >
                <div className="instructor__cover-info">
                   <div className="instructor__cover-info-left">
                      <div className="thumb">

@@ -7,8 +7,10 @@ const { sendAccountEmail } = require('../utils/emailService');
 const { use } = require('../routes/userRoute');
 const path = require('path');
 const fs = require('fs');
-
+const { generateOtp, otpDatabase } = require('../services/otpService');
+//const secretKey = process.env.JWT_SECRET_KEY;
 const { User, Trace } = db;
+
 
 const generateRandomPassword = (length = 12) => {
     return crypto.randomBytes(length).toString("base64").slice(0, length);
@@ -19,63 +21,156 @@ const loginUserController = async (req, res) => {
     const { email, mdp } = req.body;
 
     try {
+
         const user = await User.findOne({ where: { email } });
 
-        if (!user) {
-          return res.status(404).json({ message: "Aucun compte trouvé avec cet email." });
+      if (!user) {
+        return res.status(404).json({ message: "Aucun compte trouvé avec cet email." });
       }      
       if (!user.isActive) {
-          return res.status(403).json({ message: "Votre compte est désactivé. Veuillez contacter l'administrateur." });
+        return res.status(403).json({ message: "Votre compte est désactivé. Veuillez contacter l'administrateur." });
       }
-        const isMatch = await bcrypt.compare(mdp, user.mdp);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Mot de passe incorrect' });
-        }
+      const isMatch = await bcrypt.compare(mdp, user.mdp);
+      if (!isMatch) {
+          return res.status(400).json({ message: 'Mot de passe incorrect' });
+      }
 
-         // Update derConnx
-        user.derConnx = new Date();
-        await user.save();
+        // Update derConnx
+      user.derConnx = new Date();
+      await user.save();
 
-        // Add Trace
-        await Trace.create({
-            userId: user.id,
-            action: 'logging in',
-            model: 'User', 
-            data: {
-              email: user.email,
-              role: user.roleUtilisateur,
-              derConnx: new Date(),
-            }
-          });
-
-        // Generate JWT token
-        const token = jwt.sign(
-            { id: user.id, role: user.roleUtilisateur,  username: user.username  },
-                process.env.JWT_SECRET,
-            { expiresIn: '9h' }
-        );
-
-        // Send token in HttpOnly cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            maxAge: 3600000,
-            sameSite: 'Lax',
+      // Add Trace
+      await Trace.create({
+          userId: user.id,
+          action: 'logging in',
+          model: 'User', 
+          data: {
+            email: user.email,
+            role: user.roleUtilisateur,
+            derConnx: new Date(),
+          }
         });
 
-        res.status(200).json({
-            message: 'Connexion réussie.',
-            userId: user.id,
-            roleUtilisateur: user.roleUtilisateur,
-            mustUpdatePassword: user.mustUpdatePassword,
-            username: user.username, 
+      // Generate JWT token
+      const token = jwt.sign(
+          { id: user.id, role: user.roleUtilisateur,  username: user.username  },
+              process.env.JWT_SECRET,
+          { expiresIn: '9h' }
+      );
 
-        });
+      // Send token in HttpOnly cookie
+      res.cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV !== 'development',
+          maxAge: 3600000,
+          sameSite: 'Lax',
+      });
+
+      res.status(200).json({
+          message: 'Connexion réussie.',
+          userId: user.id,
+          roleUtilisateur: user.roleUtilisateur,
+          mustUpdatePassword: user.mustUpdatePassword,
+          username: user.username, 
+
+      });
 
     } catch (error) {
         res.status(500).json({
             message: 'Erreur lors de la connexion.',
             error: error.message,
+        });
+    }
+};
+// ADD
+const addUserController = async (req, res) => {
+    const { username, email, roleUtilisateur  } = req.body;
+
+    try {
+        // 1. Validate creator (admin or formateur)
+        const creator = req.user; //get tocken 
+    
+        if (!['Formateur', 'Admin'].includes(creator.roleUtilisateur)) {
+          return res.status(403).json({ message: 'Permission refusée.' });
+        }
+    
+        // 2. Generate & hash random password
+        const generatedPassword = generateRandomPassword();
+        const hashedPassword = await bcrypt.hash(generatedPassword, 8);
+    
+        // 3. Create the new user
+        const newUser = await User.create({
+          username,
+          email,
+          mdp: hashedPassword,
+          defaultMdp: hashedPassword,
+          roleUtilisateur,
+          isActive: true,
+          derConnx: new Date(),  
+        });
+    
+        // 4. Trace the creation
+        await Trace.create({
+          userId:creator.id, // the ID of the admin/formateur who created this user
+          model: 'Register a new user',
+          action: 'Création d\'utilisateur',
+          data: {
+            createdUserId: newUser.id,
+            createdUsername: newUser.username,
+            role: newUser.roleUtilisateur
+          }
+        });
+    
+         // Send welcome email with credentials
+         await sendAccountEmail({
+            email,
+            username,
+            password: generatedPassword
+          });
+
+        // 5. Return response
+        return res.status(201).json({
+          message: 'Utilisateur créé avec succès.  Un email a été envoyé;',
+          user: newUser,
+          generatedPassword 
+        });
+    }
+    catch (err) {
+        console.error('[ERROR] Failed to create user:', err);
+        return res.status(500).json({ error: err.message });
+    }
+};
+//logout
+const logoutUserController = async (req, res) => {
+    try {
+        // Clear the token cookie
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            sameSite: 'Lax',
+        });
+
+        // trace the logout action
+        if (req.user) {
+            await Trace.create({
+                userId: req.user.id,
+                action: 'user logs out',
+                model: 'User',
+                data: {
+                    email: req.user.email,
+                    role: req.user.roleUtilisateur,
+                    timestamp: new Date(),
+                }
+            });
+        }
+
+        res.status(200).json({ message: 'Déconnexion réussie.' });
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Erreur lors de la déconnexion.',
+            error: error.message,
+
         });
     }
 };
@@ -92,6 +187,7 @@ const getAllUsers = async (req, res) => {
       return res.status(404).json({ message: 'Aucun utilisateur trouvé' });
     }
 
+<<<<<<< HEAD
     const usersWithPhotoUrls = users.map(user => {
       // my images are served from 'backend/assets/uploads/'
       if (user.photo) {
@@ -106,6 +202,14 @@ const getAllUsers = async (req, res) => {
       message: 'Erreur lors de la récupération des utilisateurs.',
       error: err.message,
     });
+=======
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des utilisateurs.',
+      error: err.message,
+    });
+>>>>>>> 1e23dff235148ea471067dc6098d4b690b35f8bd
   }
 };
 // get user by id
@@ -205,97 +309,6 @@ const updateUserController = async (req, res) => {
     return res.status(500).json({ message: 'internally error', error: err.message });
   }
 };
-// ADD
-const addUserController = async (req, res) => {
-    const { username, email, roleUtilisateur  } = req.body;
-
-    try {
-        // 1. Validate creator (admin or formateur)
-        const creator = req.user; //get tocken 
-    
-        if (!['Formateur', 'Admin'].includes(creator.roleUtilisateur)) {
-          return res.status(403).json({ message: 'Permission refusée.' });
-        }
-    
-        // 2. Generate & hash random password
-        const generatedPassword = generateRandomPassword();
-        const hashedPassword = await bcrypt.hash(generatedPassword, 8);
-    
-        // 3. Create the new user
-        const newUser = await User.create({
-          username,
-          email,
-          mdp: hashedPassword,
-          defaultMdp: hashedPassword,
-          roleUtilisateur,
-          isActive: true,
-          derConnx: new Date(),  
-        });
-    
-        // 4. Trace the creation
-        await Trace.create({
-          userId:creator.id, // the ID of the admin/formateur who created this user
-          model: 'Register a new user',
-          action: 'Création d\'utilisateur',
-          data: {
-            createdUserId: newUser.id,
-            createdUsername: newUser.username,
-            role: newUser.roleUtilisateur
-          }
-        });
-    
-         // Send welcome email with credentials
-         await sendAccountEmail({
-            email,
-            username,
-            password: generatedPassword
-          });
-
-        // 5. Return response
-        return res.status(201).json({
-          message: 'Utilisateur créé avec succès.  Un email a été envoyé;',
-          user: newUser,
-          generatedPassword 
-        });
-    }
-    catch (err) {
-        console.error('[ERROR] Failed to create user:', err);
-        return res.status(500).json({ error: err.message });
-    }
-};
-//logout
-const logoutUserController = async (req, res) => {
-    try {
-        // Clear the token cookie
-        res.clearCookie('token', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: 'Lax',
-        });
-
-        // trace the logout action
-        if (req.user) {
-            await Trace.create({
-                userId: req.user.id,
-                action: 'user logs out',
-                model: 'User',
-                data: {
-                    email: req.user.email,
-                    role: req.user.roleUtilisateur,
-                    timestamp: new Date(),
-                }
-            });
-        }
-
-        res.status(200).json({ message: 'Déconnexion réussie.' });
-
-    } catch (error) {
-        res.status(500).json({
-            message: 'Erreur lors de la déconnexion.',
-            error: error.message,
-        });
-    }
-};
 // update mdp
 const updatePasswordController = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
@@ -345,7 +358,6 @@ const updatePasswordController = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
       }
 };  
-
 // update Profile as a formateur or apprenant
 const updateProfileController = async (req, res) => {
   const userId = req.params.id;
@@ -404,7 +416,6 @@ try {
 }
 };
 
-
 //get user by name 
 const getUserByName = async (req, res) => {
     const { name } = req.params;
@@ -429,46 +440,6 @@ const getUserByName = async (req, res) => {
     }
 };
 
-//update user 
-exports.updateUser = async (req, res) => {
-    try {
-      const { username, email, mdp, role } = req.body;
-      const { id } = req.params;
-  
-      const user = await User.findByPk(id);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      if (email && !isValidEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
-      }
-  
-      if (role && !['Admin', 'Formateur', 'Apprenant'].includes(role)) {
-        return res.status(400).json({ message: 'Invalid role' });
-      }
-  
-      const updatedFields = {
-        username: username ?? user.username,
-        email: email ?? user.email,
-        role: role ?? user.role
-      };
-  
-      if (mdp) {
-        updatedFields.mdp = await bcrypt.hash(mdp, 10);
-      }
-  
-      await User.update(updatedFields, { where: { id } });
-  
-      const updatedUser = await User.findByPk(id);
-  
-      res.status(200).json({ message: 'User updated successfully', user: updatedUser });
-  
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  };
-  
 //delete user (soft delete)
 exports.deleteUser = async (req, res) => {
     try {
@@ -490,7 +461,6 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-
 module.exports = {
     addUserController,
     loginUserController,
@@ -500,7 +470,6 @@ module.exports = {
     updatePasswordController,
     updateProfileController,
     getUserByIdController,
-
     getAllUsers,
     getOnceUser, 
     getUserByName

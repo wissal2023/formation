@@ -1,12 +1,10 @@
-import DashboardBannerTwo from "../../dashboard-common/DashboardBannerTwo"
-import DashboardSidebarTwo from "../../dashboard-common/DashboardSidebarTwo"
 import InstructorProfileContent from "../../instructor-dashboard/profile/InstructorProfileContent"
 
 const StudentProfileArea = () => {
    return (
      
-         <InstructorProfileContent style={true} />
-              
+      <InstructorProfileContent style={true} />
+           
    )
 }
 
