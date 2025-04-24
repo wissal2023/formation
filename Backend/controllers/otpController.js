@@ -1,8 +1,7 @@
-const { sendOtpEmail } = require('../utils/emailService');  
-const { generateOtp } = require('../services/otpService'); 
 const otpModel = require('../services/otpModel'); 
 const speakeasy = require('speakeasy'); 
 const qrcode = require('qrcode'); 
+
 const pool = require('../config/pool');
 
 // Vérifier l'OTP envoyé par email
@@ -25,25 +24,8 @@ const verifyOtp = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la vérification de l'OTP.", error: error.message });
   }
 };
-const sendOtp = async (req, res) => {
-  const { email } = req.body;
 
-  // Générer un OTP aléatoire
-  const otp = generateOtp();
-
-  try {
-    // Envoyer l'OTP par email
-    await sendOtpEmail(email, otp);
-
-    // Enregistrer l'OTP dans la base de données
-    await otpModel.storeOtp(email, otp);
-
-    res.status(200).json({ message: 'OTP envoyé avec succès à votre email.' });
-  } catch (error) {
-    res.status(500).json({ message: "Erreur lors de l'envoi de l'OTP.", error: error.message });
-  }
-};
-
+// Générer un secret pour Google Authenticator
 const generateSecret = async (req, res) => {
   const { email } = req.body;
   console.log("📥 Requête reçue avec email :", email);
@@ -94,12 +76,32 @@ const generateSecret = async (req, res) => {
       });
     });
   } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la génération du secret.', error: error.message });
+  }
+};
+
+// Vérifier l'OTP généré par Google Authenticator
+const verifyGoogleOtp1 = (req, res) => {
+  const { token, secret } = req.body;
+
+  const isVerified = speakeasy.totp.verify({
+    secret: secret,
+    encoding: 'base32',
+    token: token,
+    window: 1,
+  });
+
+  if (isVerified) {
+    res.status(200).json({ message: 'OTP vérifié avec succès ! 🎉' });
+  } else {
+    res.status(400).json({ message: 'OTP invalide !' });
     console.error("💥 Erreur générale :", error);
     res.status(500).json({ message: 'Erreur lors de la génération du secret.', error: error.message });
   }
 };
+
 // Vérifier l'OTP généré par Google Authenticator
-const verifyGoogleOtp = async (req, res) => {
+const verifyGoogleOtp2 = async (req, res) => {
   const { email, token } = req.body;
 
   try {
@@ -129,6 +131,7 @@ const verifyGoogleOtp = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la vérification.", error: error.message });
   }
 };
+
 const getOtpStatus = async (req, res) => {
   const { email } = req.query;
   console.log("GET /otp/status called with email:", email); // 🔍
@@ -146,4 +149,4 @@ const getOtpStatus = async (req, res) => {
 };
 
 // Exporter les fonctions
-module.exports = { sendOtp,verifyOtp, generateSecret, verifyGoogleOtp,getOtpStatus };
+module.exports = { verifyOtp, generateSecret, verifyGoogleOtp1, verifyGoogleOtp2, getOtpStatus };

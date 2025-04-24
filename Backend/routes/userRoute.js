@@ -1,18 +1,20 @@
-// routes/userRoute.js
+// backend/routes/userRoute.js
 const express = require('express');
 const router = express.Router();
-
-const { addUserController, loginUserController, getAllUsers, getOnceUser } = require('../controllers/usercontroller'); // On utilise maintenant userController pour tout
-const verifyToken = require('../middleware/auth');
+const {User} = require("../db/models");
+const upload = require('../utils/multerConfig'); // Adjust path if needed
+const authenticateToken = require('../utils/authMiddleware');
+const { addUserController, loginUserController, logoutUserController, 
+        updatePasswordController, getAllUsers, getOnceUser, getUserByName,
+        updateUserController, updateProfileController, getUserByIdController } = require('../controllers/userController'); // On utilise maintenant userController pour tout
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const db = require('../db/models');
-const User = db.User;
-// Route pour l'enregistrement d'un utilisateur (avec Supabase)
-router.post('/register', addUserController);
+//const db = require('../db/models');
+//const verifyToken = require('../middleware/auth');
 
-// Route pour la connexion d'un utilisateur (avec envoi OTP)
-//router.post('/login', loginUserController);
+
+// ************************************* A vérifier
+/*
 router.post('/login', async (req, res) => {
   const { email, mdp } = req.body;
 
@@ -59,12 +61,7 @@ router.post('/login', async (req, res) => {
     });
   }
 });
-
-const {User} = require("../db/models");
-const authenticateToken = require('../utils/authMiddleware');
-const { addUserController, loginUserController, logoutUserController, 
-        updatePasswordController, getAllUsers, getOnceUser, getUserByName,
-        updateUserController, updateProfileController } = require('../controllers/usercontroller'); // On utilise maintenant userController pour tout
+*/
 
 router.get('/login', authenticateToken, (req, res) => {
   res.json({ message: 'Bienvenue sur le dashboard admin', user: req.user });
@@ -72,18 +69,13 @@ router.get('/login', authenticateToken, (req, res) => {
 router.post('/login', loginUserController);
 router.post("/change-password", authenticateToken, updatePasswordController);
 router.post('/register', authenticateToken, addUserController);
-router.post('/logout', logoutUserController);
+router.post('/logout', authenticateToken,logoutUserController);
 router.get('/getOnce', authenticateToken, getOnceUser);
+router.put('/edit/:id', authenticateToken, upload.single('photo'), updateUserController);
 router.get('/getAll', authenticateToken, getAllUsers);
-router.put('/edit/:id', authenticateToken, updateUserController);
+router.get('/getById/:id', authenticateToken, getUserByIdController);
 router.put('/profile/:id', authenticateToken, updateProfileController);
-
-
 
 router.get('/:name', getUserByName);
 
-
 module.exports = router;
-
-
-

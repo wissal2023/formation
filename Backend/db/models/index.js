@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+// backend/db/models/index.js
+=======
+>>>>>>> 1e23dff235148ea471067dc6098d4b690b35f8bd
 const fs = require('fs');
 const path = require('path');
 const { Sequelize, DataTypes } = require('sequelize');

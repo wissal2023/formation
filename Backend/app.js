@@ -1,6 +1,7 @@
-// app.js
+// backend/app.js
 require('dotenv').config();
 require('./utils/cron');
+const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express(); 
@@ -39,6 +40,17 @@ app.use((req, res, next) => {
     req.lang = req.query.lang || req.headers['accept-language']?.split(',')[0].split('-')[0] || 'fr';
     next();
   });
+
+// Error handler for multer (upload img)
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError || err.message.includes('Seuls les fichiers')) {
+      return res.status(400).json({ error: err.message });
+    }
+    next(err);
+});
+// Serve static files from 'assets/uploads' directory
+app.use('/assets/uploads', express.static(path.join(__dirname, 'assets', 'uploads')));
+
 
 // ******************* HEAD ROUTES *******************
 app.use('/users', userRoute);

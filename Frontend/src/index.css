@@ -26,14 +26,15 @@ code {
 
 .modal-content {
   background: #fff;
-  padding: 2rem;
+  padding: 10px; /* was 2rem */
   border-radius: 10px;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
   z-index: 100000 !important;
+  width: 1000px;
+  margin: 5% auto;
 }
-
 .close-btn {
   position: absolute;
   top: 10px;
