@@ -46,7 +46,6 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="login-wrapper">
       <div className="login-container">
         <p className="subtitle">Comment voulez-vous recevoir votre code ?</p>
 
@@ -69,7 +68,6 @@ const ResetPassword = () => {
           <button className="submit-btn" onClick={handleContinue}>Continuer</button>
         </div>
       </div>
-    </div>
   );
 };
 

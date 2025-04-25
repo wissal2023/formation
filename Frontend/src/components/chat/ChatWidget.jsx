@@ -1,66 +1,72 @@
+// ChatWidget.jsx
 import React, { useState } from 'react';
-import { Widget, addResponseMessage } from 'react-chat-widget';
-import 'react-chat-widget/lib/styles.css';
-import './styles.css'; 
-
-
+import Lottie from 'lottie-react';
+import LottieLogo from '../../../public/assets/img/lotti/chatBot.json';
+import './styles.css';
 
 const ChatWidget = () => {
-  const [chatWindowOpen, setChatWindowOpen] = useState(true);
-  const [messages, setMessages] = useState([]); // Garder les messages
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
 
-  // Fonction pour gérer la fermeture du widget
-  const handleClose = () => {
-    console.log("Widget fermé !");
-  };
+  const toggleChat = () => setOpen(!open);
 
-  const handleToggle = () => {
-    setChatWindowOpen(!chatWindowOpen);
-  };
+  const handleSend = async () => {
+    if (!input.trim()) return;
 
-  const handleNewUserMessage = async (newMessage) => {
-    console.log("Message reçu :", newMessage);
+    const userMessage = { text: input, sender: 'user' };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
 
-    // Ajouter le message de l'utilisateur dans le chat
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: newMessage, user: 'user' },
-    ]);
+    try {
+      const res = await fetch('http://127.0.0.1:5000/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: input }),
+      });
 
-    // Envoyer la question à l'API Flask et récupérer la réponse
-    const response = await fetch('http://127.0.0.1:5000/ask', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ question: newMessage }), // Utilisez newMessage pour poser la question
-    });
-
-    const data = await response.json();
-    console.log("Réponse de l'API:", data.answer);
-
-    // Ajouter la réponse de l'assistant dans le chat
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: data.answer, user: 'assistant' },
-    ]);
-
-    // Afficher la réponse dans le widget
-    addResponseMessage(data.answer);
+      const data = await res.json();
+      const botMessage = { text: data.answer, sender: 'bot' };
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (err) {
+      setMessages((prev) => [...prev, { text: 'Erreur de connexion', sender: 'bot' }]);
+    }
   };
 
   return (
-<div className="App">
-<Widget
-  handleNewUserMessage={handleNewUserMessage}
-  handleToggle={handleToggle}
-  title="Bonjour"
-  subtitle="Comment puis-je vous aider ?"
-  showCloseButton={true}
-  handleClose={handleClose}
+    <>
+      <div className="lottie-launcher" onClick={toggleChat}>
+        <Lottie animationData={LottieLogo} loop />
+      </div>
 
-/>
-    </div>
+      {open && (
+        <div className="chat-box">
+          <div className="chat-header">
+            <span>🤖 Assistant</span>
+            <button onClick={toggleChat}>✖</button>
+          </div>
+
+          <div className="chat-messages">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={`msg ${msg.sender}`}>
+                {msg.text}
+              </div>
+            ))}
+          </div>
+
+          <div className="chat-input">
+            <input
+              type="text"
+              placeholder="Écrivez un message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            />
+            <button onClick={handleSend}>Envoyer</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
