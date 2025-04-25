@@ -14,12 +14,7 @@ function App() {
         <div className="main-page-wrapper">
           <ToastContainer />
             <AppNavigation />
-            {/* Section principale 
-          <main>
-            <h1>Bienvenue sur notre plateforme!</h1>
-          </main>
-           Widget de chat affiché partout pour l’instant */}
-          <ChatWidget />
+            
         </div>
       </HelmetProvider>
     </Provider>

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 import { useWindowSize } from '@react-hook/window-size';
 import Lottie from 'lottie-react';
-import animationData from '../../../public/assets/img/lotti/welcome.json'; // adjust path
+import animationData from '../../../public/assets/img/lotti/welcome.json';
 import styles from './WelcomePopup.module.css';
 
 const WelcomePopup = ({ username, onClose }) => {

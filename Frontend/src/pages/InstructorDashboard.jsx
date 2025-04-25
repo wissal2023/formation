@@ -7,6 +7,7 @@ const InstructorDashboard = () => {
    return (
       <DashboardLayout pageTitle="Formateur Dashboard">
          <InstructorHome />
+        
       </DashboardLayout>
    );
 };
