@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
-//import './Login.css';
+
 
 const schema = yup.object({
   email: yup.string().required("Email requis").email("Format invalide"),

@@ -1,19 +1,31 @@
+// backend/controllers/otpController
 const otpModel = require('../services/otpModel'); 
 const speakeasy = require('speakeasy'); 
 const qrcode = require('qrcode'); 
 const { generateOtp } = require('../services/otpService');
 const { sendOtpEmail } = require('../utils/emailService');
 const { Otp } = require('../db/models');
+const bcrypt = require('bcrypt'); // <-- à ajouter en haut si pas déjà fait
 
+//router.post('/generate-otp', sendOtp);
 const sendOtp = async (req, res) => {
   const { email } = req.body;
+  console.log('Email reçu depuis req.body:', email);
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email requis.' });
+  }
   const otp = generateOtp();
+  const hashedOtp = await bcrypt.hash(otp.toString(), 10); 
+  console.log("OTP generated at:", new Date());
 
   try {
     await sendOtpEmail(email, otp);
+    
     await Otp.create({
       email,
-      otp
+      otp:hashedOtp, 
+      secret: 'secret-temp'// to change later 
     });
     
     res.status(200).json({ message: 'OTP envoyé avec succès.' });
@@ -22,7 +34,7 @@ const sendOtp = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur.', error: error.message });
   }
 };
-
+//router.post('/verifyOtp', verifyOtp);
 const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
   console.log("Received OTP request with email:", email);
@@ -32,6 +44,7 @@ const verifyOtp = async (req, res) => {
   try {
     // Vérifier si l'OTP est valide
     const isValid = await otpModel.isValidOtp(email, otp);
+    console.log(typeof otp)
 
     if (!isValid) {
       console.log("OTP invalid or expired for email:", email);
@@ -40,10 +53,16 @@ const verifyOtp = async (req, res) => {
     // Supprimer l'OTP après vérification
     await otpModel.deleteOtp(email);
     return res.status(200).json({ message: 'OTP vérifié avec succès.' });
+  
   } catch (error) {
-    console.error("Error verifying OTP:", error); 
-    res.status(500).json({ message: "Erreur lors de la vérification de l'OTP.", error: error.message });
-  }
+      console.error("Error verifying OTP:", error); 
+      res.status(500).json({ 
+        message: "Erreur lors de la vérification de l'OTP.", 
+        error: error.message,
+        stack: error.stack // Pour un débogage plus riche (à retirer en prod)
+      });
+    }
+    
 };
 
 // *************************************** cheked method 

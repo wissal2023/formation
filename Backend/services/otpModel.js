@@ -1,22 +1,33 @@
 // services/otpModels.js
 const bcrypt = require('bcrypt');
-const { Otp } = require('../db/models'); // ton modèle Sequelize
+const { Otp } = require('../db/models');
 
 exports.isValidOtp = async (email, providedOtp) => {
   const otpEntry = await Otp.findOne({ where: { email } });
 
-  console.log('Fetched OTP entry:', otpEntry); // Log the fetched OTP entry
-
+  console.log('OTP from DB:', otpEntry?.otp);
+  console.log('OTP user provided:', providedOtp);
+  
   if (!otpEntry) return false;
 
   const otpValid = await bcrypt.compare(providedOtp.toString(), otpEntry.otp);
-  const createdAt = new Date(otpEntry.createdAt);
-  const isExpired = new Date() - createdAt > 10 * 60 * 1000;
+  console.log("OTP Match:", otpValid);
 
-  console.log('OTP Valid:', otpValid);  // Log whether OTP is valid
-  console.log('Is OTP expired:', isExpired); // Log whether OTP is expired
+  const createdAt = new Date(otpEntry.created_at);
+  //const isExpired = new Date() - createdAt > 10 * 60 * 1000;
+  
+  console.log('OTP created at:', createdAt);
+  console.log('Now:', new Date());
+  //console.log('Is OTP expired:', isExpired);
+  console.log("Stored OTP (hashed):", otpEntry.otp);
+  console.log("Provided OTP (plaintext):", providedOtp);
+  console.log("Secret:", otpEntry.secret);
+  console.log("created_at (DB):", createdAt.toISOString());
+  console.log("current (now):", new Date().toISOString());
 
-  return otpValid && !isExpired;
+  //return otpValid && !isExpired;
+  return otpValid;
+
 };
 
 

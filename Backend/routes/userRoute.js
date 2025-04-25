@@ -6,8 +6,10 @@ const upload = require('../utils/multerConfig'); // Adjust path if needed
 const authenticateToken = require('../utils/authMiddleware');
 const { addUserController, loginUserController, logoutUserController, 
         updatePasswordController, getAllUsers, getOnceUser, getUserByName,
-        updateUserController, updateProfileController, getUserByIdController } = require('../controllers/userController'); // On utilise maintenant userController pour tout
+        updateUserController, updateProfileController, getUserByIdController,
+        getAuthenticatedUser } = require('../controllers/userController'); // On utilise maintenant userController pour tout
 
+router.get('/auth', getAuthenticatedUser);
 router.post('/login', loginUserController);
 router.post("/change-password", authenticateToken, updatePasswordController);
 router.post('/register', authenticateToken, addUserController);
