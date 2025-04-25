@@ -1,5 +1,4 @@
 #pip install -r requirements.txt:
-
 torch
 chromadb
 ollama
@@ -11,4 +10,3 @@ sentence-transformers
 Flask
 flask-cors
 pymupdf
-
