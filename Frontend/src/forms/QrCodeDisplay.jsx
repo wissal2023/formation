@@ -11,32 +11,35 @@ const QrCodeDisplay = () => {
 
   useEffect(() => {
     const fetchQrCode = async () => {
-      const email = localStorage.getItem('userEmail');
-      console.log("Email envoyé : ", email);
-
-      if (!email) {
-        setError('Aucun email trouvé.');
-        setLoading(false);
-        return;
-      }
       try {
-          // Make the API call to generate the QR code
-          const response = await axios.get(`${import.meta.env.VITE_API_URL}/otp/generate-secret`, { params: { email } });
-          console.log("Réponse du backend : ", response.data);
-  
-          if (response.status === 200 && response.data.qrCodeUrl) {
-            setQrCodeUrl(response.data.qrCodeUrl);  // Store the QR code URL
-            setLoading(false);
-          } else {
-            setError('Erreur lors de la génération du QR Code.');
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error('Erreur lors de la récupération du QR Code', error);
-          setError('Erreur de connexion au serveur.');
-          setLoading(false);
+
+        // Step 1: get user info (email) from backend using cookies
+        const userResponse = await axios.get(`${import.meta.env.VITE_API_URL}/users/auth`, {
+          withCredentials: true,
+        });
+        
+        const userEmail = userResponse.data.email;
+        console.log("Email from cookie/token:", userEmail);
+
+        // Step 2: Call the QR code generation endpoint 
+        const qrResponse = await axios.get(`${import.meta.env.VITE_API_URL}/otp/generate-secret`, {
+          withCredentials: true,
+        });
+
+        
+        if (qrResponse.status === 200 && qrResponse.data.qrCodeUrl) {
+          setQrCodeUrl(qrResponse.data.qrCodeUrl);
+        } else {
+          setError('Erreur lors de la génération du QR Code.');
         }
-      };
+      
+      } catch (err) {
+        console.error("Erreur QR:", err);
+        setError("Erreur de connexion au serveur ou utilisateur non authentifié.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchQrCode();
   }, []);
@@ -46,7 +49,6 @@ const QrCodeDisplay = () => {
   };
 
   return (
-    <div className="login-wrapper">
       <div className="login-container">
         <img src="/logo.png" alt="Logo" className="logo" />
         <h2 className="title">Teamwill</h2>
@@ -72,7 +74,6 @@ const QrCodeDisplay = () => {
           <a href="/signin" className="forgot-password">Retour à la connexion</a>
         </div>
       </div>
-    </div>
   );
 };
 

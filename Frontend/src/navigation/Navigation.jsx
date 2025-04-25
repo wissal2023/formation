@@ -23,7 +23,7 @@ import StudentSetting from '../pages/StudentSetting';
 
 import OTPVerification from '../pages/OtpVerification';
 import ResetPassword from '../pages/ResetPassword';
-import QrCodeDisplay from '../forms/QrCodeDisplay';
+import QrCodeDisplay from '../pages/QrCodeVerification';
 import SignIn from '../pages/Login';
 
 
@@ -49,8 +49,7 @@ const AppNavigation = () => {
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/ResetPassword" element={<ResetPassword />} />
-        <Route path="/otpverification" element={<OTPVerification />} />
-        
+        <Route path="/otpverification" element={<OTPVerification />} />        
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
 
         <Route path="/welcome" element={<WelcomePage />} />
