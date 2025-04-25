@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 
 
 async function createFirstAdminUser() {
+  const loginUrl = `${process.env.FRONTEND_URL}/signin`;
   try {
     const existingAdmin = await User.findOne({ where: { roleUtilisateur: 'Admin' } });
 
@@ -32,8 +33,8 @@ async function createFirstAdminUser() {
     // Generate JWT token
     const token = jwt.sign(
       { id: adminUser.id, role: adminUser.roleUtilisateur },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: '9h' }
     );
 
     const transporter = nodemailer.createTransport({
@@ -48,7 +49,10 @@ async function createFirstAdminUser() {
       from: process.env.EMAIL_USER,
       to: adminUser.email,
       subject: 'Your Account Credentials',
-      text: `Welcome to the platform!\n\nEmail: ${adminUser.email}\nPassword: ${randomPassword}\n\nAuth Token: ${token}`
+      text: `Welcome to the platform!\n\n
+            Email: ${adminUser.email}\n
+            Password: ${randomPassword}\n
+            Cliquez ici pour vous connecter: ${loginUrl}`
     });
 
     console.log('Admin credentials sent to email');

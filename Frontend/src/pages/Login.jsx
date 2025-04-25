@@ -1,14 +1,13 @@
 // pages/Login.jsx
-import Wrapper from '../layouts/Wrapper';
-import LoginMain from '../components/inner-pages/login';
-import SEO from '../components/SEO';
+
+import SignIn from '../forms/SignIn';
+import LoginLayout from '../layouts/LoginLayout';
 
 const Login = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'login page'} />
-         <LoginMain />
-      </Wrapper>
+         <LoginLayout pageTitle="login page">
+            <SignIn />
+         </LoginLayout>
    );
 };
 

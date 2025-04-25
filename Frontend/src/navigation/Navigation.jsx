@@ -2,7 +2,6 @@
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Blog from '../pages/Blog';
-import Course from '../pages/Course';
 import Lesson from '../pages/Lesson';
 import CourseDetails from '../pages/CourseDetails';
 import About from '../pages/About';
@@ -22,10 +21,10 @@ import StudentProfile from '../pages/StudentProfile';
 import StudentWishlist from '../pages/StudentWishlist';
 import StudentSetting from '../pages/StudentSetting';
 
-import OTPVerification from './OtpVerification';
-import ResetPassword from './ResetPassword';
-import QrCodeDisplay from './QrCodeDisplay';
-import SignIn from './SignIn';
+import OTPVerification from '../pages/OtpVerification';
+import ResetPassword from '../pages/ResetPassword';
+import QrCodeDisplay from '../forms/QrCodeDisplay';
+import SignIn from '../pages/Login';
 
 
 //*********** WISSAL************** */
@@ -36,16 +35,24 @@ import ChangePassword from '../pages/ChangePassword';
 import WelcomePage from '../pages/WelcomePage'
 import Course from '../pages/Course';
 
-import NotFound from '../pages/NotFound';
 import UserSetting from '../pages/UserSetting';
+import NotFound from '../pages/NotFound';
 
 const AppNavigation = () => {
   return (
     <Router>
       <Routes>  
-         {/* public */}
+         {/* public
         <Route path="/login" element={<Login />} />
+        
+        */} 
+        <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/ResetPassword" element={<ResetPassword />} />
+        <Route path="/otpverification" element={<OTPVerification />} />
+        
+        <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
+
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/dashboard" element={<InstructorDashboard />} />        
@@ -54,27 +61,9 @@ const AppNavigation = () => {
         <Route path="/editUser/:id" element={<UserSetting />} /> 
 
 
-         {/* *********** ONS ************** */}
-        <Route path="/blog" element={
-        <PrivateRoute>
-          <Blog />
-        </PrivateRoute>
-      } />
-       {/* Redirection conditionnelle sur la page d'accueil */}
-       <Route 
-              path="/" 
-              element={isLoggedIn ? <Navigate to="/signin" /> : <SignIn />} 
-            />
-
-            <Route path="/otpverification" element={<OTPVerification />} />
-            <Route path="/ResetPassword" element={<ResetPassword />} />
-            <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
-
-            {/* Routes protégées par isLoggedIn */}
-            <Route 
-              path="/*" 
-              element={isLoggedIn ? <AppNavigation /> : <Navigate to="/" />} 
-            />
+            
+            
+           
 
         {/*ROUTES TO BE USED */}
         <Route path="/student-setting" element={<StudentSetting />} />
