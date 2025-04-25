@@ -7,18 +7,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import ChatWidget from './components/chat/ChatWidget';
 
 function App() {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   return (
     <Provider store={store}>
-      <HelmetProvider>
-
-       
+      <HelmetProvider>       
         <div className="main-page-wrapper">
           <ToastContainer />
-          <AppNavigation />
-
-          {/* Section principale 
+            <AppNavigation />
+            {/* Section principale 
           <main>
             <h1>Bienvenue sur notre plateforme!</h1>
           </main>

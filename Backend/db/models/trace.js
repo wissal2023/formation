@@ -11,19 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-<<<<<<< HEAD
     action: {  // Action type ('create', 'update', 'archive')
       type: DataTypes.STRING,
       allowNull: false
     },
-    model: {  // page name (e.g., 'Formation', 'FormationDetails')
-=======
-    action: {  // Action type (e.g., 'create', 'update', 'delete')
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    model: {  // Model name (e.g., 'Formation', 'FormationDetails')
->>>>>>> 1e23dff235148ea471067dc6098d4b690b35f8bd
+    model: {    // Model name (e.g., 'Formation', 'FormationDetails')
       type: DataTypes.STRING,
       allowNull: false
     },

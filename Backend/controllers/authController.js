@@ -3,11 +3,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const User = db.User;
-//const supabase = require('../supabaseClient');
 const { generateOtp, otpDatabase } = require('../services/otpService');
 const { sendOtpEmail } = require('../utils/emailService');
 
-
+/*
 exports.login = async (req, res) => {
   const { email, mdp } = req.body;
 
@@ -82,3 +81,5 @@ const loginUserController = async (req, res) => {
 module.exports = {
     loginUserController,
 };
+
+*/

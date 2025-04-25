@@ -33,6 +33,7 @@ app.use(cors({
     credentials: true,
 }));
 app.use(cookieParser());
+//app.use('/otp', otpRoutes);
 
 
 // ******************* middelware *******************
@@ -78,9 +79,12 @@ app.use('*', (req, res) => {
 });
 
 
-
 const PORT = process.env.APP_PORT || 4000;
 app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
+    // Redirect to /signin after server starts
+    app.get('/', (req, res) => {
+        res.redirect('/signin');
+    });
     createFirstAdminUser(); 
 });
