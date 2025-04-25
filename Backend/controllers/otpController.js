@@ -64,65 +64,36 @@ const verifyOtp = async (req, res) => {
     }
     
 };
+//router.get('/generate-secret', authenticateToken, generateSecret);  
+const generateSecret = async (req, res) => {
+  try {
+    const email = req.user?.email;
+    if (!email) {
+      return res.status(401).json({ message: 'Utilisateur non authentifié' });
+    }
+
+    const secret = speakeasy.generateSecret({ length: 20 });
+    const otpAuthUrl = speakeasy.otpauthURL({
+      secret: secret.base32,
+      label: email,
+      issuer: 'Teamwill',
+    });
+
+    const qrCodeUrl = await qrcode.toDataURL(otpAuthUrl);
+
+    // Sauvegarde dans DB si nécessaire (associer à l'utilisateur)
+    await otpModel.saveSecretForUser(email, secret.base32);
+
+    res.json({ qrCodeUrl });
+  } catch (error) {
+    console.error("Erreur lors de la génération du QR code:", error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
 
 // *************************************** cheked method 
 
 
-// Générer un secret pour Google Authenticator
-const generateSecret = async (req, res) => {
-  const { email } = req.body;
-  console.log("📥 Requête reçue avec email :", email);
-  console.log("Email reçu côté backend :", req.body.email);
-
-  if (!email) {
-    return res.status(400).json({ message: "Email manquant dans la requête." });
-  }
-
-  const secret = speakeasy.generateSecret({ length: 20 });
-  console.log("🔐 Secret généré :", secret);
-
-  try {
-    // Vérifie si un secret existe déjà pour cet email
-    const existingOtp = await Otp.findOne({ where: { email } });
-    console.log("🔎 Vérification email dans DB :", existingOtp);
-
-    if (!existingOtp) {
-      await Otp.create({
-        email,
-        secret: secret.base32,
-        verified: false,
-      });
-      console.log(" Secret enregistré en DB");
-    }
-
-    // Générer l'URL OTP pour Google Authenticator
-    const otpAuthUrl = speakeasy.otpauthURL({
-      secret: secret.base32,
-      label: email,
-      issuer: 'TeamwillApp',
-      encoding: 'base32',
-    });
-
-    console.log("🌐 URL pour QR Code :", otpAuthUrl);
-
-     // Générer le QR Code
-     qrcode.toDataURL(otpAuthUrl, (err, data_url) => {
-      if (err) {
-        console.error("❌ Erreur QR Code :", err);
-        return res.status(500).json({ message: "Erreur lors de la génération du QR Code." });
-      }
-
-      console.log("🖼️ QR Code généré !");
-      res.status(200).json({
-        message: 'QR Code généré avec succès.',
-        secret: secret.base32,
-        qrCodeUrl: data_url,
-      });
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la génération du secret.', error: error.message });
-  }
-};
 
 // Vérifier l'OTP généré par Google Authenticator
 const verifyGoogleOtp = async (req, res) => {

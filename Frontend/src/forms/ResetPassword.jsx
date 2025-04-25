@@ -46,7 +46,7 @@ const ResetPassword = () => {
           alert("Erreur lors de l'envoi de l'OTP.");
         }
       } else if (method === 'qrcode') {
-        const response = await axios.post(
+        const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/otp/generate-secret`,
           { email },
           config
