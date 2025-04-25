@@ -8,10 +8,12 @@ const path = require('path');
 const fs = require('fs');
 const { User, Trace } = db;
 
+
 const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
-//login
+
+//router.post('/login', loginUserController);
 const loginUserController = async (req, res) => {
   const { email, mdp } = req.body;
 
@@ -79,6 +81,26 @@ const loginUserController = async (req, res) => {
           message: 'Erreur lors de la connexion.',
           error: error.message,
       });
+  }
+};
+//router.get('/auth', getAuthenticatedUser);
+const getAuthenticatedUser = (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ message: "Non autorisé" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    res.json({ 
+      id: decoded.id, 
+      email: decoded.email, 
+      username: decoded.username, 
+      roleUtilisateur: decoded.role 
+    });
+  } catch (err) {
+    res.status(401).json({ message: "Token invalide" });
   }
 };
 //logout
@@ -455,6 +477,7 @@ exports.deleteUser = async (req, res) => {
 };
 
 module.exports = {
+  getAuthenticatedUser,
     addUserController,
     loginUserController,
     logoutUserController,

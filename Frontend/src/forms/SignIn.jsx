@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
 
+// control saisie
 const schema = yup.object({
   email: yup.string().required("Email requis").email("Format invalide"),
   password: yup.string().required("Mot de passe requis"),
@@ -34,34 +35,34 @@ const SignIn = () => {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, {
         email: data.email,
         mdp: data.password,
-      }, { withCredentials: true });
-
+      }, {
+        withCredentials: true, // send and receive cookies
+      });
+  
       if (response.status === 200) {
-        localStorage.setItem('username', response.data.username);
-        localStorage.setItem('roleUtilisateur', response.data.roleUtilisateur);
-        localStorage.setItem('userEmail', response.data.email);
+        // Set any non-sensitive data you need (username, role) in a state management or session storage if needed
+        const { username, roleUtilisateur, mustUpdatePassword } = response.data;
 
         toast.success("Connexion réussie", { position: 'top-center' });
-
-        if (response.data.mustUpdatePassword) {
+  
+        if (mustUpdatePassword) {
           navigate('/change-password');
           return;
         }
-
+  
         navigate('/ResetPassword');
       }
-
     } catch (error) {
       console.error('Erreur login:', error);
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message, { position: 'top-center' });
-      } else {
-        toast.error("Erreur serveur ou réseau.", { position: 'top-center' });
-      }
+      toast.error(
+        error.response?.data?.message || "Erreur serveur ou réseau.",
+        { position: 'top-center' }
+      );
     }
-
+  
     reset();
   };
+  
 
   return (
       <div className="login-container">

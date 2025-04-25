@@ -1,7 +1,6 @@
 // frontend/QrCodeDisplay.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './QrCodeDisplay.css';
 import axios from 'axios';
 
 const QrCodeDisplay = () => {
