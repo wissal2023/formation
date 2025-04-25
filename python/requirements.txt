@@ -14,5 +14,4 @@ nltk
 PyMuPDF
 ollama
 IPython
-
 torch

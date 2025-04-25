@@ -42,7 +42,7 @@ const SignIn = () => {
       if (response.status === 200) {
         // Set any non-sensitive data you need (username, role) in a state management or session storage if needed
         const { username, roleUtilisateur, mustUpdatePassword } = response.data;
-  
+
         toast.success("Connexion réussie", { position: 'top-center' });
   
         if (mustUpdatePassword) {
