@@ -39,7 +39,7 @@ const SignIn = () => {
       if (response.status === 200) {
         localStorage.setItem('username', response.data.username);
         localStorage.setItem('roleUtilisateur', response.data.roleUtilisateur);
-        localStorage.setItem('email', response.data.email);
+        localStorage.setItem('userEmail', response.data.email);
 
         toast.success("Connexion réussie", { position: 'top-center' });
 
