@@ -7,19 +7,18 @@ import 'react-toastify/dist/ReactToastify.css';
 import ChatWidget from './components/chat/ChatWidget';
 
 function App() {
+
   return (
     <Provider store={store}>
-      <HelmetProvider>
+      <HelmetProvider>       
         <div className="main-page-wrapper">
           <ToastContainer />
-          <AppNavigation />
-
-          {/* Section principale */}
+            <AppNavigation />
+            {/* Section principale 
           <main>
             <h1>Bienvenue sur notre plateforme!</h1>
           </main>
-
-          {/* Widget de chat affiché partout pour l’instant */}
+           Widget de chat affiché partout pour l’instant */}
           <ChatWidget />
         </div>
       </HelmetProvider>

@@ -44,7 +44,6 @@ module.exports = (sequelize, DataTypes) => {
 
 // Associations
 Question.associate = (models) => {
-
   Question.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
 };
 return Question;

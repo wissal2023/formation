@@ -4,10 +4,8 @@ import SEO from '../components/SEO';
 
 const StudentAttempt = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Student Attempt'} />
+      
          <StudentAttemptMain />
-      </Wrapper>
    );
 };
 

@@ -19537,6 +19537,7 @@ blockquote > p {
 .instructor__cover-info-left .thumb {
   width: 120px;
   height: 120px;
+  
 }
 .instructor__cover-info-left .thumb img {
   border-radius: 50%;
@@ -19546,6 +19547,30 @@ blockquote > p {
   padding: 4px;
 }
 .instructor__cover-info-left button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  height: 40px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tg-common-color-white);
+  border: none;
+  color: var(--tg-theme-primary);
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -o-border-radius: 50%;
+  -ms-border-radius: 50%;
+  border-radius: 50%;
+  font-size: 14px;
+  padding: 0;
+}
+.instructor__cover-info-left .upload-label {
   position: absolute;
   right: 0;
   bottom: 0;

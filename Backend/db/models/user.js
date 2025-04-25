@@ -55,7 +55,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true
     } 
-  }, {
+  },
+   {
     timestamps: true,
     paranoid: true,
     freezeTableName: true, 

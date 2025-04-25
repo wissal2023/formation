@@ -6,12 +6,8 @@ import InstructorQuizArea from './InstructorQuizArea'
 const InstructorQuiz = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+         
             <InstructorQuizArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

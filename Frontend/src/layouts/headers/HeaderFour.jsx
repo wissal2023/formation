@@ -21,8 +21,9 @@ const HeaderFour = () => {
    const handleLogout = async (e) => {
       e.preventDefault(); // IMPORTANT: Prevent <a> default behavior
       try {
-         await axios.post('http://localhost:3000/users/logout', {}, { withCredentials: true });
-         navigate('/login');
+         await axios.post(`${import.meta.env.VITE_API_URL}/users/logout`, 
+            {}, { withCredentials: true });
+         navigate('/signin');
       } catch (error) {
          console.error('Erreur lors de la déconnexion :', error);
       }

@@ -6,12 +6,7 @@ import StudentProfileArea from './StudentProfileArea'
 const StudentProfile = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
             <StudentProfileArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

@@ -4,10 +4,8 @@ import SEO from '../components/SEO';
 
 const CheckOut = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro CheckOut'} />
+      
          <CheckOutMain />
-      </Wrapper>
    );
 };
 

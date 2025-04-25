@@ -14,7 +14,7 @@ const sidebar_data = [
          },
          {
             id: 2,
-            link: "/instructor-profile",
+            link: "/listUsers",
             icon: "skillgro-avatar",
             title: "Users",
          },

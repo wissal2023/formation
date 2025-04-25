@@ -6,12 +6,8 @@ import InstructorEnrolledCourseArea from '../instructor-enrolled-courses/Instruc
 const InstructorCourses = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+        
             <InstructorEnrolledCourseArea style={true} />
-         </main>
-         <FooterOne />
       </>
    )
 }
