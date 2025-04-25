@@ -20,6 +20,9 @@ import StudentDashboard from '../dashboard/student-dashboard/student-dashboard/S
 import StudentProfile from '../pages/StudentProfile';
 import StudentWishlist from '../pages/StudentWishlist';
 import StudentSetting from '../pages/StudentSetting';
+import NotFound from '../pages/NotFound';
+
+// ...autres imports...
 
 import OTPVerification from '../pages/OtpVerification';
 import ResetPassword from '../pages/ResetPassword';
