@@ -13,34 +13,39 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     allowNull: false
   },
-  questionId: {
+  quizId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Questions', 
+      model: 'Quiz', 
       key: 'id'
     },
-    onDelete: 'CASCADE'
-  },
-  createdAt: {
-    allowNull: false,
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  },
-  updatedAt: {
-    allowNull: false,
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  }
-}, {
-  paranoid: true, // Enables soft delete
-  freezeTableName: true
-});
+    multipleChoice: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    quizId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Quiz',
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
+    }
+  }, 
+    freezeTableName: true, 
+  });
+
+  Question.associate = (models) => {
+    Question.hasMany(models.Reponse, { foreignKey: 'questId' });
+  };
+
 
 // Associations
 Question.associate = (models) => {
-  Question.hasMany(models.Quiz, { foreignKey: 'questionId', onDelete: 'CASCADE' });
+  Question.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
 };
-
 return Question;
 };
+

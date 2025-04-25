@@ -1,5 +1,5 @@
 // // ../components/inner-pages/login/LoginArea.jsx
-import LoginForm from "../../../forms/LoginForm"
+import LoginForm from "../../../forms/SignIn"
 
 const LoginArea = () => {
    return (

@@ -10,7 +10,7 @@ const InstructorProfileArea = () => {
             <div className="dashboard__inner-wrap">
                <div className="row">
                   <DashboardSidebar />
-                  <InstructorProfileContent />
+                 
                </div>
             </div>
          </div>

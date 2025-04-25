@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    content: {  // Added field for storing content of the note
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
     formationId: {
       type: DataTypes.INTEGER,
       allowNull: false,

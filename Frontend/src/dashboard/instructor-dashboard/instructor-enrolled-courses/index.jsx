@@ -5,14 +5,7 @@ import InstructorEnrolledCourseArea from './InstructorEnrolledCourseArea'
 
 const InstructorEnrolledCourse = () => {
    return (
-      <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
             <InstructorEnrolledCourseArea />
-         </main>
-         <FooterOne />
-      </>
    )
 }
 

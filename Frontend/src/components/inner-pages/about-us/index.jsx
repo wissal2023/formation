@@ -11,17 +11,13 @@ import Testimonial from "./Testimonial"
 const AboutUs = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <BreadcrumbOne title="Who We Are" sub_title="About Us" />
+        
             <About />
-            <BrandOne />
-            <Feature style={true} />
+          
             <Newsletter />
             <Features />
             <Testimonial />
-         </main>
-         <FooterOne style={false} style_2={false} />
+        
       </>
    )
 }

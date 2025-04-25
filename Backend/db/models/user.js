@@ -54,8 +54,9 @@ module.exports = (sequelize, DataTypes) => {
     derConnx: {
       type: DataTypes.DATE,
       allowNull: true
-    }  
-  }, {
+    } 
+  },
+   {
     timestamps: true,
     paranoid: true,
     freezeTableName: true, 

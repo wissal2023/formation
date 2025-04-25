@@ -4,10 +4,8 @@ import SEO from '../components/SEO';
 
 const StudentHistory = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Student History'} />
+      
          <StudentHistoryMain />
-      </Wrapper>
    );
 };
 

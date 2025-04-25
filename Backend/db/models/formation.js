@@ -1,4 +1,3 @@
-
 const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -46,5 +45,5 @@ module.exports = (sequelize, DataTypes) => {
     Formation.hasMany(models.Quiz, { foreignKey: 'formationId', onDelete: 'CASCADE' });
   };
 
-  return Formation;
+  return Formation;
 };

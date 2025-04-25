@@ -4,10 +4,8 @@ import SEO from '../components/SEO';
 
 const Cart = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Cart'} />
+      
          <CartMain />
-      </Wrapper>
    );
 };
 
