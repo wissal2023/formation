@@ -47,11 +47,7 @@ import StudentAttempt from '../pages/StudentAttempt';
 import StudentHistory from '../pages/StudentHistory';
 import StudentSetting from '../pages/StudentSetting';
 import NotFound from '../pages/NotFound';
-import PrivateRoute from '../PrivateRoute';
-import SignIn from '../SignIn';
-import ResetPassword from '../ResetPassword';
-import OTPVerification from '../OTPVerification';
-import QrCodeDisplay from '../QrCodeDisplay';
+
 // ...autres imports...
 
 import Login from '../pages/Login';
