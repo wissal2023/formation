@@ -15,9 +15,7 @@ function App() {
           <AppNavigation />
 
           {/* Section principale */}
-          <main>
-            <h1>Bienvenue sur notre plateforme!</h1>
-          </main>
+
 
           {/* Widget de chat affiché partout pour l’instant */}
           <ChatWidget />

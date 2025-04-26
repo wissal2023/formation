@@ -53,7 +53,6 @@ import ResetPassword from '../ResetPassword';
 import OTPVerification from '../OTPVerification';
 import QrCodeDisplay from '../QrCodeDisplay';
 // ...autres imports...
-
 import Login from '../pages/Login';
 import InstructorDashboard from '../pages/InstructorDashboard';
 import InstructorProfile from '../pages/InstructorProfile';
