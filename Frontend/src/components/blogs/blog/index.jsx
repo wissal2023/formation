@@ -3,7 +3,6 @@ import HeaderOne from "../../../layouts/headers/HeaderOne"
 import BreadcrumbOne from "../../common/breadcrumb/BreadcrumbOne"
 import BlogArea from "./BlogArea"
 
-const Login1 = () => {
 const Blog = () => {
    return (
       <>
@@ -16,5 +15,5 @@ const Blog = () => {
       </>
    )
 }
-}
-export default Login1;
+
+export default Blog

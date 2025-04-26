@@ -4,10 +4,8 @@ import SEO from '../components/SEO';
 
 const EventDetails = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Event Details'} />
-         <EventDetailsMain />
-      </Wrapper>
+     <EventDetailsMain />
+      
    );
 };
 

@@ -29,7 +29,7 @@ const FormationForm = ({ closeModal  }) => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:3000/formations/AddFormation', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/formations/AddFormation`, {
         formationData: {
           titre: data.titre,
           thematique: data.thematique,

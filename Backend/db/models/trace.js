@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    action: {  // Action type (e.g., 'create', 'update', 'delete')
+    action: {  // Action type ('create', 'update', 'archive')
       type: DataTypes.STRING,
       allowNull: false
     },
-    model: {  // Model name (e.g., 'Formation', 'FormationDetails')
+    model: {    // Model name (e.g., 'Formation', 'FormationDetails')
       type: DataTypes.STRING,
       allowNull: false
     },

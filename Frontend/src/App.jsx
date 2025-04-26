@@ -7,9 +7,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import ChatWidget from './components/chat/ChatWidget';
 
 function App() {
+
   return (
     <Provider store={store}>
-      <HelmetProvider>
+      <HelmetProvider>       
         <div className="main-page-wrapper">
           <ToastContainer />
           <AppNavigation />
@@ -19,6 +20,8 @@ function App() {
 
           {/* Widget de chat affiché partout pour l’instant */}
           <ChatWidget />
+            <AppNavigation />
+            
         </div>
       </HelmetProvider>
     </Provider>

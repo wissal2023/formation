@@ -1,14 +1,15 @@
 // pages/Login.jsx
-import Wrapper from '../layouts/Wrapper';
-import ChangePasswordMain from '../components/inner-pages/change-password';
-import SEO from '../components/SEO';
+
+import LoginLayout from "../layouts/LoginLayout";
+import ChangePasswordArea from "../dashboard/instructor-dashboard/instructor-setting/ChangePassword";
+
 
 const ChangePassword = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'chanange password page'} />
-         <ChangePasswordMain />
-      </Wrapper>
+
+      <LoginLayout pageTitle="chang password page">
+         <ChangePasswordArea />
+      </LoginLayout>
    );
 };
 

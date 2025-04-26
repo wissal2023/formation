@@ -4,17 +4,9 @@ import InstructorHistoryContent from "./InstructorHistoryContent"
 
 const InstructorHistoryArea = () => {
   return (
-    <section className="dashboard__area section-pb-120">
-      <div className="container">
-        <DashboardBanner />
-        <div className="dashboard__inner-wrap">
-          <div className="row">
-            <DashboardSidebar />
+    
             <InstructorHistoryContent />
-          </div>
-        </div>
-      </div>
-    </section>
+        
   )
 }
 

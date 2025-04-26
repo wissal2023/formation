@@ -8,13 +8,13 @@ const sidebar_data = [
       sidebar_details: [
          {
             id: 1,
-            link: "/instructor-dashboard",
+            link: "/dashboard",
             icon: "fas fa-home",
             title: "Dashboard",
          },
          {
             id: 2,
-            link: "/instructor-profile",
+            link: "/listUsers",
             icon: "skillgro-avatar",
             title: "Users",
          },

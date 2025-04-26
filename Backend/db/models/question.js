@@ -13,28 +13,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    questionId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Questions',
-        key: 'id',
-      },
+
+  quizId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Quiz', 
+      key: 'id'
     },
     multipleChoice: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    quizId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Quiz',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
-    }
-  }, {
+  }, 
     freezeTableName: true, 
   });
 

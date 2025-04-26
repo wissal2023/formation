@@ -1,7 +1,29 @@
-"use client";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const InstructorSettingProfile = ({ style }) => {
+const InstructorSettingProfile = ({ userId , style }) => {
+
+   const [user, setUser] = useState(null);
+   
+   useEffect(() => {
+      if (userId) {
+        axios
+          .get(`${import.meta.env.VITE_API_URL}/users/getById/${userId}`, {
+            withCredentials: true,
+          })
+          .then((res) => {
+            setUser(res.data);
+          })
+          .catch((err) => {
+            console.error("Error loading user", err);
+          });
+      }
+    }, [userId]);
+  
+    if (!user) return <p>Loading...</p>;
+
+
    return (
       <>
          {style ? (
@@ -12,17 +34,12 @@ const InstructorSettingProfile = ({ style }) => {
                <div className="instructor__cover-info">
                   <div className="instructor__cover-info-left">
                      <div className="thumb">
-                        <img src="/assets/img/courses/details_instructors01.jpg" alt="img" />
+                        <img src="/assets/img/avatar-icon.png" alt="img" />
                      </div>
                      <button title="Upload Photo">
                         <i className="fas fa-camera"></i>
                      </button>
-                  </div>
-                  <div className="instructor__cover-info-right">
-                     <Link to="#" className="btn btn-two arrow-btn">
-                        Edit Cover Photo
-                     </Link>
-                  </div>
+                  </div>                  
                </div>
             </div>
          ) : (
