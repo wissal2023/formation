@@ -10,6 +10,8 @@ const InstructorProfileContent = ({ style }) => {
                <div className="col-lg-12">
                   <div className="profile__content-wrap">
                      <ul className="list-wrap">
+                     <li><span>ilkheeee</span> February 28, 2026 8</li>
+
                         <li><span>Registration Date</span> February 28, 2026 8</li>
                         <li><span>First Name</span> {style ? "Emily" : "John"} </li>
                         <li><span>Last Name</span>{style ? "Hannah" : "Doe"} </li>
