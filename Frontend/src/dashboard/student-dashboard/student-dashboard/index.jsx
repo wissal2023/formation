@@ -8,7 +8,6 @@ const StudentDashboard = () => {
    return (
       <>
 
-
          <DashboardLayout>
             <StudentDashboardArea />
          </DashboardLayout>

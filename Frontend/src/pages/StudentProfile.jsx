@@ -1,10 +1,11 @@
-import Wrapper from '../layouts/Wrapper';
-import StudentProfileMain from '../dashboard/student-dashboard/student-profile';
-import SEO from '../components/SEO';
+import InstructorProfileContent from '../dashboard/instructor-dashboard/profile/InstructorProfileContent';
+import DashboardLayoutStudent from '../layouts/DashboardLayoutStudent';
 
 const StudentProfile = () => {
    return (
-         <StudentProfileMain />
+      <DashboardLayoutStudent pageTitle="edit profile">
+         <InstructorProfileContent />
+      </DashboardLayoutStudent>
    );
 };
 
