@@ -12,6 +12,13 @@ function App() {
       <HelmetProvider>       
         <div className="main-page-wrapper">
           <ToastContainer />
+          <AppNavigation />
+
+          {/* Section principale */}
+
+
+          {/* Widget de chat affiché partout pour l’instant */}
+          <ChatWidget />
             <AppNavigation />
             
         </div>

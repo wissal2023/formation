@@ -1,4 +1,6 @@
+import { color } from "framer-motion";
 import React from "react";
+import { TbBackground } from "react-icons/tb";
 import { Link } from "react-router-dom";
 
 const sidebar_data = [
@@ -74,6 +76,7 @@ const sidebar_data = [
 const DashboardSidebarTwo = () => {
    return (
       <div className="col-lg-3">
+         <h1 style={{color : "red" }}>hello</h1>
          <div className="dashboard__sidebar-wrap">
             {sidebar_data.map((item) => (
                <React.Fragment key={item.id}>

@@ -7,7 +7,6 @@ import StudentDashboardArea from './StudentDashboardArea'
 const StudentDashboard = () => {
    return (
       <>
-
             <StudentDashboardArea />
       </>
 
