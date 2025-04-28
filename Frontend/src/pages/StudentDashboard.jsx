@@ -1,13 +1,12 @@
-import Wrapper from '../layouts/Wrapper';
-import StudentDashboardMain from '../dashboard/student-dashboard/student-dashboard';
-import SEO from '../components/SEO';
+import StudentDashboardArea from '../dashboard/student-dashboard/student-dashboard/StudentDashboardArea';
+import DashboardLayoutStudent from '../layouts/DashboardLayoutStudent';
 
 const StudentDashboard = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Student Dashboard'} />
-         <StudentDashboardMain />
-      </Wrapper>
+      <DashboardLayoutStudent pageTitle="apprenant Dashboard">
+       {/*   <StudentDashboardArea /> */}
+      </DashboardLayoutStudent>
+     
    );
 };
 

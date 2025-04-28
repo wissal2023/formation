@@ -2,13 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const authenticateToken = require('../utils/authMiddleware');
-const { sendOtp, verifyOtp, generateSecret, verifyGoogleOtp, getOtpStatus} = require('../controllers/otpController');
+const { sendOtp, verifyOtp, generateSecret, verifyTotp} = require('../controllers/otpController');
 
 router.post('/generate-otp', sendOtp);
 router.post('/verifyOtp', verifyOtp);
 router.get('/generate-secret', authenticateToken, generateSecret); 
+router.post('/verifyTotp', verifyTotp);
 
-router.post('/verify-google-otp', verifyGoogleOtp);
-router.get('/status', getOtpStatus);
+//router.post('/verify-google-otp', verifyGoogleOtp);
+//router.get('/status', getOtpStatus);
 
 module.exports = router;

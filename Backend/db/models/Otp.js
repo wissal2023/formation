@@ -6,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     otp: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     secret: {
       type: DataTypes.STRING,  // Add secret to store the OTP secret (base32)
-      allowNull: false,
+      allowNull: true,
     },
     verified: {
       type: DataTypes.BOOLEAN,  // Add verified flag to track OTP verification status
