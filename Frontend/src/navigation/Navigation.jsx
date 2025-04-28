@@ -16,11 +16,12 @@ import InstructorEnrollCourse from '../pages/InstructorEnrolledCourses';
 import InstructorReview from '../pages/InstructorReview';
 import InstructorHistory from '../pages/InstructorHistory';
 import InstructorAttempt from '../pages/InstructorAttempt';
-import StudentDashboard from '../dashboard/student-dashboard/student-dashboard/StudentDashboardArea';
+//import StudentDashboard from '../dashboard/student-dashboard/student-dashboard/StudentDashboardArea';
 import StudentProfile from '../pages/StudentProfile';
 import StudentWishlist from '../pages/StudentWishlist';
 import StudentSetting from '../pages/StudentSetting';
 
+//*********** ons************** */
 import OTPVerification from '../pages/OtpVerification';
 import ResetPassword from '../pages/ResetPassword';
 import QrCodeDisplay from '../pages/QrCodeVerification';
@@ -28,8 +29,9 @@ import SignIn from '../pages/Login';
 
 
 //*********** WISSAL************** */
-import Login from '../pages/Login';
 import InstructorDashboard from '../pages/InstructorDashboard';
+import StudentDashboard from '../pages/StudentDashboard';
+
 import InstructorProfile from '../pages/InstructorProfile';
 import ChangePassword from '../pages/ChangePassword';
 import WelcomePage from '../pages/WelcomePage'
@@ -42,31 +44,29 @@ const AppNavigation = () => {
   return (
     <Router>
       <Routes>  
-         {/* public
-        <Route path="/login" element={<Login />} />
-        
-        */} 
+         {/* public */} 
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/ResetPassword" element={<ResetPassword />} />
-        <Route path="/otpverification" element={<OTPVerification />} />        
+        <Route path="/otpverification" element={<OTPVerification />}/>        
+        
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
-
+        
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/registration" element={<Registration />} />
-        <Route path="/dashboard" element={<InstructorDashboard />} />        
         <Route path="/formations" element={<Course />} />  
         <Route path="/listUsers" element={<InstructorProfile />} />
-        <Route path="/editUser/:id" element={<UserSetting />} /> 
-
-
+        <Route path="/editUser/:id" element={<UserSetting />} />           
             
-            
+        <Route path="/dashboard" element={<InstructorDashboard />} />        
+
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/profile" element={<StudentProfile />} />
+
            
 
         {/*ROUTES TO BE USED */}
-        <Route path="/student-setting" element={<StudentSetting />} />
-        <Route path="/instructor-setting" element={<StudentProfile />} />
+        
         <Route path="/instructor-attempts" element={<InstructorAttempt />} /> 
         <Route path="/course-details" element={<CourseDetails />} />
         <Route path="/lesson" element={<Lesson />} />
@@ -79,7 +79,6 @@ const AppNavigation = () => {
         <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
         <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table */}
         <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table */}
-        <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-wishlist" element={<StudentWishlist />} />
         <Route path="/about-us" element={<About />} />
         <Route path="*" element={<NotFound />} />

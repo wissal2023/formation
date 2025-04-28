@@ -5,9 +5,8 @@ import InstructorHome from '../dashboard/instructor-dashboard/dashboard-home/Das
 const InstructorDashboard = () => {
    
    return (
-      <DashboardLayout pageTitle="Formateur Dashboard">
-         <InstructorHome />
-        
+      <DashboardLayout pageTitle="Dashboard">
+         <InstructorHome/>
       </DashboardLayout>
    );
 };

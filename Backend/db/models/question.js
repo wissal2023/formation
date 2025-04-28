@@ -24,15 +24,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    quizId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Quiz',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
-    }
   }, 
     freezeTableName: true, 
   });

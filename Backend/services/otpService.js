@@ -7,26 +7,9 @@ const generateOtp = () => {
     return otp;
 };
 
-// Vérifier un OTP
-const verifyOtp = (email, otp) => {
-    const otpData = otpDatabase[email];
-    if (otpData && otpData.otp === otp) {
-        const currentTime = Date.now();
-        const timeDiff = currentTime - otpData.timestamp;
-        // Si l'OTP est expiré (10 minutes max)
-        if (timeDiff > 10 * 60 * 1000) {
-            delete otpDatabase[email]; // Supprimer l'OTP expiré
-            return false; // OTP expiré
-        }
-        delete otpDatabase[email]; // Supprimer l'OTP après la vérification
-        return true; // OTP validé
-    }
-    return false; // OTP invalide
-};
 
 module.exports = {
-    generateOtp,
-    verifyOtp
+    generateOtp
 
 };
 

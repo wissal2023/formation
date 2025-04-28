@@ -4,10 +4,6 @@ const { Otp } = require('../db/models');
 
 const isValidOtp = async (email, providedOtp) => {
   const otpEntry = await Otp.findOne({ where: { email } });
-
-  console.log('OTP from DB:', otpEntry?.otp);
-  console.log('OTP user provided:', providedOtp);
-
   if (!otpEntry) return false;
 
   const otpValid = await bcrypt.compare(providedOtp.toString(), otpEntry.otp);
@@ -35,7 +31,30 @@ const deleteOtp = async (email) => {
   await Otp.destroy({ where: { email } });
 };
 
+const saveSecretForUser = async (email, secret) => {
+  try {
+    const otpEntry = await Otp.findOne({ where: { email } });
+    if (otpEntry) {
+      otpEntry.secret = secret;  // Use the generated secret here
+      await otpEntry.save();
+    } else {
+      // Save the new OTP entry with the generated secret
+      await Otp.create({
+        email: email,
+        secret: secret,  // Use the generated secret here
+        otp: '', // Empty OTP value for now, this will be updated later
+        verified: false,
+      });
+    }
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde du secret:', error);
+    throw error;
+  }
+};
+
+
 module.exports = {
-  isValidOtp, 
-  deleteOtp
+  isValidOtp,
+  deleteOtp,
+  saveSecretForUser,
 };
