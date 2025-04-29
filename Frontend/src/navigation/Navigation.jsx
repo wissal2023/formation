@@ -22,10 +22,14 @@ import StudentWishlist from '../pages/StudentWishlist';
 import StudentSetting from '../pages/StudentSetting';
 
 //*********** ons************** */
-import OTPVerification from '../pages/OtpVerification';
+
 import ResetPassword from '../pages/ResetPassword';
 import QrCodeDisplay from '../pages/QrCodeVerification';
 import SignIn from '../pages/Login';
+import OTPVerification from '../pages/OtpVerification';
+import TotpVerif from '../pages/TotpVerif';
+
+// Exemple de routing
 
 
 //*********** WISSAL************** */
@@ -47,11 +51,13 @@ const AppNavigation = () => {
          {/* public */} 
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
+
         <Route path="/ResetPassword" element={<ResetPassword />} />
-        <Route path="/otpverification" element={<OTPVerification />}/>        
-        
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
-        
+        <Route path="/verify-qrcode" element={<TotpVerif />} />
+
+        <Route path="/otpverification" element={<OTPVerification />}/> 
+
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/formations" element={<Course />} />  

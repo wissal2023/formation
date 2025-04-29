@@ -18,7 +18,7 @@ const InstructorSettingPassword = () => {
       }
 
       try {
-         const response = await fetch('http://localhost:4000/users/change-password', {
+        
          const response = await fetch(`${import.meta.env.VITE_API_URL}/users/change-password`, {
             method: 'POST',
             headers: {               

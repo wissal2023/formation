@@ -2,6 +2,17 @@
 const bcrypt = require('bcrypt');
 const { Otp } = require('../db/models');
 
+
+const getSecretForUser = async (email) => {
+  const otpEntry = await Otp.findOne({
+    where: { email },
+    attributes: ['secret']
+  });
+  console.log("🔎 Récupération du secret dans otpModel pour :", email);
+  return otpEntry ? otpEntry.secret : null;
+};
+
+
 const isValidOtp = async (email, providedOtp) => {
   const otpEntry = await Otp.findOne({ where: { email } });
   if (!otpEntry) return false;
@@ -30,7 +41,6 @@ const deleteOtp = async (email) => {
   console.log("Deleting OTP for email:", email); // Log when OTP is deleted
   await Otp.destroy({ where: { email } });
 };
-
 const saveSecretForUser = async (email, secret) => {
   try {
     const otpEntry = await Otp.findOne({ where: { email } });
@@ -57,4 +67,5 @@ module.exports = {
   isValidOtp,
   deleteOtp,
   saveSecretForUser,
+  getSecretForUser
 };

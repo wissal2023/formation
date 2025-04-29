@@ -18,7 +18,7 @@ function App() {
 
 
           {/* Widget de chat affiché partout pour l’instant */}
-          <ChatWidget />
+      
             <AppNavigation />
             
         </div>
