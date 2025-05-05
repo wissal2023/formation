@@ -9,12 +9,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     secret: {
-      type: DataTypes.STRING,  // Add secret to store the OTP secret (base32)
+      type: DataTypes.STRING,  // base32 secret for TOTP
       allowNull: true,
     },
     verified: {
-      type: DataTypes.BOOLEAN,  // Add verified flag to track OTP verification status
-      defaultValue: false,  // Default to false when a new OTP is created
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     created_at: {
       type: DataTypes.DATE,
@@ -22,8 +22,10 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     tableName: 'Otps',
-    timestamps: false,  // If you don't want Sequelize to automatically manage createdAt and updatedAt columns
+    timestamps: false,
   });
+
+
 
   return Otp;
 };
