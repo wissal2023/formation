@@ -20,12 +20,13 @@ CORS(app)
 
 # Liste des fichiers PDF à utiliser (répertoire relatif)
 pdf_files = [
-    "./TR__Formations_EKIP_/TW_Formation GA EKIP360 - V2 (1).pdf",  
+    "./TR__Formations_EKIP_/TW_Formation GA EKIP360 - V2 (1).pdf",
     "./TR__Formations_EKIP_/TW_facturation_EKIP360.pdf",
     "./TR__Formations_EKIP_/Documentation paramétrage de prestation (1).pdf",
     "./TR__Formations_EKIP_/TW Formation-Prestation_V2 (1).pdf",
-    "./TR__Formations_EKIP_/TW-Formation Métiers (1).pdf"
 ]
+
+
 
 # Chat system prompt
 system_prompt = """
@@ -147,6 +148,10 @@ def ask_question():
     return jsonify({'answer': response_text})
 
 if __name__ == '__main__':
+    # 🆕 Ajouter cette partie temporaire pour regénérer toute la base
+    for pdf_file in pdf_files:
+        splits = process_document(pdf_file)
+        add_to_vector_collection(splits, os.path.basename(pdf_file))
+    
     app.run(debug=True, host="0.0.0.0", port=5000)
-
 
