@@ -48,65 +48,8 @@ const LoginForm = () => {
       } catch (error) {
          console.error('Login error:', error);
          toast.error('Login failed. Please check your credentials.', { position: 'top-center' });
-import { useNavigate } from 'react-router-dom';
-import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
-
-
-const schema = yup.object({
-  email: yup.string().required("Email requis").email("Format invalide"),
-  password: yup.string().required("Mot de passe requis"),
-}).required();
-
-const Form = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema)
-  });
-
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(prev => !prev);
-  };
-
-  const onSubmit = async (data) => {
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, {
-        email: data.email,
-        mdp: data.password,
-      }, { withCredentials: true });
-
-      if (response.status === 200) {
-        localStorage.setItem('username', response.data.username);
-        localStorage.setItem('roleUtilisateur', response.data.roleUtilisateur);
-
-        toast.success("Connexion réussie", { position: 'top-center' });
-
-        if (response.data.mustUpdatePassword) {
-          navigate('/change-password');
-          return;
-        }
-
-        navigate('/welcome');
-      }
-
-    } catch (error) {
-      console.error('Erreur login:', error);
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message, { position: 'top-center' });
-      } else {
-        toast.error("Erreur serveur ou réseau.", { position: 'top-center' });
       }
     }
-
-    reset();
-  };
-
   return (
     <div className="login-wrapper">
       <div className="login-container">

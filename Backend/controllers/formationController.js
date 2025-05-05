@@ -212,8 +212,9 @@ const deleteFormation = async (req, res) => {
     res.status(500).json({ message: 'Error deleting formation, storing in Historisation, or tracing', error });
   }
 };
-
-exports.getCompletedFormations = async (req, res) => {
+//app.use('/formations', formationRoutes);
+//router.get('/completed', authenticateToken, getCompletedFormations);
+const getCompletedFormations = async (req, res) => {
   try {
     const userId = req.user.id; // Get user ID from the authenticated token
     console.log("User ID:", userId);
@@ -243,5 +244,5 @@ exports.getCompletedFormations = async (req, res) => {
 };
 
 module.exports = {
-  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation
+  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation, getCompletedFormations
 };

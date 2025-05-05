@@ -12,10 +12,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
    
    const [questions, setQuestions] = useState([]);
    const [question, setQuestion] = useState("");
-   const [reponses, setReponses] = useState([{ text: "", points: 1 },
-                                             { text: "", points: 1 }, 
-                                             { text: "", points: 1 }, 
-                                             { text: "", points: 1 }]);
+   const [reponses, setReponses] = useState([{ text: "", points: 1 },{ text: "", points: 1 }, { text: "", points: 1 }, { text: "", points: 1 }]);
    const [correctAnswers, setCorrectAnswers] = useState([]);
    const [optionQuet, setOptionQuet] = useState("Multiple_choice");
   
@@ -51,11 +48,12 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     };
     
 
-   const handleReponseChange = (index, value) => {
+    const handleReponseChange = (index, newValue) => {
       const newReponses = [...reponses];
-      newReponses[index] = value;
+      newReponses[index] = newValue;
       setReponses(newReponses);
-   };
+    };
+    
 
    const handleSubmit = async (e) => {
       e.preventDefault();
@@ -95,17 +93,25 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
                {optionQuet === "Multiple_choice" && (
                <div className="form-grp">
                   <label>Correct Answers</label>
-                  {reponses.map((rep, idx) => (
-                     <div key={idx}>
-                     <input
-                        type="checkbox"
-                        value={rep}
-                        checked={correctAnswers.includes(rep)}
-                        onChange={() => handleCorrectChange(rep)}
-                     />
-                     {rep}
+                  {reponses.map((r, i) => (
+                     <div key={i}>
+                        <input
+                           type="text"
+                           value={r.text}
+                           onChange={(e) =>
+                           handleReponseChange(i, { ...r, text: e.target.value })
+                           }
+                        />
+                        <input
+                           type="number"
+                           value={r.points}
+                           onChange={(e) =>
+                           handleReponseChange(i, { ...r, points: parseInt(e.target.value) })
+                           }
+                        />
                      </div>
-                  ))}
+                     ))}
+
                </div>
                )}
 

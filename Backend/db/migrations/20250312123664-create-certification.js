@@ -38,15 +38,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      quizId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Quiz', 
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
-      }
     });
   },
   async down(queryInterface, Sequelize) {
