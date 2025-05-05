@@ -9,8 +9,8 @@
 /node_modules/
 **/myenv/
 myenv/
-
-
+Backend/node_modules/
+Frontend/node_modules/
 __pycache__/
 *.pyc
 
