@@ -28,7 +28,6 @@ const RegistrationForm = () => {
       try {
        
         // Send data without the password field (mdp is generated on the backend)
-        const response = await axios.post('http://localhost:4000/users/register', {
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/register`, {
           username: data.username,
           email: data.email,

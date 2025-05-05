@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     thematique: { type: DataTypes.STRING },
     verouillee: { type: DataTypes.BOOLEAN, defaultValue: false },
     typeFlag: { type: DataTypes.ENUM('obligatoire', 'facultat'), allowNull: false,},
-    status: { type: DataTypes.ENUM('enrolled', 'in_progress', 'completed'), allowNull: false,},
+    status: { type: DataTypes.ENUM('created','enrolled', 'in_progress', 'completed'), allowNull: false,},
     userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'User', key: 'id'}},
     createdAt: {
       allowNull: false,

@@ -7,8 +7,7 @@ const { sendAccountEmail } = require('../utils/emailService');
 const path = require('path');
 const fs = require('fs');
 const { User, Trace } = db;
-
-
+const updateUserStreak = require('../services/streak');
 const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
@@ -31,11 +30,17 @@ const loginUserController = async (req, res) => {
     if (!isMatch) {
         return res.status(400).json({ message: 'Mot de passe incorrect' });
     }
-
+    //await updateStreak(user.id);
+    try {
+      await updateUserStreak(user.id);
+    } catch (streakErr) {
+      console.error('Streak error:', streakErr.message);
+      // You can decide if you want to block login or just log the error
+    }
       // Update derConnx
     user.derConnx = new Date();
     await user.save();
-
+    
     // Add Trace
     await Trace.create({
         userId: user.id,
@@ -48,6 +53,7 @@ const loginUserController = async (req, res) => {
         }
       });
 
+      
     // Generate JWT token
     const token = jwt.sign(
         { id: user.id, 
@@ -63,10 +69,10 @@ const loginUserController = async (req, res) => {
     res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',
-        maxAge: 3600000,
+        maxAge: 32400000,
         sameSite: 'Lax',
     });
-
+    
     res.status(200).json({
         message: 'Connexion réussie.',
         userId: user.id,
@@ -77,6 +83,7 @@ const loginUserController = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('Login Error:', error);
       res.status(500).json({
           message: 'Erreur lors de la connexion.',
           error: error.message,
