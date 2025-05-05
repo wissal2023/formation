@@ -11,4 +11,10 @@ router.get('/:id', authenticateToken, getFormationById);
 router.put('/:id', updateFormation);
 router.delete('/:id', deleteFormation);
 
+
+router.get('/completed', authenticateToken, formationController.getCompletedFormations);
+
+
+
+
 module.exports = router;

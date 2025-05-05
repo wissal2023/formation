@@ -65,12 +65,12 @@ app.use('/documents', docRoute );
 app.use('/quizzes', quizRoutes);
 
 app.use('/certifications', certificationRoutes);
-app.use('/daily-streak', dailyStreakRoutes);
+app.use('/streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/notedigitales', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
 app.use('/quizprogs', quizProgRoutes);
-app.use('/api/recompenses', recompenseRoutes);
+app.use('/recompenses', recompenseRoutes);
 app.use('/reponses', reponseRoutes);
 app.use('/videos', videoRoutes);
 app.use('/helps', helpRoutes);

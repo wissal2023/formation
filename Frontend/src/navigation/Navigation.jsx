@@ -27,7 +27,9 @@ const AppNavigation = () => {
          {/* i need to be logged in to navigate to all the routes */} 
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/ResetPassword" element={<ResetPassword />} />
+          
         <Route path="/otpverification" element={<OTPVerification />}/>        
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
         <Route path="/welcome" element={<WelcomePage />} />
@@ -59,9 +61,17 @@ const AppNavigation = () => {
         <Route path="/blog-details" element={<BlogDetails />} />{/* evla rating commentaire  
         <Route path="/contact" element={<Contact />} /> {/* note dig  
         <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
+
         <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table 
         <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
+
+        <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table
+        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
+
+        {/*<Route path="/student-dashboard" element={<StudentDashboard />} />
+        {/*<Route path="/student-wishlist" element={<StudentWishlist />} />
         <Route path="/student-wishlist" element={<StudentWishlist />} />
+
         <Route path="/about-us" element={<About />} />
         */}
         <Route path="*" element={<NotFound />} />

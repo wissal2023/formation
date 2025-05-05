@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW
     }
   }, {
+    tableName: 'DailyStreaks',  
     paranoid: true,
     freezeTableName: true
   });
