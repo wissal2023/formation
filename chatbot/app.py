@@ -13,12 +13,13 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS  # Importez CORS
 
 
+# Creates a Flask web server and enables CORS so it can be accessed from frontend
 app = Flask(__name__)
 
 CORS(app)
 
 
-# Liste des fichiers PDF à utiliser (répertoire relatif)
+# list of PDF training documents that will be used to build the knowledge base.
 pdf_files = [
     "./TR__Formations_EKIP_/TW_Formation GA EKIP360 - V2 (1).pdf",  
     "./TR__Formations_EKIP_/TW_facturation_EKIP360.pdf",
@@ -27,9 +28,10 @@ pdf_files = [
     "./TR__Formations_EKIP_/TW-Formation Métiers (1).pdf"
 ]
 
-# Chat system prompt
+# Chat system prompt :Analyzes context, and Gives structured, context-based answers only
 system_prompt = """
-You are an AI assistant tasked with providing detailed answers based solely on the given context. Your goal is to analyze the information provided and formulate a comprehensive, well-structured response to the question.
+You are an AI assistant tasked with providing detailed answers based solely on the given context. 
+Your goal is to analyze the information provided and formulate a comprehensive, well-structured response to the question.
 
 context will be passed as "Context:"
 user question will be passed as "Question:"
@@ -44,7 +46,7 @@ To answer the question:
 Important: Base your entire response solely on the information provided in the context. Do not include any external knowledge or assumptions not present in the given text.
 """
 
-# Fonction de traitement des documents et de découpe en morceaux
+# Fonction to Converts a PDF file into smaller text chunks
 def process_document(pdf_path: str) -> list[Document]:
     with open(pdf_path, "rb") as f:
         file_data = f.read()
@@ -66,7 +68,7 @@ def process_document(pdf_path: str) -> list[Document]:
     )
     return text_splitter.split_documents(docs)
 
-# Fonction pour obtenir ou créer la collection vectorielle
+# Initializes a ChromaDB vector store using an embedding function (Ollama via nomic-embed-text)
 def get_vector_collection() -> chromadb.Collection:
     ollama_ef = OllamaEmbeddingFunction(
         url="http://localhost:11434/api/embeddings",
@@ -79,7 +81,7 @@ def get_vector_collection() -> chromadb.Collection:
         metadata={"hnsw:space": "cosine"},
     )
 
-# Fonction pour ajouter les morceaux de documents à la collection vectorielle
+# Fonction that Adds processed PDF chunks to the Chroma vector database, and Each chunk is indexed with metadata and an Id
 def add_to_vector_collection(all_splits: list[Document], file_name: str):
     collection = get_vector_collection()
     documents, metadatas, ids = [], [], []
@@ -95,7 +97,7 @@ def add_to_vector_collection(all_splits: list[Document], file_name: str):
         ids=ids,
     )
 
-# Fonction pour interroger la collection vectorielle en fonction du prompt
+# Fonction that Runs a semantic similarity search based on the user’s question
 def query_collection(prompt: str, n_results: int = 10):
     collection = get_vector_collection()
     results = collection.query(query_texts=[prompt], n_results=n_results)
@@ -105,7 +107,7 @@ def query_collection(prompt: str, n_results: int = 10):
 def call_llm(context: str, prompt: str):
     response = ollama.chat(
         model="llama3.2:3b",
-        stream=True,
+        stream=True, # to fetch token-by-token 
         messages=[{"role": "system", "content": system_prompt},
                   {"role": "user", "content": f"Context: {context}, Question: {prompt}"}]
     )
@@ -117,10 +119,10 @@ def call_llm(context: str, prompt: str):
             break
     return response_text
 
-# Fonction de re-rank des documents avec un modèle CrossEncoder
+# Fonction that Uses a CrossEncoder model (ms-marco) to re-rank the top results from Chroma for better relevance
 def re_rank_cross_encoders(documents: list[str], prompt: str) -> str:
     encoder_model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
-    ranks = encoder_model.rank(prompt, documents, top_k=3)
+    ranks = encoder_model.rank(prompt, documents, top_k=5) # Picks the top 3 and concatenates their content
     relevant_text = ""
     for rank in ranks:
         relevant_text += documents[rank["corpus_id"]]

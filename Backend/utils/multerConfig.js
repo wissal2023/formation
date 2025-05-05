@@ -3,41 +3,56 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure the uploads directory exists
-const uploadDir = path.join(__dirname, '..','assets', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Create directories if they don't exist
+const userPhotoDir = path.join(__dirname, '..', 'assets', 'uploads');
+const documentDir = path.join(__dirname, '..', 'assets', 'documents');
 
-// Set up storage engine
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, uniqueSuffix + path.extname(file.originalname));
-    },
-  });
+[userPhotoDir, documentDir].forEach(dir => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+});
 
+// ---- 1. For User Images --------------------------
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, userPhotoDir),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
   // File filter to allow only images
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-  
-    if (extname && mimetype) {
-      cb(null, true);
-    } else {
-      cb(new Error('Seuls les fichiers image sont autorisés (jpg, jpeg, png, gif).'));
-    }
+  const imageFilter = (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif/;
+    const extOk = allowed.test(path.extname(file.originalname).toLowerCase());
+    const mimeOk = allowed.test(file.mimetype);
+    if (extOk && mimeOk) cb(null, true);
+    else cb(new Error('Seuls les fichiers image sont autorisés.'));
   };
   
 // Configure multer
-const upload = multer({
-    storage,
-    limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
-    fileFilter,
-  });
 
-module.exports = upload;
+const uploadImage = multer({
+  storage: imageStorage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+  fileFilter: imageFilter
+});
+
+// ---- 2. For All Files (Documents, Videos, etc.) ----
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, documentDir),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const uploadFile = multer({
+  storage: fileStorage,
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB
+});
+
+
+
+module.exports = {
+  uploadImage, // For user avatars/photos
+  uploadFile   // For documents, videos, etc.
+};

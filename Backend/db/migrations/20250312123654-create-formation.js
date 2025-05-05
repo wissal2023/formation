@@ -23,7 +23,7 @@ module.exports = {
         allowNull: false,
       },
       status: { 
-        type: Sequelize.ENUM('enrolled', 'in_progress', 'completed'), 
+        type: Sequelize.ENUM('created','enrolled', 'in_progress', 'completed'), 
         allowNull: false,
       },
       userId: { 

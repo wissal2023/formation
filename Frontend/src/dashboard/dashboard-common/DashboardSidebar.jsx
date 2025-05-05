@@ -16,19 +16,19 @@ const sidebar_data = [
             id: 2,
             link: "/listUsers",
             icon: "skillgro-avatar",
-            title: "Users",
+            title: "All Users",
          },
          {
             id: 3,
             link: "/formations",
             icon: "skillgro-book",
-            title: "Formation",
+            title: "All Formation",
          },
          {
             id: 4,
-            link: "/instructor-wishlist",
+            link: "/stepper",
             icon: "skillgro-label",
-            title: "Wishlist",
+            title: "formation stepper",
          },
          {
             id: 5,

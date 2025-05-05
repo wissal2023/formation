@@ -30,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: 'CASCADE'  
     },
-    file_data: {  
-      type: DataTypes.BLOB('long'),  
-      allowNull: true
-    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -50,7 +46,6 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     paranoid: true,  // Enables soft delete
     timestamps: true,  // Automatically adds createdAt and updatedAt timestamps
-    freezeTableName: true,  // Prevents Sequelize from pluralizing table name
   });
 
   // Associations

@@ -1,6 +1,97 @@
-const { Document, Historisation } = require('../db/models');
+// backend/controllers/docController.js:
+const path = require('path');
+const fs = require('fs');
+const { exec } = require('child_process');
 
-// Create a document
+const { Document, Trace, Historisation } = require('../db/models');
+
+const createDocument = async (req, res) => {
+  try {
+    const user = req.user;
+    const { formationDetailsId } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      console.log("no file found");
+      return res.status(400).json({ message: 'Aucun fichier téléchargé.' });
+    }
+
+    const newDocument = await Document.create({
+      filename: file.filename,
+      filetype: file.mimetype,
+      uploadedDate: new Date(),
+      formationDetailsId
+    });
+
+    await Trace.create({
+      userId: user.id,
+      model: 'Document',
+      action: `add file (${file.originalname})`,
+      data: {
+        id: newDocument.id,
+        filename: file.filename,
+        filetype: file.mimetype,
+        user: user.username || user.email ||  user.id
+      }
+    });
+
+    return res.status(201).json({ message: 'Document téléchargé avec succès.', document: newDocument });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erreur lors du téléchargement du document.', error: error.message });
+  }
+};
+//to be used for the video generator
+/* router.post('/AddDoc', authenticateToken, createDocument);
+const createDocument = async (req, res) => {
+  try {
+    const user = req.user;
+    const { formationDetailsId } = req.body;
+    const file = req.file;
+    if (!file) {
+      console.log("no file found");
+      return res.status(400).json({ message: 'Aucun fichier téléchargé.' });
+    }
+    const newDocument = await Document.create({
+      filename: file.filename,
+      filetype: file.mimetype,
+      uploadedDate: new Date(),
+      formationDetailsId
+    });
+    await Trace.create({
+      userId: user.id,
+      model: 'Document',
+      action: `add file (${file.originalname})`,
+      data: {
+        id: newDocument.id,
+        filename: file.filename,
+        filetype: file.mimetype,
+        user: user.username || user.email || user.id
+      }
+    });
+     // Step 1: Prepare paths for Python script
+     const pdfPath = path.join(__dirname, '..', 'assets', 'documents', file.filename);
+     const videoOutputPath = path.join('assets/uploads', `${file.filename}-video.mp4`);
+ 
+      // Step 2: Call the Python script
+    exec(`python python/video_generator.py "${pdfPath}" "${videoOutputPath}"`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing Python script: ${stderr}`);
+        return res.status(500).json({ message: 'Erreur lors de la génération de la vidéo.', error: stderr });
+      }
+      // Return the video URL
+      return res.status(201).json({
+        message: 'Document téléchargé avec succès.',
+        document: newDocument,
+        videoUrl: `/assets/uploads/${path.basename(videoOutputPath)}` // Return the video URL
+      });
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+*/
+/* Create a document
 exports.createDocument = async (req, res) => {
   try {
     const { filename, filetype, formation_id } = req.body;
@@ -15,9 +106,10 @@ exports.createDocument = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+*/
 
 // 🔹 Get all documents
-exports.getAllDocuments = async (req, res) => {
+const getAllDocuments = async (req, res) => {
   try {
     const docs = await Document.findAll();
     res.status(200).json(docs);
@@ -27,7 +119,7 @@ exports.getAllDocuments = async (req, res) => {
 };
 
 // 🔹 Get document by ID
-exports.getDocumentById = async (req, res) => {
+const getDocumentById = async (req, res) => {
   try {
     const doc = await Document.findByPk(req.params.id);
     if (!doc) return res.status(404).json({ message: 'Document not found' });
@@ -38,7 +130,7 @@ exports.getDocumentById = async (req, res) => {
 };
 
 // 🔹 Get document by name
-exports.getDocumentByName= async (req, res) => {
+const getDocumentByName= async (req, res) => {
   try {
     const doc = await Document.findOne({ where: { filename: req.params.name } });
     if (!doc) return res.status(404).json({ message: 'Document not found' });
@@ -49,7 +141,7 @@ exports.getDocumentByName= async (req, res) => {
 };
 
 // 🔹 Update a document
-exports.updateDocument = async (req, res) => {
+const updateDocument = async (req, res) => {
   try {
     const { filename, filetype } = req.body;
     const { id } = req.params;
@@ -66,7 +158,7 @@ exports.updateDocument = async (req, res) => {
 
 //move deleted document to table historisation
 
-exports.deleteDocument = async (req, res) => {
+const deleteDocument = async (req, res) => {
   try {
     const doc = await Document.findByPk(req.params.id, { paranoid: false });
 
@@ -88,4 +180,13 @@ exports.deleteDocument = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+module.exports = {
+  createDocument,
+  getAllDocuments,
+  getDocumentById,
+  getDocumentByName,
+  updateDocument,
+  deleteDocument
 };
