@@ -185,3 +185,32 @@ exports.deleteFormation = async (req, res) => {
     res.status(500).json({ message: 'Error deleting formation, storing in Historisation, or tracing', error });
   }
 };
+
+exports.getCompletedFormations = async (req, res) => {
+  try {
+    const userId = req.user.id; // Get user ID from the authenticated token
+    console.log("User ID:", userId);
+    console.log("Querying for status: completed");
+    const completedFormations = await Formation.findAll({
+      where: {
+        userId: userId, 
+        status: 'completed' // Correct filter for status
+      },
+      raw: true,
+      paranoid: false // To return raw data without additional Sequelize model methods
+    });
+
+    console.log("Completed formations for user:", completedFormations);
+
+    if (completedFormations.length === 0) {
+      return res.status(404).json({ message: "No completed formations found for user" });
+    }
+
+    // Send back the number of completed formations
+    res.json({ completedFormations: completedFormations.length });
+    
+  } catch (error) {
+    console.error("Failed to get completed formations:", error);
+    res.status(500).json({ message: "Failed to get completed formations", error: error.message });
+  }
+};

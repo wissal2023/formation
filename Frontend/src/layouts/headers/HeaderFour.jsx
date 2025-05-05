@@ -20,8 +20,6 @@ const HeaderFour = () => {
    const handleLogout = async (e) => {
       e.preventDefault(); 
       try {
-         await axios.post('http://localhost:4000/users/logout', {}, { withCredentials: true });
-         navigate('/login');
          await axios.post(`${import.meta.env.VITE_API_URL}/users/logout`, 
             {}, { withCredentials: true });
          navigate('/signin');
