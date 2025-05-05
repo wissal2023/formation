@@ -7,7 +7,7 @@ const { sendOtp, verifyOtp, generateSecret, verifyTotp} = require('../controller
 router.post('/generate-otp', sendOtp);
 router.post('/verifyOtp', verifyOtp);
 router.get('/generate-secret', authenticateToken, generateSecret); 
-router.post('/verifyTotp', authenticateToken, verifyTotp);
+router.post('/verifyTotp', verifyTotp);
 
 //router.post('/verify-google-otp', verifyGoogleOtp);
 //router.get('/status', getOtpStatus);

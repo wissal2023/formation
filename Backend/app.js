@@ -63,7 +63,6 @@ app.use('/formations', formationRoutes);
 app.use('/module', formationDetailsRoutes);
 app.use('/documents', docRoute );
 app.use('/quizzes', quizRoutes);
-
 app.use('/certifications', certificationRoutes);
 app.use('/streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
