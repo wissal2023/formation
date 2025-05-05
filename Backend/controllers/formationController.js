@@ -1,9 +1,36 @@
 const { sequelize, Formation, FormationDetails, Video, Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
-
-
 const { USER_ROLES } = require('../db/constants/roles');
 
+//app.use('/formations', formationRoutes);
+// router.post('/AddFormation',authenticateToken, createFormation);
+const createFormation = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user || (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin'))
+      return res.status(403).json({ message: 'Permission refusée.' });
 
+    const formation = await Formation.create({
+      ...req.body,
+      status: 'in_progress', 
+      userId: user.id
+    });
+
+    await Trace.create({
+      userId: user.id,
+      model: 'Formation',
+      action: 'Création de formation',
+      data: { id: formation.id, titre: formation.titre }
+    });
+
+    return res.status(201).json({ formation });
+  } catch (error) {
+    return res.status(500).json({ message: 'Erreur création formation', error: error.message });
+  }
+};
+
+
+
+/*
 exports.createFormation = async (req, res) => {
   const transaction = await sequelize.transaction();
   
@@ -30,7 +57,7 @@ exports.createFormation = async (req, res) => {
       formationId: formation.id
     }, { transaction });
 
-    // Step 3: Optionally create a blank Video and link to FormationDetails
+    // Step 3: create a blank Video and link to FormationDetails
     let videoId = null;
     if (createEmptyVideo) {
       const emptyVideo = await Video.create({
@@ -38,7 +65,7 @@ exports.createFormation = async (req, res) => {
         duree: 0,
         nomSection: '',
         nbreSection: '',
-        formationDetailsId: formationDetails.id // ✅ link to FormationDetails
+        formationDetailsId: formationDetails.id //  link to FormationDetails
       }, { transaction });
 
       videoId = emptyVideo.id;
@@ -70,9 +97,9 @@ exports.createFormation = async (req, res) => {
     return res.status(500).json({ message: 'Erreur lors de la création', error });
   }
 };
-
+*/
 // get all
-exports.getAllFormations = async (req, res) => {
+const getAllFormations = async (req, res) => {
   try {
     const user = req.user;
 
@@ -98,7 +125,7 @@ exports.getAllFormations = async (req, res) => {
 
 
 // get by id
-exports.getFormationById = async (req, res) => {
+const getFormationById = async (req, res) => {
   try {
     const formation = await Formation.findByPk(req.params.id);
     if (!formation) return res.status(404).json({ message: 'Formation non trouvée' });
@@ -109,7 +136,7 @@ exports.getFormationById = async (req, res) => {
 };
 
 // UPDATE
-exports.updateFormation = async (req, res) => {
+const updateFormation = async (req, res) => {
   try {
     const [updated] = await Formation.update(req.body, {
       where: { id: req.params.id }
@@ -126,7 +153,7 @@ exports.updateFormation = async (req, res) => {
 
 // Delete
 
-exports.deleteFormation = async (req, res) => {
+const deleteFormation = async (req, res) => {
   const { id } = req.params;
   const transaction = await sequelize.transaction();  // Ensure atomic operations
   try {
@@ -213,4 +240,8 @@ exports.getCompletedFormations = async (req, res) => {
     console.error("Failed to get completed formations:", error);
     res.status(500).json({ message: "Failed to get completed formations", error: error.message });
   }
+};
+
+module.exports = {
+  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation
 };

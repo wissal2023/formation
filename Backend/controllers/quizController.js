@@ -1,8 +1,77 @@
-const { Quiz, Trace, User, Question, Reponse, QuizProg, Formation } = require('../db/models');
+const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails } = require('../db/models');
 const { calculateScore } = require('../services/quizService');
+const sequelize = require('../db/models').sequelize; // Add this to access transactions
 
 
+//app.use('/quizzes', quizRoutes);
+//router.post('/create', quizController.createQuiz);
+exports.createQuiz = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const { userId, formationDetailsId, questions } = req.body;
 
+    const user = await User.findByPk(userId);
+    if (!user || (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin')) {
+      await transaction.rollback();
+      return res.status(403).json({ message: 'Permission refusée ou utilisateur introuvable.' });
+    }
+
+    const formation = await FormationDetails.findByPk(formationDetailsId);
+    if (!formation) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Formation non trouvée.' });
+    }
+
+    const [quiz] = await Quiz.findOrCreate({
+      where: { formationDetailsId },
+      defaults: { difficulty: 'medium' },
+      transaction
+    });
+
+    let questionIds = [];
+
+    for (let q of questions) {
+      const createdQuestion = await Question.create({
+        questionText: q.questionText,
+        optionQuet: q.optionQuet || null,
+        quizId: quiz.id
+      }, { transaction });
+
+      questionIds.push(createdQuestion.id);
+
+      for (let rep of q.reponses) {
+        await Reponse.create({
+          questId: createdQuestion.id,
+          reponseText: rep.reponseText,
+          isCorrect: rep.isCorrect,
+          points: rep.points || 1
+        }, { transaction });
+      }
+    }
+
+    await Trace.create({
+      userId,
+      page: 'Quiz',
+      action: 'Création de quiz',
+      metadata: {
+        quizId: quiz.id,
+        formationDetailsId,
+        questionIds,
+      }
+    }, { transaction });
+
+    await transaction.commit();
+    return res.status(201).json({ message: 'Quiz créé avec succès.', quizId: quiz.id });
+
+  } catch (error) {
+    await transaction.rollback();
+    console.error('Erreur création quiz:', error);
+    return res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
+
+
+/*
 exports.createQuiz = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
@@ -86,7 +155,7 @@ exports.createQuiz = async (req, res) => {
     return res.status(500).json({ message: 'Erreur lors de la création du quiz', error: error.message });
   }
 };
-
+*/
 
 exports.attemptQuiz = async (req, res) => {
   try {

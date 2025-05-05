@@ -1,14 +1,20 @@
 // routes/formation.routes.js
 const express = require('express');
 const router = express.Router();
-const formationController = require('../controllers/formationController');
 const authenticateToken = require('../utils/authMiddleware');
-router.post('/AddFormation',authenticateToken, formationController.createFormation);
-router.get('/all', authenticateToken, formationController.getAllFormations);
+const { createFormation, getAllFormations, getFormationById, 
+        updateFormation, deleteFormation} = require('../controllers/formationController'); 
+
+router.post('/AddFormation',authenticateToken, createFormation);
+router.get('/all', authenticateToken, getAllFormations);
+router.get('/:id', authenticateToken, getFormationById);
+router.put('/:id', updateFormation);
+router.delete('/:id', deleteFormation);
+
+
 router.get('/completed', authenticateToken, formationController.getCompletedFormations);
-router.get('/:id', authenticateToken, formationController.getFormationById);
-router.put('/:id', formationController.updateFormation);
-router.delete('/:id', formationController.deleteFormation);
+
+
 
 
 module.exports = router;

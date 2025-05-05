@@ -1,3 +1,4 @@
+// frontend/src/App.jsx
 import { HelmetProvider } from 'react-helmet-async';
 import AppNavigation from './navigation/Navigation';
 import { Provider } from 'react-redux';
@@ -16,7 +17,6 @@ function App() {
           {/* Widget de chat affiché partout pour l’instant */}
           <ChatWidget />
             <AppNavigation />
-            
         </div>
       </HelmetProvider> 
     </Provider>

@@ -21,12 +21,14 @@ module.exports = (sequelize, DataTypes) => {
       model: 'Quiz', 
       key: 'id'
     },
-    multipleChoice: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-  }, 
-    freezeTableName: true, 
+    onDelete: 'CASCADE'
+  },
+  optionQuet: {
+    type: DataTypes.ENUM('Multiple_choice', 'Yes/No', 'reorginize', 'Match', 'Drag/Drop'),
+    allowNull: false
+  },
+
+    paranoid: true,
   });
 
   // Associations

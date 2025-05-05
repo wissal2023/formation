@@ -2,21 +2,27 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Documents', {
+    await queryInterface.createTable('Reponses', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      filename: {
+      reponseText: {
         type: Sequelize.STRING
       },
-      filetype: {
-        type: Sequelize.STRING
+      isCorrect: {
+        type: Sequelize.BOOLEAN
       },
-      uploadedDate: {
-        type: Sequelize.DATE
+      questId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Questions', 
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -25,22 +31,10 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      },
-      deletedAt: {
-        type: Sequelize.DATE,
-      },
-      formationDetailsId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'FormationDetails', 
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
-      },
+      }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Documents');
+    await queryInterface.dropTable('Reponses');
   }
 };

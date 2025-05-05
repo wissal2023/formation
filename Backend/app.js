@@ -11,6 +11,8 @@ const cors = require('cors');
 const createFirstAdminUser = require('./utils/createFirstAdminUser');
 
 const formationRoutes = require('./routes/formationRoutes');
+const formationDetailsRoutes = require('./routes/formationDetailsRoutes');
+
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
 const otpRoutes = require('./routes/otpRoutes');
@@ -51,19 +53,22 @@ app.use((err, req, res, next) => {
 });
 // Serve static files from 'assets/uploads' directory
 app.use('/assets/uploads', express.static(path.join(__dirname, 'assets', 'uploads')));
+app.use('/assets/documents', express.static(path.join(__dirname, 'assets', 'documents')));
 
 
 // ******************* HEAD ROUTES *******************
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
+app.use('/module', formationDetailsRoutes);
 app.use('/documents', docRoute );
+app.use('/quizzes', quizRoutes);
+
 app.use('/certifications', certificationRoutes);
 app.use('/streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/notedigitales', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
-app.use('/quizzes', quizRoutes);
 app.use('/quizprogs', quizProgRoutes);
 app.use('/recompenses', recompenseRoutes);
 app.use('/reponses', reponseRoutes);
@@ -78,13 +83,11 @@ app.use('*', (req, res) => {
     });
 });
 
-
 const PORT = process.env.APP_PORT || 4000;
+app.get('/', (req, res) => {
+    res.redirect('/signin');
+});
 app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
-    // Redirect to /signin after server starts
-    app.get('/', (req, res) => {
-        res.redirect('/signin');
-    });
     createFirstAdminUser(); 
 });

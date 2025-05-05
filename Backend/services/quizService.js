@@ -27,6 +27,7 @@ const calculateScore = (quiz, userAnswers) => {
       return 5;   // 5 points for subsequent attempts
     }
   };
+  
   module.exports = { calculateScore , calculatePointGagne};
   
   
