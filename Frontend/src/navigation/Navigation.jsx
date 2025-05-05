@@ -31,6 +31,7 @@ const AppNavigation = () => {
          {/* public */} 
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        
         <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="/otpverification" element={<OTPVerification />}/>        
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
