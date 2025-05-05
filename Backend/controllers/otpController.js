@@ -132,7 +132,7 @@ const verifyTotp = async (req, res) => {
       secret: userSecret,
       encoding: 'base32',
       step: 30,
-      time: Math.floor(Date.now() / 1000)
+  
     });
     console.log(`🧪 Token attendu pour ${email}:`, expectedToken);
     console.log(`📩 Token reçu du client:`, otp);
@@ -142,7 +142,7 @@ const verifyTotp = async (req, res) => {
         secret: userSecret,
         encoding: 'base32',
         step: 30,
-        time: Math.floor(Date.now() / 30) + i
+        time: Math.floor(Date.now() / 30) + i 
       });
       console.log(`🧪 Token valide à t+${i}:`, t);
     }
