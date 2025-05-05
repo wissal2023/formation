@@ -4,7 +4,6 @@ import UseSticky from "../../hooks/UseSticky"
 import { Link } from "react-router-dom"
 import InjectableSvg from "../../hooks/InjectableSvg"
 import HeaderSearch from "./menu/HeaderSearch"
-import HeaderOffCanvas from "./menu/HeaderOffCanvas"
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -19,10 +18,13 @@ const HeaderFour = () => {
    const navigate = useNavigate();
 
    const handleLogout = async (e) => {
-      e.preventDefault(); // IMPORTANT: Prevent <a> default behavior
+      e.preventDefault(); 
       try {
+<<<<<<< HEAD
          await axios.post('http://localhost:3000/users/logout', {}, { withCredentials: true });
          navigate('/signin');
+=======
+>>>>>>> ab0c1cbdfb0bdd0c396fb2c8dc66eb8166371774
          await axios.post(`${import.meta.env.VITE_API_URL}/users/logout`, 
             {}, { withCredentials: true });
          navigate('/signin');
