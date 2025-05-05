@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+import DashboardLayoutStudent from "../../../layouts/DashboardLayoutStudent"
+
+
+const StudentDashboardArea = () => {
+   return (
+<DashboardLayoutStudent pageTitle="dashbord-student">
+
+
+
+
+</DashboardLayoutStudent>
+
+=======
 import Count from "../../../components/common/Count"
 import dashboard_count_data from "../../../data/dashboard-data/DashboardCounterData"
 
@@ -23,6 +37,7 @@ const StudentDashboardArea = () => {
             ))}
          </div>
       </div>
+>>>>>>> ab0c1cbdfb0bdd0c396fb2c8dc66eb8166371774
    )
 }
 

@@ -1,63 +1,21 @@
 import { useState } from 'react';
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
+import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import axios from 'axios'; 
-const schema = yup
-   .object({
-      email: yup.string().required("Email is required").email("Invalid email format"),
-      password: yup.string().required("Password is required"),
-   })
-   .required();
-
-const LoginForm = () => {
-   const {
-      register,
-      handleSubmit,
-      reset,
-      formState: { errors },
-   } = useForm({ resolver: yupResolver(schema) });
-
-   const navigate = useNavigate();
-
-   const onSubmit = async (data) => {
-      try {
-         const response = await axios.post('http://localhost:4000/users/login', {
-            email: data.email,
-            mdp: data.password,
-         }, { withCredentials: true });
-   
-         localStorage.setItem('username', response.data.username); 
-         localStorage.setItem('roleUtilisateur', response.data.roleUtilisateur);
-
-         if (response.status === 200) {
-            const { mustUpdatePassword } = response.data;
-   
-            toast.success('Login successful', { position: 'top-center' });
-   
-            if (mustUpdatePassword) {
-               navigate('/change-password');
-               return;
-            }
-   
-            // ✅ Redirect to welcome page first, then it will auto-navigate to dashboard
-            navigate('/welcome');
-         }
-   
-      } catch (error) {
-         console.error('Login error:', error);
-         toast.error('Login failed. Please check your credentials.', { position: 'top-center' });
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
 
+// Validation schema for the form
+const schema = yup
+  .object({
+    email: yup.string().required("Email requis").email("Format invalide"),
+    password: yup.string().required("Mot de passe requis"),
+  })
+  .required();
 
-const schema = yup.object({
-  email: yup.string().required("Email requis").email("Format invalide"),
-  password: yup.string().required("Mot de passe requis"),
-}).required();
-
-const Form = () => {
+const LoginForm = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -67,11 +25,11 @@ const Form = () => {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   });
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(prev => !prev);
+    setPasswordVisible((prev) => !prev);
   };
 
   const onSubmit = async (data) => {
@@ -94,7 +52,6 @@ const Form = () => {
 
         navigate('/welcome');
       }
-
     } catch (error) {
       console.error('Erreur login:', error);
       if (error.response?.data?.message) {
@@ -104,7 +61,7 @@ const Form = () => {
       }
     }
 
-    reset();
+    reset();  // Reset form fields after submit
   };
 
   return (
@@ -117,7 +74,7 @@ const Form = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="input-group">
             <FaUser className="icon" />
-            <input  type="text" placeholder="Email" {...register("email")} />
+            <input type="text" placeholder="Email" {...register("email")} />
           </div>
           {errors.email && <p className="form_error">{errors.email.message}</p>}
 
@@ -142,4 +99,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default LoginForm;

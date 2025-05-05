@@ -5,6 +5,10 @@ import Registration from '../pages/Registration';
 import StudentProfile from '../pages/StudentProfile';
 //*********** ons************** */
 
+<<<<<<< HEAD
+import OTPVerification from '../pages/OtpVerification';
+=======
+>>>>>>> ab0c1cbdfb0bdd0c396fb2c8dc66eb8166371774
 import ResetPassword from '../pages/ResetPassword';
 import QrCodeDisplay from '../pages/QrCodeVerification';
 import SignIn from '../pages/Login';
@@ -28,6 +32,16 @@ const AppNavigation = () => {
   return (
     <Router>
       <Routes>  
+<<<<<<< HEAD
+         {/* public */} 
+        <Route path="/signin" element={ <SignIn />} />
+        <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/ResetPassword" element={<ResetPassword />} />
+        <Route path="/otpverification" element={<OTPVerification />}/>        
+        
+        <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
+        
+=======
          {/* i need to be logged in to navigate to all the routes */} 
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
@@ -35,8 +49,27 @@ const AppNavigation = () => {
         <Route path="/otpverification" element={<OTPVerification />}/> 
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
         <Route path="/verify-qrcode" element={<TotpVerif />} />
+>>>>>>> ab0c1cbdfb0bdd0c396fb2c8dc66eb8166371774
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/dashboard" element={<InstructorDashboard />} />        
+<<<<<<< HEAD
+        <Route path="/formations" element={<Course />} />  
+        
+        <Route path="/listUsers" element={<InstructorProfile />} />
+        <Route path="/student-profile" element={<StudentProfile />} />
+
+
+
+        <Route path="/editUser/:id" element={<UserSetting />} />           
+            
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
+
+
+           
+
+        {/*ROUTES TO BE USED */}
+        <Route path="/student-setting" element={<StudentSetting />} />
+=======
 
         <Route path="/registration" element={<Registration />} />
         <Route path="/listUsers" element={<InstructorProfile />} />
@@ -53,6 +86,7 @@ const AppNavigation = () => {
            
 
         {/*ROUTES TO BE USED 
+>>>>>>> ab0c1cbdfb0bdd0c396fb2c8dc66eb8166371774
         
         <Route path="/instructor-attempts" element={<InstructorAttempt />} /> 
         <Route path="/course-details" element={<CourseDetails />} />
@@ -64,6 +98,10 @@ const AppNavigation = () => {
         <Route path="/blog-details" element={<BlogDetails />} />{/* evla rating commentaire  
         <Route path="/contact" element={<Contact />} /> {/* note dig  
         <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
+<<<<<<< HEAD
+        <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table */}
+        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table */}
+=======
 
         <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table 
         <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
@@ -73,6 +111,7 @@ const AppNavigation = () => {
 
         {/*<Route path="/student-dashboard" element={<StudentDashboard />} />
         {/*<Route path="/student-wishlist" element={<StudentWishlist />} />
+>>>>>>> ab0c1cbdfb0bdd0c396fb2c8dc66eb8166371774
         <Route path="/student-wishlist" element={<StudentWishlist />} />
 
         <Route path="/about-us" element={<About />} />

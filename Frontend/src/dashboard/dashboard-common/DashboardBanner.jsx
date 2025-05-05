@@ -11,7 +11,10 @@ const DashboardBanner = ({ style }) => {
    useEffect(() => {
       const fetchUser = async () => {
          try {
+<<<<<<< HEAD
+=======
 
+>>>>>>> ab0c1cbdfb0bdd0c396fb2c8dc66eb8166371774
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/getOnce`, {
                withCredentials: true,
             });
