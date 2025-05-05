@@ -74,24 +74,21 @@ const sendOtp = async (req, res) => {
 
 //router.get('/generate-secret', authenticateToken, generateSecret);  
 const generateSecret = async (req, res) => {
+  console.log("🧑‍💻 Utilisateur extrait du token:", req.user);
   try {
     console.log("✅ Requête reçue pour générer un secret 2FA");
-
     const email = req.user?.email;
-    if (!email) {
-      return res.status(401).json({ message: 'Utilisateur non authentifié' });
-    }
 
-    // ✅ Ne pas régénérer si déjà un secret existe
+    if (!email) return res.status(401).json({ message: 'Utilisateur non authentifié' });
+
     let otpEntry = await Otp.findOne({ where: { email } });
-
     let userSecret;
-    if (otpEntry && otpEntry.secret) {
+
+    if (otpEntry?.secret) {
       userSecret = otpEntry.secret;
       console.log("🕒 Secret déjà existant récupéré:", userSecret);
     } else {
-      const newSecret = speakeasy.generateSecret({ length: 20 });
-      userSecret = newSecret.base32;
+      userSecret = speakeasy.generateSecret({ length: 20 }).base32;
       console.log("🔐 Nouveau secret généré:", userSecret);
 
       if (otpEntry) {
@@ -110,45 +107,63 @@ const generateSecret = async (req, res) => {
 
     const qrCodeUrl = await qrcode.toDataURL(otpAuthUrl);
 
-    res.json({ qrCodeUrl });
+    res.json({ qrCodeUrl,secret: userSecret });
   } catch (error) {
     console.error("Erreur lors de la génération du QR code:", error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
-//router.post('/verifyTotp', verifyTotp);
+//router.post('/verifyTotp', authenticateToken, verifyTotp);
 const verifyTotp = async (req, res) => {
   const { email, otp } = req.body;
+  console.log("📥 Requête de vérification TOTP reçue avec :", { email, otp });
+
   try {
     const userSecret = await otpModel.getSecretForUser(email);
+
     if (!userSecret) {
+      console.log(`❌ Aucun secret trouvé pour l'utilisateur : ${email}`);
       return res.status(404).json({ message: "Aucun secret TOTP trouvé pour cet utilisateur." });
     }
 
-    // 👉 Log the expected token (for dev/debugging only!)
+    console.log("🔐 Secret trouvé :", userSecret);
+
     const expectedToken = speakeasy.totp({
       secret: userSecret,
-      encoding: 'base32'
+      encoding: 'base32',
+      step: 30,
+  
     });
-    console.log(`🧪 Expected token for ${email}:`, expectedToken);
-    console.log(`📩 Received token:`, otp);
+    console.log(`🧪 Token attendu pour ${email}:`, expectedToken);
+    console.log(`📩 Token reçu du client:`, otp);
+
+    for (let i = -2; i <= 2; i++) {
+      const t = speakeasy.totp({
+        secret: userSecret,
+        encoding: 'base32',
+        step: 30,
+        time: Math.floor(Date.now() / 30) + i 
+      });
+      console.log(`🧪 Token valide à t+${i}:`, t);
+    }
 
     const verified = speakeasy.totp.verify({
       secret: userSecret,
       encoding: 'base32',
       token: otp,
-      window: 2 
+      window: 2
     });
 
     if (!verified) {
-      console.log('❌ Token did not match.');
+      console.log('❌ Token invalide : ne correspond pas au token attendu.');
       return res.status(400).json({ message: 'Code TOTP invalide.' });
     }
 
-    console.log('✅ Token verified successfully.');
+    console.log('✅ Code TOTP vérifié avec succès !');
     res.status(200).json({ message: 'Code TOTP vérifié avec succès.' });
+
   } catch (error) {
-    console.error("Erreur lors de la vérification TOTP:", error);
+    console.error("🔥 Erreur inattendue lors de la vérification TOTP:", error);
     res.status(500).json({ message: "Erreur serveur." });
   }
 };

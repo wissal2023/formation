@@ -1,6 +1,7 @@
+// EmailOTPVerification.jsx
 import React, { useState, useEffect } from 'react';
 import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useNavigate, useLocation  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const OTPVerification = () => {
@@ -8,24 +9,21 @@ const OTPVerification = () => {
   const [email, setEmail] = useState('');
   const [showOtp, setShowOtp] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const method = location.state?.method || 'email'; // default to email if not set
 
   useEffect(() => {
-    const fetchEmailFromToken = async () => {
+    const fetchEmail = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/auth`, {
           withCredentials: true,
         });
         setEmail(response.data.email);
-        console.log("Email récupéré depuis le token:", response.data.email);
       } catch (error) {
-        console.error("Erreur de récupération de l'utilisateur:", error);
-        alert("Impossible de récupérer l'e-mail depuis le token.");
+        console.error("Erreur lors de la récupération de l'email :", error);
+        alert("Impossible de récupérer l'e-mail.");
       }
     };
 
-    fetchEmailFromToken();
+    fetchEmail();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -36,27 +34,18 @@ const OTPVerification = () => {
     }
 
     try {
-      console.log("Email:", email);
-      console.log("OTP:", otp);
-      console.log("Method:", method);
-
-      const endpoint = method === 'qrcode'
-        ? `${import.meta.env.VITE_API_URL}/otp/verifyTotp`
-        : `${import.meta.env.VITE_API_URL}/otp/verifyOtp`;
-
-    const response = await axios.post(endpoint,
-      { email, otp },
-      { withCredentials: true }
-    );
-
-      console.log("Backend response:", response.data);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/otp/verifyOtp`, {
+        email,
+        otp
+      }, {
+        withCredentials: true
+      });
 
       if (response.status === 200) {
         navigate('/welcome');
       }
     } catch (error) {
-      console.error(error);
-      const message = error.response?.data?.message || 'Erreur serveur lors de la vérification du code';
+      const message = error.response?.data?.message || 'Erreur lors de la vérification du code';
       alert(message);
     }
   };
@@ -65,10 +54,10 @@ const OTPVerification = () => {
     <div className="login-container">
       <img src="assets/img/logo/Image2.png" alt="Logo" className="logo" />
       <h2 className="title">Teamwill</h2>
-      <h3 className="subtitle">VÉRIFICATION OTP</h3>
+      <h3 className="subtitle">VÉRIFICATION PAR EMAIL</h3>
 
       <p className="text-white text-sm mb-4">
-        Un code de vérification a été envoyé à <strong>{email}</strong>
+        Un code a été envoyé à <strong>{email}</strong>
       </p>
 
       <form onSubmit={handleSubmit}>

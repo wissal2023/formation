@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
+import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import axios from 'axios'; 
 const schema = yup
@@ -50,6 +50,7 @@ const LoginForm = () => {
          toast.error('Login failed. Please check your credentials.', { position: 'top-center' });
       }
     }
+   
   return (
     <div className="login-wrapper">
       <div className="login-container">
@@ -60,7 +61,7 @@ const LoginForm = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="input-group">
             <FaUser className="icon" />
-            <input  type="text" placeholder="Email" {...register("email")} />
+            <input type="text" placeholder="Email" {...register("email")} />
           </div>
           {errors.email && <p className="form_error">{errors.email.message}</p>}
 
@@ -85,4 +86,4 @@ const LoginForm = () => {
   );
 };
 
-export default Form;
+export default LoginForm;

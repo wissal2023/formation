@@ -4,10 +4,14 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Registration from '../pages/Registration';
 import StudentProfile from '../pages/StudentProfile';
 //*********** ons************** */
-import OTPVerification from '../pages/OtpVerification';
+
 import ResetPassword from '../pages/ResetPassword';
 import QrCodeDisplay from '../pages/QrCodeVerification';
 import SignIn from '../pages/Login';
+import OTPVerification from '../pages/OtpVerification';
+import TotpVerif from '../pages/TotpVerif';
+
+// Exemple de routing
 
 //*********** WISSAL************** */
 import InstructorDashboard from '../pages/InstructorDashboard';
@@ -24,32 +28,29 @@ const AppNavigation = () => {
   return (
     <Router>
       <Routes>  
-         {/* i need to be logged in to navigate to all the routes */} 
+         {/* public */} 
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
         
         <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="/otpverification" element={<OTPVerification />}/>        
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
+        <Route path="/verify-qrcode" element={<TotpVerif />} />
+
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/dashboard" element={<InstructorDashboard />} />        
-
-        <Route path="/registration" element={<Registration />} />
-        <Route path="/listUsers" element={<InstructorProfile />} />
-        <Route path="/editUser/:id" element={<UserSetting />} />  
-        
         <Route path="/formations" element={<Course />} />  
-        <Route path="/stepper" element={<AddFormation />} />           
-       
-            
-
-        <Route path="/student-dashboard" element={<StudentDashboard />} />
-        <Route path="/profile" element={<StudentProfile />} />
-
-           
-
-        {/*ROUTES TO BE USED 
         
+        <Route path="/listUsers" element={<InstructorProfile />} />
+        <Route path="/student-profile" element={<StudentProfile />} />
+
+
+
+        <Route path="/editUser/:id" element={<UserSetting />} />           
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
+
+
+        {/*ROUTES TO BE USED         
         <Route path="/instructor-attempts" element={<InstructorAttempt />} /> 
         <Route path="/course-details" element={<CourseDetails />} />
         <Route path="/lesson" element={<Lesson />} />
@@ -60,7 +61,8 @@ const AppNavigation = () => {
         <Route path="/blog-details" element={<BlogDetails />} />{/* evla rating commentaire  
         <Route path="/contact" element={<Contact />} /> {/* note dig  
         <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
-
+        <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table 
+        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
         <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table 
         <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
 

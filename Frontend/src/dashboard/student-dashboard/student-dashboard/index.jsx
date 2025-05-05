@@ -7,6 +7,11 @@ import StudentDashboardArea from './StudentDashboardArea'
 const StudentDashboard = () => {
    return (
       <>
+<<<<<<< HEAD
+
+         <DashboardLayout>
+=======
+>>>>>>> ab0c1cbdfb0bdd0c396fb2c8dc66eb8166371774
             <StudentDashboardArea />
       </>
 
