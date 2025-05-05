@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import axios from 'axios';
 
 const OTPVerification = () => {
@@ -8,6 +8,8 @@ const OTPVerification = () => {
   const [email, setEmail] = useState('');
   const [showOtp, setShowOtp] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const method = location.state?.method || 'email'; // default to email if not set
 
   useEffect(() => {
     const fetchEmailFromToken = async () => {
@@ -36,12 +38,16 @@ const OTPVerification = () => {
     try {
       console.log("Email:", email);
       console.log("OTP:", otp);
+      console.log("Method:", method);
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/otp/verifyOtp`,
-        { email, otp },
-        { withCredentials: true }
-      );
+      const endpoint = method === 'qrcode'
+        ? `${import.meta.env.VITE_API_URL}/otp/verifyTotp`
+        : `${import.meta.env.VITE_API_URL}/otp/verifyOtp`;
+
+    const response = await axios.post(endpoint,
+      { email, otp },
+      { withCredentials: true }
+    );
 
       console.log("Backend response:", response.data);
 

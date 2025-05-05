@@ -1,4 +1,4 @@
-// controllers/userController.js
+// controllers/usercontroller.js
 const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const jwt = require('jsonwebtoken');
@@ -13,22 +13,23 @@ const generateRandomPassword = (length = 12) => {
 };
 
 //router.post('/login', loginUserController);
-const loginUserController = async (req, res) => {
+const loginUserController = async (req, res) => { 
   const { email, mdp } = req.body;
 
   try {
-
-      const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: "Aucun compte trouvé avec cet email." });
     }      
+
     if (!user.isActive) {
       return res.status(403).json({ message: "Votre compte est désactivé. Veuillez contacter l'administrateur." });
     }
+
     const isMatch = await bcrypt.compare(mdp, user.mdp);
     if (!isMatch) {
-        return res.status(400).json({ message: 'Mot de passe incorrect' });
+      return res.status(400).json({ message: 'Mot de passe incorrect' });
     }
     //await updateStreak(user.id);
     try {
@@ -43,51 +44,52 @@ const loginUserController = async (req, res) => {
     
     // Add Trace
     await Trace.create({
-        userId: user.id,
-        action: 'logging in',
-        model: 'User', 
-        data: {
-          email: user.email,
-          role: user.roleUtilisateur,
-          derConnx: new Date(),
-        }
-      });
-
-      
-    // Generate JWT token
+      userId: user.id,
+      action: 'logging in',
+      model: 'User', 
+      data: {
+        email: user.email,
+        role: user.roleUtilisateur,
+        derConnx: new Date(),
+      }
+    });
+    // Calculate seconds until next midnight
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0); // Set time to next midnight
+    const secondsUntilMidnight = Math.floor((midnight - now) / 1000);
+    // Generate JWT token that expires at midnight
     const token = jwt.sign(
-        { id: user.id, 
-          role: user.roleUtilisateur,  
-          username: user.username, 
-          email: user.email, 
-        },
-            process.env.JWT_SECRET_KEY,
-        { expiresIn: '9h' }
+      {
+        id: user.id,
+        role: user.roleUtilisateur,
+        username: user.username,
+        email: user.email,
+      },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: secondsUntilMidnight }
     );
-
     // Send token in HttpOnly cookie
     res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development',
-        maxAge: 32400000,
-        sameSite: 'Lax',
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      maxAge: secondsUntilMidnight * 1000, // cookie expiry in ms
+      sameSite: 'Lax',
     });
     
     res.status(200).json({
-        message: 'Connexion réussie.',
-        userId: user.id,
-        roleUtilisateur: user.roleUtilisateur,
-        mustUpdatePassword: user.mustUpdatePassword,
-        username: user.username, 
-
+      message: 'Connexion réussie.',
+      userId: user.id,
+      roleUtilisateur: user.roleUtilisateur,
+      mustUpdatePassword: user.mustUpdatePassword,
+      username: user.username,
     });
 
   } catch (error) {
-    console.error('Login Error:', error);
-      res.status(500).json({
-          message: 'Erreur lors de la connexion.',
-          error: error.message,
-      });
+    res.status(500).json({
+      message: 'Erreur lors de la connexion.',
+      error: error.message,
+    });
   }
 };
 //router.get('/auth', getAuthenticatedUser);

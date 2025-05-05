@@ -8,6 +8,8 @@ const QrCodeDisplay = () => {
   const [loading, setLoading] = useState(true); // To display a loading state
   const [error, setError] = useState('');  // To handle errors
   const navigate = useNavigate();
+  const [secret, setSecret] = useState('');
+
 
   useEffect(() => {
     const fetchQrCode = async () => {
@@ -29,6 +31,9 @@ const QrCodeDisplay = () => {
         
         if (qrResponse.status === 200 && qrResponse.data.qrCodeUrl) {
           setQrCodeUrl(qrResponse.data.qrCodeUrl);
+          if (qrResponse.data.secret) {
+            setSecret(qrResponse.data.secret);
+          }
         } else {
           setError('Erreur lors de la génération du QR Code.');
         }
@@ -45,12 +50,12 @@ const QrCodeDisplay = () => {
   }, []);
 
   const handleContinue = () => {
-    navigate('/otp-verification');
+    navigate('/otpverification');
   };
 
   return (
       <div className="login-container">
-        <img src="/logo.png" alt="Logo" className="logo" />
+        <img src="assets/img/logo/Image2.png" alt="Logo" className="logo" />
         <h2 className="title">Teamwill</h2>
         <h3 className="subtitle">SCANNER LE QR CODE</h3>
         <p className="instruction" style={{ color: 'white', marginBottom: '20px' }}>

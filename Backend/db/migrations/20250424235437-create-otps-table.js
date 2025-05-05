@@ -15,11 +15,11 @@ module.exports = {
       },
       otp: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       secret: {
         type: Sequelize.STRING,  // Add secret to store the OTP secret (base32)
-        allowNull: false,
+        allowNull: true,
       },
       verified: {
         type: Sequelize.BOOLEAN,  // Add verified flag to track OTP verification status

@@ -34,26 +34,20 @@ const ResetPassword = () => {
 
     try {
       if (method === 'email') {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/otp/generate-otp`,
-          { email },
-          config
-        );
+        const response = await axios.post( `${import.meta.env.VITE_API_URL}/otp/generate-otp`,
+          { email }, config );      
 
         if (response.status === 200) {
-          navigate('/otpverification');
+          navigate('/otpverification', { state: { method: 'email' } });
         } else {
           alert("Erreur lors de l'envoi de l'OTP.");
         }
       } else if (method === 'qrcode') {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/otp/generate-secret`,
-          { email },
-          config
-        );
+        const response = await axios.get( `${import.meta.env.VITE_API_URL}/otp/generate-secret`,
+          config  );
 
         if (response.status === 200) {
-          navigate('/qrcodedisplay');
+          navigate('/qrcodedisplay', { state: { method: 'qrcode' } });
         } else {
           alert("Erreur lors de la génération du QR Code.");
         }
