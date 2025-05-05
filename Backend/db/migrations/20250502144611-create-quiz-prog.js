@@ -2,30 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Quiz', {
+    await queryInterface.createTable('QuizProgs', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      questions: {
-        type: Sequelize.STRING
+      completed: {
+        type: Sequelize.BOOLEAN
       },
-      totalScore: {
-        type: Sequelize.FLOAT
-      },
-      score: {
-        type: Sequelize.INTEGER
-      },
-      date: {
+      competedAt: {
         type: Sequelize.DATE
       },
-      tentatives: {
+      poingagne: {
         type: Sequelize.INTEGER
       },
-      difficulty: {
-        type: Sequelize.STRING
+      quizId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Quiz', 
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -35,18 +35,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      formationId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Formations', 
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
+      deletedAt: {
+        type: Sequelize.DATE,
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Quiz');
+    await queryInterface.dropTable('QuizProgs');
   }
 };

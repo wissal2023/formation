@@ -9,19 +9,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      reponses: {
+      reponseText: {
         type: Sequelize.STRING
       },
-      reponseCorr: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      isCorrect: {
+        type: Sequelize.BOOLEAN
       },
       questId: {
         type: Sequelize.INTEGER,
@@ -31,6 +23,14 @@ module.exports = {
           key: 'id'
         },
         onDelete: 'CASCADE'
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
       }
     });
   },

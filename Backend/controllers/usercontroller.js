@@ -7,8 +7,7 @@ const { sendAccountEmail } = require('../utils/emailService');
 const path = require('path');
 const fs = require('fs');
 const { User, Trace } = db;
-
-
+const updateUserStreak = require('../services/streak');
 const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
@@ -32,11 +31,17 @@ const loginUserController = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Mot de passe incorrect' });
     }
-
-    // Update derConnx
+    //await updateStreak(user.id);
+    try {
+      await updateUserStreak(user.id);
+    } catch (streakErr) {
+      console.error('Streak error:', streakErr.message);
+      // You can decide if you want to block login or just log the error
+    }
+      // Update derConnx
     user.derConnx = new Date();
     await user.save();
-
+    
     // Add Trace
     await Trace.create({
       userId: user.id,
@@ -48,13 +53,11 @@ const loginUserController = async (req, res) => {
         derConnx: new Date(),
       }
     });
-
     // Calculate seconds until next midnight
     const now = new Date();
     const midnight = new Date(now);
     midnight.setHours(24, 0, 0, 0); // Set time to next midnight
     const secondsUntilMidnight = Math.floor((midnight - now) / 1000);
-
     // Generate JWT token that expires at midnight
     const token = jwt.sign(
       {
@@ -66,7 +69,6 @@ const loginUserController = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: secondsUntilMidnight }
     );
-
     // Send token in HttpOnly cookie
     res.cookie('token', token, {
       httpOnly: true,
@@ -74,7 +76,7 @@ const loginUserController = async (req, res) => {
       maxAge: secondsUntilMidnight * 1000, // cookie expiry in ms
       sameSite: 'Lax',
     });
-
+    
     res.status(200).json({
       message: 'Connexion réussie.',
       userId: user.id,

@@ -2,6 +2,29 @@
 const db = require('../db/models');
 const Video = db.Video;
 
+// router.post('/uploadVideo', videoController.createVideo);
+exports.createVideo = async (req, res) => {
+  try {
+    const user = req.user;
+    const { formationDetailsId, ...videoData } = req.body;
+
+    const video = await Video.create({
+      ...videoData,
+      formationDetailsId
+    });
+
+    await Trace.create({
+      userId: user.id,
+      model: 'Video',
+      action: 'Création de vidéo',
+      data: { id: video.id, formationDetailsId }
+    });
+
+    return res.status(201).json({ video });
+  } catch (error) {
+    return res.status(500).json({ message: 'Erreur création vidéo', error: error.message });
+  }
+};
 
 
 // Get all Videos
