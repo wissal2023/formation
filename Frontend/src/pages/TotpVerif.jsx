@@ -1,15 +1,15 @@
 // pages/Login.jsx
 import LoginLayout from "../layouts/LoginLayout";
-import QrCodeDisplay from "../forms/QrCodeDisplay";
+import QrCodeVerification from "../forms/QrCodeVerification";
 
 
-const QrCodeVerification = () => {
+const TotpVerif = () => {
    return (
 
       <LoginLayout pageTitle="chang password page">
-         <QrCodeDisplay />
+         <QrCodeVerification />
       </LoginLayout>
    );
 };
 
-export default QrCodeVerification;
+export default TotpVerif;

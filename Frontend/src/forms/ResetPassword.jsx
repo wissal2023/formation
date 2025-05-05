@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaQrcode } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 
 const ResetPassword = () => {
@@ -28,7 +29,6 @@ const ResetPassword = () => {
 
   const handleContinue = async () => {
     const config = {
-      headers: { 'Content-Type': 'application/json' },
       withCredentials: true,
     };
 
@@ -43,11 +43,18 @@ const ResetPassword = () => {
           alert("Erreur lors de l'envoi de l'OTP.");
         }
       } else if (method === 'qrcode') {
-        const response = await axios.get( `${import.meta.env.VITE_API_URL}/otp/generate-secret`,
-          config  );
-
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/otp/generate-secret`, config);
+      
         if (response.status === 200) {
-          navigate('/qrcodedisplay', { state: { method: 'qrcode' } });
+          console.log("QR Code URL:", response.data.qrCodeUrl); // Log the URL
+          console.log("Réponse complète backend:", response.data);  
+          navigate('/qrcodedisplay', {
+            state: {
+              method: 'qrcode',
+              qrCodeUrl: response.data.qrCodeUrl,
+              secret: response.data.secret  
+            }
+          });
         } else {
           alert("Erreur lors de la génération du QR Code.");
         }

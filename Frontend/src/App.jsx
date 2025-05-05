@@ -15,7 +15,7 @@ function App() {
           <ToastContainer />
           {/* Section principale */}
           {/* Widget de chat affiché partout pour l’instant */}
-          <ChatWidget />
+      
             <AppNavigation />
         </div>
       </HelmetProvider> 

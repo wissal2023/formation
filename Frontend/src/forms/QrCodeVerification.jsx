@@ -1,10 +1,10 @@
-// EmailOTPVerification.jsx
+// QRCodeOTPVerification.jsx
 import React, { useState, useEffect } from 'react';
 import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const OTPVerification = () => {
+const QRCodeVerification = () => {
   const [otp, setOtp] = useState('');
   const [email, setEmail] = useState('');
   const [showOtp, setShowOtp] = useState(false);
@@ -26,21 +26,18 @@ const OTPVerification = () => {
     fetchEmail();
   }, []);
 
+  
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!otp) {
-      alert('Veuillez entrer le code OTP');
-      return;
-    }
-
+   
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/otp/verifyOtp`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/otp/verifyTotp`, {
         email,
         otp
       }, {
         withCredentials: true
       });
-
+      console.log("✅ Réponse de vérification TOTP:", response.data);
+      console.log("📤 Envoi de l'email:", userEmailFromToken);
       if (response.status === 200) {
         navigate('/welcome');
       }
@@ -54,10 +51,11 @@ const OTPVerification = () => {
     <div className="login-container">
       <img src="assets/img/logo/Image2.png" alt="Logo" className="logo" />
       <h2 className="title">Teamwill</h2>
-      <h3 className="subtitle">VÉRIFICATION PAR EMAIL</h3>
+      <h3 className="subtitle">VÉRIFICATION PAR QR CODE</h3>
 
       <p className="text-white text-sm mb-4">
-        Un code a été envoyé à <strong>{email}</strong>
+        Veuillez entrer le code généré par votre application d'authentification
+        pour <strong>{email}</strong>
       </p>
 
       <form onSubmit={handleSubmit}>
@@ -86,4 +84,4 @@ const OTPVerification = () => {
   );
 };
 
-export default OTPVerification;
+export default QRCodeVerification;

@@ -4,10 +4,14 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Registration from '../pages/Registration';
 import StudentProfile from '../pages/StudentProfile';
 //*********** ons************** */
-import OTPVerification from '../pages/OtpVerification';
+
 import ResetPassword from '../pages/ResetPassword';
 import QrCodeDisplay from '../pages/QrCodeVerification';
 import SignIn from '../pages/Login';
+import OTPVerification from '../pages/OtpVerification';
+import TotpVerif from '../pages/TotpVerif';
+
+// Exemple de routing
 
 //*********** WISSAL************** */
 import InstructorDashboard from '../pages/InstructorDashboard';
@@ -27,11 +31,10 @@ const AppNavigation = () => {
          {/* i need to be logged in to navigate to all the routes */} 
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/ResetPassword" element={<ResetPassword />} />
-          
-        <Route path="/otpverification" element={<OTPVerification />}/>        
+        <Route path="/otpverification" element={<OTPVerification />}/> 
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
+        <Route path="/verify-qrcode" element={<TotpVerif />} />
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/dashboard" element={<InstructorDashboard />} />        
 
