@@ -27,6 +27,7 @@ const AppNavigation = () => {
          {/* i need to be logged in to navigate to all the routes */} 
         <Route path="/signin" element={ <SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        
         <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="/otpverification" element={<OTPVerification />}/>        
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
