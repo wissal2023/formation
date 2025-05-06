@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaQrcode } from 'react-icons/fa';
-import { toast } from 'react-toastify';
 import axios from 'axios';
 
 const ResetPassword = () => {

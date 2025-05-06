@@ -16,7 +16,8 @@ module.exports = async function authenticateToken(req, res, next) {
       return res.status(401).json({ message: 'Utilisateur non trouvé.' });
     }
 
-    req.user = { email: decoded.email }; // ⚠️ C’est ce champ qui est utilisé dans generateSecret
+    req.user = user;
+    //req.user = { email: decoded.email }; // ⚠️ C’est ce champ qui est utilisé dans generateSecret
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Échec d\'authentification.', error: err.message });
