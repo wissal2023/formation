@@ -6,11 +6,14 @@
 /dataSources.local.xml
 .idea/
 .history/
-/node_modules/
+
 **/myenv/
 myenv/
+
 Backend/node_modules/
 Frontend/node_modules/
+/node_modules/
+
 __pycache__/
 *.pyc
 

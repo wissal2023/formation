@@ -11,14 +11,14 @@ const WelcomePage = () => {
   const [role, setRole] = useState('');
 
   useEffect(() => {
-    const fetchUserFromToken = async () => {
+    const fetchLoggedInUser  = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/auth`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/getOnce`, {
           withCredentials: true,
         });
 
-        setUsername(response.data.username); // or response.data.username if available
-        setRole(response.data.roleUtilisateur); // assuming your backend returns it
+        setUsername(response.data.username);
+        setRole(response.data.roleUtilisateur); 
 
         console.log("Email récupéré depuis le token:", response.data.email);
         console.log("Rôle récupéré depuis le token:", response.data.roleUtilisateur);
@@ -31,7 +31,7 @@ const WelcomePage = () => {
       }
     };
 
-    fetchUserFromToken();
+    fetchLoggedInUser ();
   }, [navigate]);
 
   const handleNavigation = () => {

@@ -28,25 +28,22 @@ const AppNavigation = () => {
   return (
     <Router>
       <Routes>  
-         {/* public */} 
         <Route path="/signin" element={ <SignIn />} />
-        <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/change-password" element={<ChangePassword />} />        
         <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="/otpverification" element={<OTPVerification />}/>        
         <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
         <Route path="/verify-qrcode" element={<TotpVerif />} />
-
         <Route path="/welcome" element={<WelcomePage />} />
+        
         <Route path="/dashboard" element={<InstructorDashboard />} />        
         <Route path="/formations" element={<Course />} />  
-        
         <Route path="/listUsers" element={<InstructorProfile />} />
-        <Route path="/student-profile" element={<StudentProfile />} />
-
-
-
         <Route path="/editUser/:id" element={<UserSetting />} />           
+        <Route path="/stepper" element={<AddFormation />} />
+
         <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/student-profile" element={<StudentProfile />} />
 
 
         {/*ROUTES TO BE USED         

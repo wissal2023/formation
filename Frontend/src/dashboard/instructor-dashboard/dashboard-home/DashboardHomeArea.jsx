@@ -1,9 +1,3 @@
-
-import DashboardCourse from "../../dashboard-common/DashboardCourse";
-import DashboardCounter from "./DashboardCounter";
-import DashboardReviewTable from "./DashboardReviewTable";
-import BtnArrow from "../../../svg/BtnArrow";
-import { Link } from "react-router-dom";
 import Stats from "./stats";
 
 const DashboardHomeArea = () => {
@@ -15,7 +9,9 @@ const DashboardHomeArea = () => {
                <h4 className="title">Dashboard</h4>
             </div>
             <div className="row">
+               {/* 
                <Stats />
+               */}
             </div>
          </div>         
          {/* <DashboardCourse />

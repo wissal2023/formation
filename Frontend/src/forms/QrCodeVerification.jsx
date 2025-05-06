@@ -1,43 +1,35 @@
-// QRCodeOTPVerification.jsx
 import React, { useState, useEffect } from 'react';
 import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const QRCodeVerification = () => {
   const [otp, setOtp] = useState('');
-  const [email, setEmail] = useState('');
   const [showOtp, setShowOtp] = useState(false);
+  const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const fetchEmail = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/auth`, {
-          withCredentials: true,
-        });
-        setEmail(response.data.email);
-      } catch (error) {
-        console.error("Erreur lors de la récupération de l'email :", error);
-        alert("Impossible de récupérer l'e-mail.");
-      }
-    };
+    const passedEmail = location.state?.email;
+    if (passedEmail) {
+      setEmail(passedEmail);
+    } else {
+      alert("Aucune adresse e-mail fournie. Redirection...");
+      navigate('/signin');
+    }
+  }, [location.state, navigate]);
 
-    fetchEmail();
-  }, []);
-
-  
   const handleSubmit = async (e) => {
-   
+    e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/otp/verifyTotp`, {
-        email,
-        otp
-      }, {
-        withCredentials: true
-      });
-      console.log("✅ Réponse de vérification TOTP:", response.data);
-      console.log("📤 Envoi de l'email:", email);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/otp/verifyTotp`,
+        { otp },  // Now it's sending 'otp' as the property instead of token
+        { withCredentials: true }
+      );
+      
+
       if (response.status === 200) {
         navigate('/welcome');
       }

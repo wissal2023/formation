@@ -7,6 +7,7 @@ const { sendAccountEmail } = require('../utils/emailService');
 const path = require('path');
 const fs = require('fs');
 const { User, Trace } = db;
+
 const updateUserStreak = require('../services/streak');
 const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
@@ -31,6 +32,7 @@ const loginUserController = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Mot de passe incorrect' });
     }
+
     //await updateStreak(user.id);
     try {
       await updateUserStreak(user.id);
@@ -53,6 +55,7 @@ const loginUserController = async (req, res) => {
         derConnx: new Date(),
       }
     });
+
     // Calculate seconds until next midnight
     const now = new Date();
     const midnight = new Date(now);
@@ -62,7 +65,7 @@ const loginUserController = async (req, res) => {
     const token = jwt.sign(
       {
         id: user.id,
-        role: user.roleUtilisateur,
+        roleUtilisateur: user.roleUtilisateur,
         username: user.username,
         email: user.email,
       },
@@ -368,16 +371,18 @@ const updateUserController = async (req, res) => {
  //GET the loged in user
  const getOnceUser = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const user = await User.findByPk(userId, {
-          attributes: ['email', 'roleUtilisateur', 'username']
-        });
-        
-        if (!user) {
-          return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
+      const user = await User.findByPk(req.user.id);
+      if (!user) {
+        return res.status(404).json({ message: 'user not found' });
+      }
+
+      res.status(200).json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        roleUtilisateur: user.roleUtilisateur,
+      });
     
-        res.status(200).json(user);
       } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
       }
