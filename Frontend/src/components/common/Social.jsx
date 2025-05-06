@@ -5,18 +5,8 @@ const Social = () => {
    return (
       <>
          <li>
-            <Link to="https://www.facebook.com/" target="_blank">
-               <InjectableSvg src="/assets/img/icons/facebook.svg" alt="img" className="injectable" />
-            </Link>
-         </li>
-         <li>
-            <Link to="https://www.facebook.com/" target="_blank">
-               <InjectableSvg src="/assets/img/icons/twitter.svg" alt="img" className="injectable" />
-            </Link>
-         </li>
-         <li>
-            <Link to="https://www.facebook.com/" target="_blank">
-               <InjectableSvg src="/assets/img/icons/whatsapp.svg" alt="img" className="injectable" />
+            <Link to="https://www.teamwillgroup.com/en/" target="_blank">
+               <InjectableSvg src="/assets/img/icons/globe.svg" alt="img" className="injectable" />
             </Link>
          </li>
          <li>
@@ -25,8 +15,13 @@ const Social = () => {
             </Link>
          </li>
          <li>
-            <Link to="https://www.facebook.com/" target="_blank">
+            <Link to="https://www.youtube.com/channel/UCaLs6ZwJce-qcoKKztUklFQ" target="_blank">
                <InjectableSvg src="/assets/img/icons/youtube.svg" alt="img" className="injectable" />
+            </Link>
+         </li>
+         <li>
+            <Link to="https://www.linkedin.com/company/teamwill/posts/?feedView=all" target="_blank">
+               <InjectableSvg src="/assets/img/icons/linkedin.svg" alt="img" className="injectable" />
             </Link>
          </li>
       </>

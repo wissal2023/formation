@@ -244,5 +244,6 @@ const getCompletedFormations = async (req, res) => {
 };
 
 module.exports = {
-  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation, getCompletedFormations
+  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation,getCompletedFormations
+
 };

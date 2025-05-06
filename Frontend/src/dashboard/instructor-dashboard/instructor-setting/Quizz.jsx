@@ -176,4 +176,4 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
    );
 
 }
-export default Quizz;
+export default Quizz;
