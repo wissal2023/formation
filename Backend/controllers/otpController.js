@@ -75,14 +75,23 @@ const sendOtp = async (req, res) => {
 //router.get('/generate-secret', authenticateToken, generateSecret);  
 const generateSecret = async (req, res) => {
   console.log("🧑‍💻 Utilisateur extrait du token:", req.user);
+
   try {
     console.log("✅ Requête reçue pour générer un secret 2FA");
     const email = req.user?.email;
+    const force = req.body.force; // récupère force depuis le corps de la requête
 
     if (!email) return res.status(401).json({ message: 'Utilisateur non authentifié' });
 
     let otpEntry = await Otp.findOne({ where: { email } });
     let userSecret;
+
+    // ⚠️ Si force = true, on supprime l'ancien enregistrement
+    if (force && otpEntry) {
+      await Otp.destroy({ where: { email } });
+      otpEntry = null;
+      console.log("♻️ Ancien secret supprimé pour régénération.");
+    }
 
     if (otpEntry?.secret) {
       userSecret = otpEntry.secret;
@@ -107,7 +116,7 @@ const generateSecret = async (req, res) => {
 
     const qrCodeUrl = await qrcode.toDataURL(otpAuthUrl);
 
-    res.json({ qrCodeUrl,secret: userSecret });
+    res.json({ qrCodeUrl, secret: userSecret });
   } catch (error) {
     console.error("Erreur lors de la génération du QR code:", error);
     res.status(500).json({ message: 'Erreur serveur' });
@@ -142,7 +151,7 @@ const verifyTotp = async (req, res) => {
         secret: userSecret,
         encoding: 'base32',
         step: 30,
-        time: Math.floor(Date.now() / 30) + i 
+        time: Math.floor(Date.now() / 1000 / 30) + i    
       });
       console.log(`🧪 Token valide à t+${i}:`, t);
     }

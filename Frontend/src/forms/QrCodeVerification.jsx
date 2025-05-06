@@ -37,7 +37,7 @@ const QRCodeVerification = () => {
         withCredentials: true
       });
       console.log("✅ Réponse de vérification TOTP:", response.data);
-      console.log("📤 Envoi de l'email:", userEmailFromToken);
+      console.log("📤 Envoi de l'email:", email);
       if (response.status === 200) {
         navigate('/welcome');
       }
