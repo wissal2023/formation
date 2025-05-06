@@ -1,16 +1,16 @@
+// backend/routes/docRoute.js:
 const express = require('express');
 const router = express.Router();
-const docController = require('../controllers/docController');
+const authenticateToken = require('../utils/authMiddleware');
+const { uploadFile } = require('../utils/multerConfig');
+const {createDocument, getAllDocuments, getDocumentById, getDocumentByName,
+        updateDocument, deleteDocument } = require('../controllers/docController');
 
-router.post('/AddDoc', docController.createDocument);
-
-router.get('/', docController.getAllDocuments);
-
-router.get('/:id', docController.getDocumentById);
-router.get('/:filename', docController.getDocumentByName);
-
-router.put('/:id', docController.updateDocument);
-
-router.delete('/:id', docController.deleteDocument);
+router.post('/AddDoc', authenticateToken,uploadFile.single('file'),  createDocument);
+router.get('/', authenticateToken, getAllDocuments);
+router.get('/:id',authenticateToken,  getDocumentById);
+router.get('/:filename', authenticateToken, getDocumentByName);
+router.put('/:id',authenticateToken,  updateDocument);
+router.delete('/:id',authenticateToken,  deleteDocument);
 
 module.exports = router;

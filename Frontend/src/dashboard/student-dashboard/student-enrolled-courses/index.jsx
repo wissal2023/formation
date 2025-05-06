@@ -6,12 +6,8 @@ import StudentEnrolledCoursesArea from './StudentEnrolledCoursesArea'
 const StudentEnrolledCourses = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+         
             <StudentEnrolledCoursesArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

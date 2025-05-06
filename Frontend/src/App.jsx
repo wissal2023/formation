@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 // App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+=======
+// frontend/src/App.jsx
+>>>>>>> main
 import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+<<<<<<< HEAD
 import AppNavigation from './navigation/Navigation';
 import SignIn from '/src/SignIn';
 
@@ -30,6 +35,23 @@ function App() {
           </Routes>
         </Router>
       </HelmetProvider>
+=======
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+
+function App() {
+
+  return (
+    <Provider store={store}>
+      <HelmetProvider>       
+        <div className="main-page-wrapper">
+          <ToastContainer />
+            <AppNavigation />
+        </div>
+      </HelmetProvider> 
+>>>>>>> main
     </Provider>
   );
 }

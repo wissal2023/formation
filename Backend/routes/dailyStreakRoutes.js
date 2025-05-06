@@ -1,10 +1,13 @@
+// routes/streakRoutes.js
 const express = require('express');
 const router = express.Router();
-const streakController = require('../controllers/dailyStreakController');
+const { updateStreak, getStreak } = require('../controllers/dailyStreakController');
+const authenticateToken = require('../utils/authMiddleware');
 
-
-router.get('/:id', streakController.getDailyStreakById);
-router.put('/:id', streakController.updateDailyStreak);
-router.delete('/:id', streakController.deleteDailyStreak);
+// Route to update the user's streak
+// routes/streakRoutes.js
+//router.post('/update', authenticateToken, updateStreak);
+// Route to get the user's current streak
+router.get('/get', authenticateToken, getStreak);
 
 module.exports = router;

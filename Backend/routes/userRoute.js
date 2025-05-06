@@ -1,50 +1,26 @@
-// routes/userRoute.js
+// backend/routes/userRoute.js
 const express = require('express');
 const router = express.Router();
-const { addUserController, loginUserController, getAllUsers, getOnceUser } = require('../controllers/usercontroller'); // On utilise maintenant userController pour tout
-const verifyToken = require('../middleware/auth');
-
-
-// Route pour l'enregistrement d'un utilisateur (avec Supabase)
-router.post('/register', addUserController);
-
-// Route pour la connexion d'un utilisateur (avec envoi OTP)
-//router.post('/login', loginUserController);
-router.post('/login', (req, res) => {
-    // Exemple user fictif
-    const user = {
-      id: 1,
-      username: 'ons',
-      role: 'admin'
-    };
-  
-    const token = jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
-  
-    res.json({
-      message: 'Login réussi ✅',
-      token: token
-    });
-  });
-// Route pour récupérer tous les utilisateurs
-router.get('/getAll', getAllUsers); // update to get user from BD
-
-// Route pour récupérer un seul utilisateur par ID
-router.get('/getOnce/:id', getOnceUser);
-router.get('/protected', verifyToken, (req, res) => {
-    res.json({ message: 'Accès autorisé ! Voici des données secrètes 🔐', user: req.user });
-  });
-  
+const {User} = require("../db/models");
+const {uploadImage} = require('../utils/multerConfig'); 
+const authenticateToken = require('../utils/authMiddleware');
+const { addUserController, loginUserController, logoutUserController, 
+        updatePasswordController, getAllUsers, getOnceUser, getUserByName,
+        updateUserController, updateProfileController, getUserByIdController,
+        getAuthenticatedUser } = require('../controllers/usercontroller'); // On utilise maintenant userController pour tout
+router.get('/auth', getAuthenticatedUser);
+router.post('/login', loginUserController);
+router.post("/change-password", authenticateToken, updatePasswordController);
+router.post('/register', authenticateToken, addUserController);
+router.post('/logout', authenticateToken,logoutUserController);
+router.get('/getOnce', authenticateToken, getOnceUser);
+router.put('/edit/:id', authenticateToken, uploadImage.single('photo'), updateUserController);
+router.get('/getAll', authenticateToken, getAllUsers);
+router.get('/getById/:id', authenticateToken, getUserByIdController);
+router.put('/profile/:id', authenticateToken, updateProfileController);
+router.get('/:name', getUserByName);
+router.get('/login', (req, res) => {
+  res.json({ message: 'Bienvenue sur le dashboard admin', user: req.user });
+});
 
 module.exports = router;
-
-/** user of wissal & siwar
- * const userController = require('../controllers/userController'); // change le chemin selon ton projet
- 
- router.get('/', userController.getAllUsers);
- router.get('/:name', userController.getUserByName);
- router.post('/addUser', userController.createUser);
- router.put('/:id', userController.updateUser);
- router.delete('/:id', userController.deleteUser);
- 
- module.exports = router;
- */

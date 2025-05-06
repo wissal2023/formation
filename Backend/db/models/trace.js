@@ -1,51 +1,52 @@
 'use strict';
-const { Sequelize, DataTypes } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
   const Trace = sequelize.define('Trace', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
+      type: DataTypes.INTEGER
+    },
+    userId: { 
       type: DataTypes.INTEGER,
-    },
-    userId: {
-      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    page: {
+    action: {  // Action type ('create', 'update', 'archive')
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
-    action: {
+    model: {    // the page route in the front
       type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: 'view'
+      allowNull: false
     },
-    metadata: {
+    data: {
       type: DataTypes.JSONB, 
       allowNull: true,
     },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW,
+      defaultValue: DataTypes.NOW,
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW,
+      defaultValue: DataTypes.NOW,
     },
-deletedAt: {
-    type: DataTypes.DATE
-  }
+    deletedAt: {
+        type: DataTypes.DATE
+      }
   }, {
+    paranoid: true,
+    timestamps: true,
     freezeTableName: true,
-    paranoid: false
+    tableName: 'Traces', 
   });
 
+  // Association: A Trace belongs to a User (the actor performing the action)
   Trace.associate = (models) => {
-    Trace.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE'});};
+    Trace.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
+  };
 
   return Trace;
 };

@@ -6,12 +6,7 @@ import StudentWishlistArea from './StudentWishlistArea'
 const StudentWishlist = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
             <StudentWishlistArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

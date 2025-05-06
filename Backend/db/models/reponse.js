@@ -1,6 +1,4 @@
-'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');
 
 module.exports = (sequelize, DataTypes) => {
   const Reponse = sequelize.define('Reponse', {
@@ -16,13 +14,17 @@ module.exports = (sequelize, DataTypes) => {
   },
   isCorrect: {  
     type: DataTypes.BOOLEAN,
-    defaultValue: false
   },
+  points: {
+    type: DataTypes.INTEGER
+  },
+  //matchPair,
+  //position,
   questId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Question', 
+      model: 'Questions', 
       key: 'id'
     },
     onDelete: 'CASCADE'
@@ -30,21 +32,23 @@ module.exports = (sequelize, DataTypes) => {
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   updatedAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   deletedAt: {
     type: DataTypes.DATE
   }
 }, {
   paranoid: true, 
-  freezeTableName: true
 });
 
-
+Reponse.associate = (models) => {
+  Reponse.belongsTo(models.Question, { foreignKey: 'questId', onDelete: 'CASCADE' });
+  };
+  
 return Reponse;
 };

@@ -6,12 +6,10 @@ import InstructorWishlistArea from './InstructorWishlistArea'
 const InstructorWishlist = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+       
+       
             <InstructorWishlistArea />
-         </main>
-         <FooterOne />
+            
       </>
    )
 }

@@ -4,10 +4,8 @@ import SEO from '../components/SEO';
 
 const Contact = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Contact'} />
+      
          <ContactMain />
-      </Wrapper>
    );
 };
 

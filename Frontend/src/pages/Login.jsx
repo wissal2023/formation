@@ -1,13 +1,13 @@
-import Wrapper from '../layouts/Wrapper';
-import LoginMain from '../components/inner-pages/login';
-import SEO from '../components/SEO';
+// pages/Login.jsx
+
+import SignIn from '../forms/SignIn';
+import LoginLayout from '../layouts/LoginLayout';
 
 const Login = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Login'} />
-         <LoginMain />
-      </Wrapper>
+         <LoginLayout pageTitle="login page">
+            <SignIn />
+         </LoginLayout>
    );
 };
 

@@ -1,5 +1,5 @@
+'use strict';
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../../config/database');  // Corrected to use the sequelize instance
 
 module.exports = (sequelize, DataTypes) => {
   const Certification = sequelize.define('Certification', {
@@ -9,11 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    nom: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    prenom: {
+    title: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -25,11 +21,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    formationId: {  // Changed to formationId to link certification with the course
+    quizId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Formation', 
+        model: 'Quiz', 
         key: 'id'
       },
       onDelete: 'CASCADE'
@@ -37,17 +33,22 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW  // Sequelize.NOW is the correct way to set the default value
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW  // Sequelize.NOW is the correct way to set the default value
-    }
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
+      }
   }, {
-    paranoid: true,  // Soft delete
+    paranoid: true, 
     freezeTableName: true
   });
+
 
   // Define associations
   Certification.associate = (models) => {

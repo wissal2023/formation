@@ -1,13 +1,18 @@
-// app.js
+// backend/app.js
 require('dotenv').config();
+require('./utils/cron');
+const path = require('path');
 const express = require('express');
-const app = express();
+const cookieParser = require('cookie-parser');
+const app = express(); 
 const { sequelize } = require('./db/models');
 const db = require('./db/models');
 const cors = require('cors');
+const createFirstAdminUser = require('./utils/createFirstAdminUser');
 
 const formationRoutes = require('./routes/formationRoutes');
 const formationDetailsRoutes = require('./routes/formationDetailsRoutes');
+
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
 const otpRoutes = require('./routes/otpRoutes');
@@ -24,9 +29,14 @@ const videoRoutes = require('./routes/videoRoutes');
 const helpRoutes = require('./routes/helpRoutes');
 const helpTranslationRoutes = require('./routes/helpTranslationRoutes');
 
-
 app.use(express.json()); 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // my frontend URL
+    credentials: true,
+}));
+app.use(cookieParser());
+//app.use('/otp', otpRoutes);
+
 
 // ******************* middelware *******************
 app.use((req, res, next) => {
@@ -34,31 +44,36 @@ app.use((req, res, next) => {
     next();
   });
 
+// Error handler for multer (upload img)
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError || err.message.includes('Seuls les fichiers')) {
+      return res.status(400).json({ error: err.message });
+    }
+    next(err);
+});
+// Serve static files from 'assets/uploads' directory
+app.use('/assets/uploads', express.static(path.join(__dirname, 'assets', 'uploads')));
+app.use('/assets/documents', express.static(path.join(__dirname, 'assets', 'documents')));
+
+
 // ******************* HEAD ROUTES *******************
-app.get('/', (req,res)=> {
-    res.status(200).json({
-        status:'success',
-        message:'welcome to our api',
-    })
-})
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
-app.use('/formation-details', formationDetailsRoutes)
+app.use('/module', formationDetailsRoutes);
 app.use('/documents', docRoute );
+app.use('/quizzes', quizRoutes);
 app.use('/certifications', certificationRoutes);
-app.use('/streaks', dailyStreakRoutes);
+app.use('/streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/notedigitales', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
-app.use('/quizzes', quizRoutes);
 app.use('/quizprogs', quizProgRoutes);
-app.use('/api/recompenses', recompenseRoutes);
+app.use('/recompenses', recompenseRoutes);
 app.use('/reponses', reponseRoutes);
 app.use('/videos', videoRoutes);
 app.use('/helps', helpRoutes);
 app.use('/help-translations', helpTranslationRoutes);  
-
 
 app.use('*', (req, res) => {
     res.status(404).json({
@@ -67,18 +82,11 @@ app.use('*', (req, res) => {
     });
 });
 
-
-
-const PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.APP_PORT || 4000;
+app.get('/', (req, res) => {
+    res.redirect('/signin');
+});
 app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
+    createFirstAdminUser(); 
 });
-
-
-
-/*
-db.sequelize.sync()
-  .then(() => console.log("Database schema updated"))
-  .catch(err => console.error("Error updating database:", err));
-*/
-

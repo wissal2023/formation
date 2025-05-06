@@ -12,35 +12,26 @@ module.exports = {
       titre: {
         type: Sequelize.STRING
       },
-      description: {
-        type: Sequelize.STRING
-      },
-      duree: {
-        type: Sequelize.INTEGER
-      },
-      evaluation: {
-        type: Sequelize.INTEGER
-      },
       thematique: {
         type: Sequelize.STRING
       },
-      datedebut: {
-        type: Sequelize.DATE
-      },
-      datefin: {
-        type: Sequelize.DATE
-      },
       verouillee: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: false // Set default value for verouillee as false
       },
       typeFlag: { 
         type: Sequelize.ENUM('facultat', 'obligatoire'), 
-        allowNull: false,},
+        allowNull: false,
+      },
+      status: { 
+        type: Sequelize.ENUM('created','enrolled', 'in_progress', 'completed'), 
+        allowNull: false,
+      },
       userId: { 
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users',
+          model: 'Users',  // Ensure this references the correct table ('Users')
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -53,11 +44,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      deletedAt: {  // ✅ Soft delete support
+      deletedAt: {  // Soft delete support
         type: Sequelize.DATE
       }
     });
+
+    // Optional: Add an index for userId if you query formations by user frequently
+    await queryInterface.addIndex('Formations', ['userId']);
   },
+  
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Formations');
   }

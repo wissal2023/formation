@@ -4,10 +4,8 @@ import SEO from '../components/SEO';
 
 const InstructorWishlist = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Instructor Wishlist'} />
+      
          <InstructorWishlistMain />
-      </Wrapper>
    );
 };
 

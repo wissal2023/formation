@@ -44,11 +44,11 @@ module.exports = (sequelize, DataTypes) => {
     allowNull: false,
     defaultValue: 0
   },
-  quizId: {
+  userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Quiz', 
+      model: 'Users', 
       key: 'id'
     },
     onDelete: 'CASCADE'
@@ -56,12 +56,12 @@ module.exports = (sequelize, DataTypes) => {
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   updatedAt: {
     allowNull: false,
     type: DataTypes.DATE,
-    defaultValue: Sequelize.NOW
+    defaultValue: DataTypes.NOW
   },
   deletedAt: {
     type: DataTypes.DATE
@@ -73,7 +73,7 @@ module.exports = (sequelize, DataTypes) => {
 
 // Associations
 Recompense.associate = (models) => {
-  Recompense.belongsTo(models.Quiz, { foreignKey: 'QuizId', onDelete: 'CASCADE' });
+  Recompense.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
 };
 
 return Recompense;

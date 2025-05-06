@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0
     },
+    streakCount: {  // New attribute to track the consecutive login days
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -25,14 +30,20 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
     }
   }, {
+    tableName: 'DailyStreaks',  
     paranoid: true,
     freezeTableName: true
   });

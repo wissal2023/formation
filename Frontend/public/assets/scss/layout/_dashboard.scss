@@ -555,6 +555,14 @@
                             width: 100%;
                         }
                     }
+                    &.disabled  {
+                        opacity: 0.5;
+                        pointer-events: none;
+                        cursor: not-allowed;
+                    }
+                    &.completed   {
+                        color: rgb(45, 202, 45);
+                    }
                 }
             }
         }
