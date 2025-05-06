@@ -20245,6 +20245,7 @@ blockquote > p {
   gap: 15px;
   margin-bottom: 35px;
 }
+
 .footer__social li a {
   color: var(--tg-common-color-gray-5);
 }

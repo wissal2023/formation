@@ -106,25 +106,31 @@ exports.displaycertification = async (req, res) => {
     return res.status(500).json({ message: 'Error fetching certification', error });
   }
 };
-exports.numberofcertifperformation = async (req, res) => {
-  const { formationId } = req.params; // formationId as URL param
+exports.numberOfCertifPerFormation = async (req, res) => {
+  const { formationId } = req.params;
 
   try {
-    // Count how many certifications have been issued for the specified formation
+    if (!formationId) {
+      return res.status(400).json({ message: 'Formation ID is required' });
+    }
     const certificationCount = await Certification.count({
       where: { formationId },
     });
-
     if (certificationCount === 0) {
-      return res.status(404).json({ message: 'No users have achieved certification for this formation' });
+      return res.status(404).json({
+        message: `No certifications found for formation ID: ${formationId}`,
+        certificationCount: 0,
+      });
     }
-
     return res.status(200).json({
-      message: `Successfully retrieved the count of users with certifications for formation ID: ${formationId}`,
+      message: `Successfully retrieved certification count for formation ID: ${formationId}`,
       certificationCount,
     });
   } catch (error) {
     console.error('Error fetching certification count:', error);
-    return res.status(500).json({ message: 'Error fetching certification count', error });
+    return res.status(500).json({
+      message: 'Internal server error while fetching certification count',
+      error: error.message,
+    });
   }
 };

@@ -1,6 +1,8 @@
 // src/layouts/LoginLayout.jsx
 import Wrapper from './Wrapper';
 import SEO from '../components/SEO';
+import './LoginLayout.css';
+
 
 const LoginLayout = ({ pageTitle, children }) => {
   return (

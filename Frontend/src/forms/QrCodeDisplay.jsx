@@ -1,79 +1,106 @@
-// frontend/QrCodeDisplay.jsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const QrCodeDisplay = () => {
-  const [qrCodeUrl, setQrCodeUrl] = useState(''); // To store the QR code URL
-  const [loading, setLoading] = useState(true); // To display a loading state
-  const [error, setError] = useState('');  // To handle errors
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [countdown, setCountdown] = useState(10);
+  const [expiredMessage, setExpiredMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [showQr, setShowQr] = useState(true);
+
   const navigate = useNavigate();
+  const location = useLocation();
+  const [qrCodeUrl, setQrCodeUrl] = useState(location.state?.qrCodeUrl || '');
+  const [secret, setSecret] = useState(location.state?.secret || '');
 
+  // Countdown timer for QR expiration
   useEffect(() => {
-    const fetchQrCode = async () => {
+    if (showQr) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setShowQr(false);
+            setExpiredMessage("🔒 Le QR Code a expiré. Redirection en cours...");
+            setTimeout(() => navigate('/signin'), 5000);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [showQr, navigate]);
+
+  // Check QR code presence on load
+  useEffect(() => {
+    if (!qrCodeUrl || !secret) {
+      setShowQr(false);
+      setExpiredMessage("QR Code invalide ou expiré.");
+      setTimeout(() => navigate('/signin'), 5000);
+    }
+  }, [qrCodeUrl, secret, navigate]);
+
+  // Fetch authenticated user's email
+  useEffect(() => {
+    const fetchEmail = async () => {
       try {
-
-        // Step 1: get user info (email) from backend using cookies
-        const userResponse = await axios.get(`${import.meta.env.VITE_API_URL}/users/auth`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/auth`, {
           withCredentials: true,
         });
-        
-        const userEmail = userResponse.data.email;
-        console.log("Email from cookie/token:", userEmail);
-
-        // Step 2: Call the QR code generation endpoint 
-        const qrResponse = await axios.get(`${import.meta.env.VITE_API_URL}/otp/generate-secret`, {
-          withCredentials: true,
-        });
-
-        
-        if (qrResponse.status === 200 && qrResponse.data.qrCodeUrl) {
-          setQrCodeUrl(qrResponse.data.qrCodeUrl);
-        } else {
-          setError('Erreur lors de la génération du QR Code.');
-        }
-      
+        setEmail(response.data.email);
       } catch (err) {
-        console.error("Erreur QR:", err);
-        setError("Erreur de connexion au serveur ou utilisateur non authentifié.");
-      } finally {
-        setLoading(false);
+        console.error("Erreur lors de la récupération de l'e-mail:", err);
+        setError("Impossible de récupérer l'e-mail.");
       }
     };
 
-    fetchQrCode();
+    fetchEmail();
   }, []);
 
   const handleContinue = () => {
-    navigate('/otp-verification');
+    navigate('/verify-qrcode', {
+      state: {
+        email: email
+      }
+    });
   };
 
   return (
-      <div className="login-container">
-        <img src="/logo.png" alt="Logo" className="logo" />
-        <h2 className="title">Teamwill</h2>
-        <h3 className="subtitle">SCANNER LE QR CODE</h3>
-        <p className="instruction" style={{ color: 'white', marginBottom: '20px' }}>
-          Veuillez scanner le QR Code avec votre application d’authentification.
-        </p>
+    <div className="login-container">
+      <img src="assets/img/logo/Image2.png" alt="Logo" className="logo" />
+      <h2 className="title">Teamwill</h2>
+      <h3 className="subtitle">SCANNER LE QR CODE</h3>
 
-        {loading ? (
-          <div className="qr-loader">Chargement...</div>
-        ) : error ? (
-          <div className="error-message">{error}</div>
-        ) : qrCodeUrl ? (
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      <p className="instruction" style={{ color: 'white', marginBottom: '20px' }}>
+        Veuillez scanner le QR Code avec votre application d’authentification.
+      </p>
+
+      {showQr && qrCodeUrl ? (
+        <>
           <img src={qrCodeUrl} alt="QR Code" className="qr-img" />
-        ) : (
-          <div className="qr-loader">QR Code non disponible</div>
-        )}
+          <p style={{ color: 'white', marginTop: '10px' }}>
+            ⏳ Le QR Code expirera dans <strong>{countdown}</strong> secondes.
+          </p>
+        </>
+      ) : (
+        <p style={{ color: 'white' }}>{expiredMessage || '⛔ QR Code expiré.'}</p>
+      )}
 
-        <div className="buttons">
+      <div className="buttons">
+        {showQr && (
           <button className="submit-btn" onClick={handleContinue}>
             Continuer
           </button>
-          <a href="/signin" className="forgot-password">Retour à la connexion</a>
-        </div>
+        )}
+        <a href="/signin" className="forgot-password">Retour à la connexion</a>
       </div>
+    </div>
   );
 };
 

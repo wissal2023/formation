@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const quizController = require('../controllers/quizController');
 
+router.post('/create', quizController.createQuiz);
+
 router.post('/quizzes/:id/attempt', quizController.attemptQuiz);
-router.post('/quizzes', quizController.createQuiz);
 router.put('/quizzes/:id', quizController.updateQuiz);
 router.get('/formations/:formationId/quizzes', quizController.getAllQuizzes);
 router.delete('/quizzes/:quizId', quizController.deleteQuiz); 

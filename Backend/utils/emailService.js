@@ -15,7 +15,7 @@ const sendOtpEmail = async (email, otp) => {
         from: process.env.EMAIL_USER,  
         to: email,                   
         subject: 'Votre OTP de vérification', 
-        text: `Bonjour, voici votre OTP : ${otp}. Il est valable pendant 10 minutes.`
+        text: `Bonjour, voici votre OTP : ${otp}. Il est valable pendant 1 minute.`
     };
 
     try {
@@ -29,7 +29,7 @@ const sendOtpEmail = async (email, otp) => {
 
 // Method to send account creation email
 const sendAccountEmail = async ({ email, username, password }) => {
-    const loginUrl = `${process.env.FRONTEND_URL}/login`; 
+    const loginUrl = `${process.env.FRONTEND_URL}/signin`; 
 
     const mailOptions = {
         from: process.env.EMAIL_USER,  

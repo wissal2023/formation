@@ -28,32 +28,32 @@ const ResetPassword = () => {
 
   const handleContinue = async () => {
     const config = {
-      headers: { 'Content-Type': 'application/json' },
       withCredentials: true,
     };
 
     try {
       if (method === 'email') {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/otp/generate-otp`,
-          { email },
-          config
-        );
+        const response = await axios.post( `${import.meta.env.VITE_API_URL}/otp/generate-otp`,
+          { email }, config );      
 
         if (response.status === 200) {
-          navigate('/otpverification');
+          navigate('/otpverification', { state: { method: 'email' } });
         } else {
           alert("Erreur lors de l'envoi de l'OTP.");
         }
       } else if (method === 'qrcode') {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/otp/generate-secret`,
-          { email },
-          config
-        );
-
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/otp/generate-secret`, config);
+      
         if (response.status === 200) {
-          navigate('/qrcodedisplay');
+          console.log("QR Code URL:", response.data.qrCodeUrl); // Log the URL
+          console.log("Réponse complète backend:", response.data);  
+          navigate('/qrcodedisplay', {
+            state: {
+              method: 'qrcode',
+              qrCodeUrl: response.data.qrCodeUrl,
+              secret: response.data.secret  
+            }
+          });
         } else {
           alert("Erreur lors de la génération du QR Code.");
         }
