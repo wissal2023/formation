@@ -13,7 +13,7 @@ const UseFormations = () => {
    useEffect(() => {
       const fetchFormations = async () => {
          try {
-            const response = await axios.get('http://localhost:3000/formations/all', { withCredentials: true });
+            const response = await axios.get('http://localhost:4000/formations/all', { withCredentials: true });
             setFormations(response.data);
          } catch (err) {
             setError("Erreur lors du chargement des formations.");

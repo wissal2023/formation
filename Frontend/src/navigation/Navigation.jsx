@@ -3,6 +3,7 @@ import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Registration from '../pages/Registration';
 import StudentProfile from '../pages/StudentProfile';
+
 //*********** ons************** */
 
 import ResetPassword from '../pages/ResetPassword';
