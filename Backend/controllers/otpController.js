@@ -1,73 +1,179 @@
-const { sendOtpEmail } = require('../utils/emailService');  
-const { generateOtp } = require('../services/otpService'); 
+// backend/controllers/otpController
 const otpModel = require('../services/otpModel'); 
 const speakeasy = require('speakeasy'); 
 const qrcode = require('qrcode'); 
+const bcrypt = require('bcrypt'); 
+const { sendOtpEmail } = require('../utils/emailService');
+const { Otp, Trace } = require('../db/models');
+const crypto = require('crypto');
 
-
-// Vérifier l'OTP envoyé par email
-const verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
+// ******************************* email 
+const generateOtp = () => {
+  const otp = crypto.randomInt(100000, 999999); // Générer un code OTP à 6 chiffres
+  return otp;
+};
+//router.post('/generate-otp', sendOtp);
+const sendOtp = async (req, res) => {
+  //Extracts email from req.body
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: 'Email requis.' });
+  }
+  //Generates an OTP
+  const otp = generateOtp();
+  //Hashes the OTP using bcrypt for secure storage.
+  const hashedOtp = await bcrypt.hash(otp.toString(), 10); 
+  console.log("OTP generated at:", new Date());
 
   try {
-    // Vérifier si l'OTP est valide
-    const isValid = await otpModel.isValidOtp(email, otp);
+    //Sends the OTP via email 
+    await sendOtpEmail(email, otp);
+    
+    //Stores the email, hashed OTP, and flags (verified: false) in the database (Otp table)
+    await Otp.create({
+      email,
+      otp:hashedOtp, 
+      secret: null,
+      verified: false
+    });
+    
+    res.status(200).json({ message: 'OTP envoyé avec succès.' });
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi ou du stockage de l\'OTP:', error);
+    res.status(500).json({ message: 'Erreur serveur.', error: error.message });
+  }
+};
+//router.post('/verifyOtp', verifyOtp);
+const verifyOtp = async (req, res) => {
+  
+  const { email, otp } = req.body;
+  console.log("Received OTP request with email:", email);
+  console.log("Received OTP:", otp);
 
-    if (!isValid) {
-      return res.status(400).json({ message: 'OTP invalide ou expiré.' });
+  try {
+    //Finds the latest OTP for the given email.
+    const { email, otp } = req.body;
+    const otpRecord = await Otp.findOne({
+      where: { email: email },
+      order: [['created_at', 'DESC']], 
+    });
+
+    if (!otpRecord) {
+      return res.status(400).json({ message: 'OTP not found.' });
     }
 
-    // Supprimer l'OTP après vérification
+    // Compare the OTP entered by the user with the stored hashed OTP
+    const isOtpValid = await bcrypt.compare(otp, otpRecord.otp);
+    if (!isOtpValid) {
+      return res.status(400).json({ message: 'Invalid OTP.' });
+    }
+
+    // Mark OTP as verified
+    otpRecord.verified = true;
+    await otpRecord.save();
+
+    // Add Trace for OTP login
+    await Trace.create({
+      userId: otpRecord?.userId, // make sure you store or retrieve the userId
+      action: 'login with OTP email',
+      model: 'OtpVerification',
+      data: {
+        email,
+        method: 'auth with email OTP',
+        timestamp: new Date()
+      }
+    });
+
+
+    // DELETE the OTP from the database
     await otpModel.deleteOtp(email);
 
-    return res.status(200).json({ message: 'OTP vérifié avec succès.' });
+    return res.status(200).json({ message: 'OTP verified and deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la vérification de l'OTP.", error: error.message });
+    console.error('Error verifying OTP:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Générer un secret pour Google Authenticator
-const generateSecret = async (req, res) => {
-  const secret = speakeasy.generateSecret({ length: 20 });
+// ******************************* qr code
+//router.get('/generate-secret', authenticateToken, generateSecret);
+const generateTotpSecret = async (req, res) => {
+  const { email } = req.user; // assuming you're using auth middleware
 
-  try {
-    const otpAuthUrl = secret.otpauth_url;
-
-    // Convertir le QR code en image (DataURL)
-    qrcode.toDataURL(otpAuthUrl, (err, data_url) => {
-      if (err) {
-        return res.status(500).json({ message: "Erreur lors de la génération du QR Code." });
-      }
-
-      // Retourner le QR code et le secret à sauvegarder
-      res.status(200).json({
-        message: 'Scanne ce QR Code dans Google Authenticator.',
-        secret: secret.base32, // Sauvegarde ce secret
-        qrCodeUrl: data_url,
-      });
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la génération du secret.', error: error.message });
-  }
-};
-
-// Vérifier l'OTP généré par Google Authenticator
-const verifyGoogleOtp = (req, res) => {
-  const { token, secret } = req.body;
-
-  const isVerified = speakeasy.totp.verify({
-    secret: secret,
-    encoding: 'base32',
-    token: token,
-    window: 1,
+  const secret = speakeasy.generateSecret({
+    name: `Teamwill (${email})`
   });
 
-  if (isVerified) {
-    res.status(200).json({ message: 'OTP vérifié avec succès ! 🎉' });
-  } else {
-    res.status(400).json({ message: 'OTP invalide !' });
+  try {
+    const qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url);
+
+    // Store secret in your DB (hashing optional depending on security model)
+    await Otp.create({
+      email,
+      otp: null,
+      secret: secret.base32,
+      verified: false,
+    });
+
+    console.log("Génération du secret TOTP pour:", email);
+    console.log("Secret (base32):", secret.base32);
+
+    return res.json({ qrCodeUrl, secret: secret.base32 });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Erreur lors de la génération du QR code' });
+  }
+};
+//router.post('/verifyTotp', authenticateToken, verifyTotp);
+const verifyTotp = async (req, res) => {
+  const email = req.user?.email;
+  const { otp } = req.body; 
+  
+  if (!email) {
+    return res.status(401).json({ message: "Email de l'utilisateur non trouvé dans le token." });
+  }
+  try {
+    // Retrieve the latest OTP secret for the user
+    const otpRecord = await Otp.findOne({
+      where: { email },
+      order: [['created_at', 'DESC']],
+    });
+
+    if (!otpRecord || !otpRecord.secret) {
+      return res.status(400).json({ message: 'Aucun secret TOTP trouvé pour cet utilisateur.' });
+    }
+
+    console.log("Vérification du TOTP pour:", email);
+    console.log("Token reçu:", otp);
+    console.log("Dernier secret en base32 depuis la BD:", otpRecord?.secret);
+
+    // Verify the OTP with speakeasy
+    const verified = speakeasy.totp.verify({
+      secret: otpRecord.secret,
+      encoding: 'base32',
+      token: otp, 
+      window: 1,
+    });
+
+    if (!verified) {
+      return res.status(400).json({ message: 'Code TOTP invalide.' });
+    }
+    console.log("Résultat de la vérification TOTP:", verified);
+
+    otpRecord.verified = true;
+    await otpRecord.save(); // Update the OTP record to mark it as verified
+    await otpModel.deleteOtp(email); // Clean up the OTP record
+
+    return res.status(200).json({ message: 'TOTP vérifié avec succès' });
+  } catch (err) {
+    console.error('Erreur lors de la vérification TOTP:', err);
+    return res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
-// Exporter les fonctions
-module.exports = { verifyOtp, generateSecret, verifyGoogleOtp };
+module.exports = { 
+  sendOtp ,
+  verifyOtp, 
+  generateTotpSecret,
+  verifyTotp
+};

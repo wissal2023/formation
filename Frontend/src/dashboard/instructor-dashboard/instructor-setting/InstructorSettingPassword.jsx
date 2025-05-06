@@ -18,7 +18,7 @@ const InstructorSettingPassword = () => {
       }
 
       try {
-         const response = await fetch('http://localhost:3000/users/change-password', {
+         const response = await fetch(`${import.meta.env.VITE_API_URL}/users/change-password`, {
             method: 'POST',
             headers: {               
                'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ const InstructorSettingPassword = () => {
             setRePassword('');
             
             // Logout the user after password change
-            await fetch('http://localhost:3000/users/logout', {
+            await fetch('http://localhost:4000/users/logout', {
                method: 'POST',
                credentials: 'include'
             });

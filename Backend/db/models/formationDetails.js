@@ -1,4 +1,6 @@
 'use strict';
+const { Sequelize, DataTypes } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   const FormationDetails = sequelize.define('FormationDetails', {
     id: {
@@ -16,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     plan: {
-      type: DataTypes.JSON, // or DataTypes.ARRAY (am using PostgreSQL)
+      type: DataTypes.JSON, // DataTypes.ARRAY (am using PostgreSQL)
       allowNull: true
     },
     formationId: {
@@ -52,6 +54,8 @@ module.exports = (sequelize, DataTypes) => {
   FormationDetails.associate = (models) => {
     FormationDetails.hasMany(models.Video, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
     FormationDetails.hasMany(models.Document, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
+    FormationDetails.hasMany(models.Quiz, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
+
     FormationDetails.belongsTo(models.Formation, {foreignKey: 'formationId', onDelete: 'CASCADE'});
   };
 

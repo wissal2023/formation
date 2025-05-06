@@ -1,19 +1,25 @@
-// src/components/WelcomePopup/WelcomePopup.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 import { useWindowSize } from '@react-hook/window-size';
 import Lottie from 'lottie-react';
-import animationData from '../../../public/assets/img/lotti/welcome.json'; // adjust path
 import styles from './WelcomePopup.module.css';
 
 const WelcomePopup = ({ username, onClose }) => {
   const [showConfetti, setShowConfetti] = useState(true);
   const [width, height] = useWindowSize();
+  const [animationData, setAnimationData] = useState(null);
+
+  useEffect(() => {
+    fetch('/assets/img/lotti/welcome.json') // depuis public/
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch((err) => console.error('Erreur chargement Lottie:', err));
+  }, []);
 
   const handleContinue = () => {
-    setShowConfetti(false); // hide confetti when continuing
-    onClose(); // navigate to dashboard
+    setShowConfetti(false);
+    onClose();
   };
 
   return (
@@ -34,17 +40,18 @@ const WelcomePopup = ({ username, onClose }) => {
           </div>
 
           <div className={styles.lottieWrapper}>
-            <Lottie 
-              animationData={animationData} 
-              loop 
-              className={styles.lottieSmall}
-            />
+            {animationData && (
+              <Lottie 
+                animationData={animationData} 
+                loop 
+                className={styles.lottieSmall}
+              />
+            )}
           </div>
 
           <div className={styles.user}>
-          Hello <span className={styles.username}><strong>{username} !😄</strong></span>
-        </div>
-
+            Hello <span className={styles.username}><strong>{username} !😄</strong></span>
+          </div>
 
           <div className={styles.subtext}>
             So happy to see you. Let’s make today amazing!

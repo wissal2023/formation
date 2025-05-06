@@ -6,12 +6,8 @@ import StudentSettingArea from './StudentSettingArea'
 const StudentSetting = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+       
             <StudentSettingArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

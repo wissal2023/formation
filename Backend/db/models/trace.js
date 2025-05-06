@@ -7,15 +7,15 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    userId: {  // User who performed the action
+    userId: { 
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    action: {  // Action type (e.g., 'create', 'update', 'delete')
+    action: {  // Action type ('create', 'update', 'archive')
       type: DataTypes.STRING,
       allowNull: false
     },
-    model: {  // Model name (e.g., 'Formation', 'FormationDetails')
+    model: {    // the page route in the front
       type: DataTypes.STRING,
       allowNull: false
     },

@@ -6,6 +6,8 @@ import Breadcrumb from '../components/common/breadcrumb/DashboardBreadcrumb';
 import FooterOne from '../layouts/footers/FooterOne';
 import DashboardBanner from "../dashboard/dashboard-common/DashboardBanner";
 import DashboardSidebar from "../dashboard/dashboard-common/DashboardSidebar";
+import ChatWidget from '../components/chat/ChatWidget';
+
 
 const DashboardLayout = ({ pageTitle, children }) => {
   return (
@@ -25,6 +27,7 @@ const DashboardLayout = ({ pageTitle, children }) => {
             </div>
           </div>
         </section>
+        <ChatWidget />
       </main>
       <FooterOne />
     </Wrapper>

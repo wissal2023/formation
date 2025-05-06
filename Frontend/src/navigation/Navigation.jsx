@@ -1,118 +1,80 @@
 // frontend/src/navigation/Navigation.jsx
+import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import HomeTwo from '../pages/HomeTwo';
-import HomeEight from '../pages/HomeEight';
-import HomeSeven from '../pages/HomeSeven';
-import HomeSix from '../pages/HomeSix';
-import HomeFive from '../pages/HomeFive';
-import HomeFour from '../pages/HomeFour';
-import HomeThree from '../pages/HomeThree';
-import Course from '../pages/Course';
-import Lesson from '../pages/Lesson';
-import CourseDetails from '../pages/CourseDetails';
-import About from '../pages/About';
-import Instructor from '../pages/Instructor';
-import InstructorDetails from '../pages/InstructorDetails';
-import Event from '../pages/Event';
-import EventDetails from '../pages/EventDetails';
-import Shop from '../pages/Shop';
-import ShopDetails from '../pages/ShopDetails';
-import Cart from '../pages/Cart';
-import Wishlist from '../pages/Wishlist';
-import CheckOut from '../pages/CheckOut';
-import Blog from '../pages/Blog';
-import BlogTwo from '../pages/BlogTwo';
-import BlogThree from '../pages/BlogThree';
-import BlogDetails from '../pages/BlogDetails';
 import Registration from '../pages/Registration';
-import Contact from '../pages/Contact';
-import InstructorEnrollCourse from '../pages/InstructorEnrolledCourses';
-import InstructorWishlist from '../pages/InstructorWishlist';
-import InstructorReview from '../pages/InstructorReview';
-import InstructorQuiz from '../pages/InstructorQuiz';
-import InstructorHistory from '../pages/InstructorHistory';
-import InstructorCourses from '../pages/InstructorCourses';
-import InstructorAnnouncement from '../pages/InstructorAnnouncement';
-import InstructorAssignment from '../pages/InstructorAssignment';
-import InstructorSetting from '../pages/InstructorSetting';
-import InstructorAttempt from '../pages/InstructorAttempt';
-import StudentDashboard from '../pages/StudentDashboard';
 import StudentProfile from '../pages/StudentProfile';
-import StudentEnrollCourse from '../pages/StudentEnrolledCourses';
-import StudentWishlist from '../pages/StudentWishlist';
-import StudentReview from '../pages/StudentReview';
-import StudentAttempt from '../pages/StudentAttempt';
-import StudentHistory from '../pages/StudentHistory';
-import StudentSetting from '../pages/StudentSetting';
-import NotFound from '../pages/NotFound';
+//*********** ons************** */
 
-import Login from '../pages/Login';
+import ResetPassword from '../pages/ResetPassword';
+import QrCodeDisplay from '../pages/QrCodeVerification';
+import SignIn from '../pages/Login';
+import OTPVerification from '../pages/OtpVerification';
+import TotpVerif from '../pages/TotpVerif';
+
+// Exemple de routing
+
+//*********** WISSAL************** */
 import InstructorDashboard from '../pages/InstructorDashboard';
+import StudentDashboard from '../pages/StudentDashboard';
 import InstructorProfile from '../pages/InstructorProfile';
 import ChangePassword from '../pages/ChangePassword';
 import WelcomePage from '../pages/WelcomePage'
+import Course from '../pages/Course';
+import AddFormation from '../pages/AddFormation';
+import UserSetting from '../pages/UserSetting';
+import NotFound from '../pages/NotFound';
 
 const AppNavigation = () => {
   return (
     <Router>
-      <Routes>
-         {/* public */}
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/change-password" element={<ChangePassword />} />
+      <Routes>  
+        <Route path="/signin" element={ <SignIn />} />
+        <Route path="/change-password" element={<ChangePassword />} />        
+        <Route path="/ResetPassword" element={<ResetPassword />} />
+        <Route path="/otpverification" element={<OTPVerification />}/>        
+        <Route path="/qrcodedisplay" element={<QrCodeDisplay />} />
+        <Route path="/verify-qrcode" element={<TotpVerif />} />
         <Route path="/welcome" element={<WelcomePage />} />
-        <Route path="/instructor-dashboard" element={<InstructorDashboard />} />        
-        <Route path="/formations" element={<Course />} />
         
-        <Route path="/course-details" element={<CourseDetails />} />
-        <Route path="/lesson" element={<Lesson />} />
-        <Route path="/instructor-profile" element={<InstructorProfile />} />
+        <Route path="/dashboard" element={<InstructorDashboard />} />        
+        <Route path="/formations" element={<Course />} />  
+        <Route path="/listUsers" element={<InstructorProfile />} />
+        <Route path="/editUser/:id" element={<UserSetting />} />           
+        <Route path="/stepper" element={<AddFormation />} />
 
-        <Route path="/instructor-setting" element={<InstructorSetting />} />
-        <Route path="/home-two" element={<HomeTwo />} />
-        <Route path="/home-three" element={<HomeThree />} />
-        <Route path="/home-four" element={<HomeFour />} />
-        <Route path="/home-five" element={<HomeFive />} />
-        <Route path="/home-six" element={<HomeSix />} />
-        <Route path="/home-seven" element={<HomeSeven />} />
-        <Route path="/home-eight" element={<HomeEight />} />
-         <Route path="/about-us" element={<About />} />
-        <Route path="/instructors" element={<Instructor />} />
-        <Route path="/instructor-details" element={<InstructorDetails />} />
-        <Route path="/events" element={<Event />} />
-        <Route path="/events-details" element={<EventDetails />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/shop-details" element={<ShopDetails />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/check-out" element={<CheckOut />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog-2" element={<BlogTwo />} />
-        <Route path="/blog-3" element={<BlogThree />} />
-        <Route path="/blog-details" element={<BlogDetails />} />
-        <Route path="/registration" element={<Registration />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
-        <Route path="/instructor-wishlist" element={<InstructorWishlist />} />
-        <Route path="/instructor-review" element={<InstructorReview />} />
-        <Route path="/instructor-attempts" element={<InstructorAttempt />} />
-        <Route path="/instructor-history" element={<InstructorHistory />} />
-        <Route path="/instructor-courses" element={<InstructorCourses />} />
-        <Route path="/instructor-announcement" element={<InstructorAnnouncement />} />
-        <Route path="/instructor-quiz" element={<InstructorQuiz />} />
-        <Route path="/instructor-assignment" element={<InstructorAssignment />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
-        <Route path="/student-enrolled-courses" element={<StudentEnrollCourse />} />
+
+
+        {/*ROUTES TO BE USED         
+        <Route path="/instructor-attempts" element={<InstructorAttempt />} /> 
+        <Route path="/course-details" element={<CourseDetails />} />
+        <Route path="/lesson" element={<Lesson />} />
+        <Route path="/instructor-details" element={<InstructorDetails />} />
+        <Route path="/instructors" element={<Instructor />} />   {/* list formateur 
+        <Route path="/events" element={<Event />} />{/* doc 
+        <Route path="/check-out" element={<CheckOut />} />   {/*form      
+        <Route path="/blog-details" element={<BlogDetails />} />{/* evla rating commentaire  
+        <Route path="/contact" element={<Contact />} /> {/* note dig  
+        <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
+        <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table 
+        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
+        <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table 
+        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
+
+        <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table
+        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
+
+        {/*<Route path="/student-dashboard" element={<StudentDashboard />} />
+        {/*<Route path="/student-wishlist" element={<StudentWishlist />} />
         <Route path="/student-wishlist" element={<StudentWishlist />} />
-        <Route path="/student-review" element={<StudentReview />} />
-        <Route path="/student-attempts" element={<StudentAttempt />} />
-        <Route path="/student-history" element={<StudentHistory />} />
-        <Route path="/student-setting" element={<StudentSetting />} />
-        {/* <Route path="/blog-details/" element={<DynamicBlogDeatils />} /> */}
+
+        <Route path="/about-us" element={<About />} />
+        */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
+   
   );
 };
 

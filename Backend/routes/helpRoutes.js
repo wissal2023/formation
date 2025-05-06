@@ -1,14 +1,16 @@
 // routes/helpRoutes.js
 const express = require('express');
 const router = express.Router();
-const helpController = require('../controllers/helpController');
+const {createHelp, getHelpByPage, getAllHelps, getHelpById, updateHelp, deleteHelp } = require('../controllers/helpController');
+const authenticateToken = require('../utils/authMiddleware');
 
-router.get('/page/:page', helpController.getHelpByPage);
-router.post('/', helpController.createHelp);
-router.get('/', helpController.getAllHelps);
-router.get('/:id', helpController.getHelpById);
-router.put('/:id', helpController.updateHelp);
-router.delete('/:id', helpController.deleteHelp);
+
+router.post('/', authenticateToken,createHelp);
+router.get('/page/:page', authenticateToken, getHelpByPage);
+router.get('/', authenticateToken, getAllHelps);
+router.get('/:id', authenticateToken, getHelpById);
+router.put('/:id', authenticateToken, updateHelp);
+router.delete('/:id', authenticateToken, deleteHelp);
 
 
 module.exports = router;

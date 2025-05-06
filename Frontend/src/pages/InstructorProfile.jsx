@@ -1,13 +1,11 @@
-import Wrapper from '../layouts/Wrapper';
-import InstructorProfileMain from '../dashboard/instructor-dashboard/profile';
-import SEO from '../components/SEO';
+import InstructorAttemptsConten from '../dashboard/instructor-dashboard/instructor-attempts/listUsers';
+import DashboardLayout from '../layouts/DashboardLayout';
 
 const InstructorProfile = () => {
    return (
-      <Wrapper>
-         <SEO pageTitle={'SkillGro Instructor Profile'} />
-         <InstructorProfileMain />
-      </Wrapper>
+      <DashboardLayout pageTitle="List Users">
+         <InstructorAttemptsConten/>
+      </DashboardLayout>
    );
 };
 

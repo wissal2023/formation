@@ -7,12 +7,11 @@ pyttsx3
 matplotlib
 Pillow
 opencv-python
-django
 tensorflow
 PyPDF2
 nltk
 PyMuPDF
 ollama
 IPython
-
 torch
+pdfminer.six 

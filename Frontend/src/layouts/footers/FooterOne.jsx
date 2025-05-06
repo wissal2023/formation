@@ -18,10 +18,6 @@ const FooterOne = ({ style, style_2 }) => {
                               <Social />
                            </ul>
                         </div>
-                        <div className="app-download">
-                           <Link to="#"><img src="/assets/img/others/google-play.svg" alt="img" /></Link>
-                           <Link to="#"><img src="/assets/img/others/apple-store.svg" alt="img" /></Link>
-                        </div>
                      </div>
                   </div>
                </div>
@@ -29,26 +25,6 @@ const FooterOne = ({ style, style_2 }) => {
             {style_2 && (
                <div className="footer__shape" style={{ backgroundImage: 'url(/assets/img/others/h8_footer_shape.svg)' }}></div>
             )}
-         </div>
-
-         <div className={`footer__bottom ${style_2 ? "footer__bottom-four" : ""}`}>
-            <div className="container">
-               <div className="row align-items-center">
-                  <div className="col-md-7">
-                     <div className="copy-right-text">
-                        <p>© 2010-2024 skillgro.com. All rights reserved.</p>
-                     </div>
-                  </div>
-                  <div className="col-md-5">
-                     <div className="footer__bottom-menu">
-                        <ul className="list-wrap">
-                           <li><Link to="/contact">Term of Use</Link></li>
-                           <li><Link to="/contact">Privacy Policy</Link></li>
-                        </ul>
-                     </div>
-                  </div>
-               </div>
-            </div>
          </div>
       </footer>
    );

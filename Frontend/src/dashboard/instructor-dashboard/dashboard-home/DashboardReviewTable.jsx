@@ -9,7 +9,7 @@ const DashboardReviewTable = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/users/getAll", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/getAll`, {
           withCredentials: true, 
         });
         setUsers(response.data);

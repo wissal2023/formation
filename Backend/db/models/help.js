@@ -11,45 +11,43 @@ module.exports = (sequelize, DataTypes) => {
     },
     page: {
       type: DataTypes.STRING,
-      allowNull: false,
-      comment: 'The route or component/page this help entry is for'
+      allowNull: false
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: false,
-      comment: 'Short title or headline for the help tip'
+      allowNull: false
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: false,
-      comment: 'Detailed help message shown to the user'
+      allowNull: false
     },
     language: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'fr',
-      comment: 'Language code (e.g., fr, en, ar)'
-    },
-    role: {
-      type: DataTypes.ENUM('Admin', 'Formateur', 'Apprenant'),
-      defaultValue: 'Admin',
-      allowNull: false,
-      comment: 'User role this help tip is for'
+      defaultValue: 'en'
     },
     isActive: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true,
-      comment: 'Used to deactivate help without deleting'
+      defaultValue: true
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Users',
+        key: 'id'
+      },
+      onDelete: 'CASCADE'
     },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     deletedAt: {
         type: DataTypes.DATE
@@ -66,5 +64,5 @@ module.exports = (sequelize, DataTypes) => {
     Help.hasMany(models.HelpTranslation, { foreignKey: 'helpId', onDelete: 'CASCADE' });
     Help.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE'});};
 
-  return Help;
+  return Help;
 };

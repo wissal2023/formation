@@ -1,69 +1,96 @@
 // controllers/recompenseController.js
-const db = require('../db/models');
-const Recompense = db.Recompense;
+const { Recompense, DailyStreak, User } = require('../db/models'); // Assuming your models are in the models folder
+const moment = require('moment');
 
+// Method to award badge when streak count reaches 7
+const awardBadgeIfStreakReached = async (req, res) => {
+  const userId = req.user.id; // Get userId from authenticated token
 
-// Create a new Recompense
-exports.createRecompense = async (req, res) => {
   try {
-    const recompense = await Recompense.create(req.body);
-    res.status(201).json(recompense);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
+    // Find the user's latest streak record
+    const lastStreak = await DailyStreak.findOne({
+      where: { userId: userId },
+      order: [['createdAt', 'DESC']]
+    });
 
-// Get all Recompenses
-exports.getAllRecompenses = async (req, res) => {
-  try {
-    const recompenses = await Recompense.findAll();
-    res.status(200).json(recompenses);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// Get a single Recompense by ID
-exports.getRecompenseById = async (req, res) => {
-  try {
-    const recompense = await Recompense.findByPk(req.params.id);
-    if (!recompense) {
-      return res.status(404).json({ message: "Recompense not found" });
-    }
-    res.status(200).json(recompense);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// Update a Recompense by ID
-exports.updateRecompense = async (req, res) => {
-  try {
-    const recompense = await Recompense.findByPk(req.params.id);
-    if (!recompense) {
-      return res.status(404).json({ message: "Recompense not found" });
+    if (!lastStreak) {
+      return res.status(404).json({ message: 'No streak record found for this user' });
     }
 
-    // Update fields with new values from request body
-    await recompense.update(req.body);
-    res.status(200).json(recompense);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
+    const streakCount = lastStreak.streakCount;
 
-// Soft delete a Recompense by ID (paranoid soft delete)
-exports.deleteRecompense = async (req, res) => {
-  try {
-    const recompense = await Recompense.findByPk(req.params.id);
-    if (!recompense) {
-      return res.status(404).json({ message: "Recompense not found" });
+    // If the streak count is 5, award the badge
+    if (streakCount === 5) {
+      const existingBadge = await Recompense.findOne({
+        where: {
+          userId: userId,
+          isUnlocked: true,
+          name: '5-Day Streak Badge'
+        }
+      });
+
+      if (existingBadge) {
+        return res.status(400).json({ message: 'Badge already awarded to this user' });
+      }
+
+      const badgeData = {
+        name: '5-Day Streak Badge',
+        type: 'streak',
+        description: 'Awarded for logging in for 5 consecutive days',
+        icon: 'badge_icon_path_here',
+        isUnlocked: true,
+        userId: userId,
+        points: 100,
+        awardedDate: new Date()
+      };
+
+      const newBadge = await Recompense.create(badgeData);
+
+      return res.status(200).json({
+        message: 'Badge awarded successfully!',
+        badge: newBadge
+      });
+    } else {
+      return res.status(400).json({
+        message: `User has not reached a 5-day streak. Current streak: ${streakCount}`
+      });
     }
 
-    // Soft delete
-    await recompense.destroy();
-    res.status(200).json({ message: "Recompense deleted successfully" });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    return res.status(500).json({
+      message: 'Failed to award badge',
+      error: error.message
+    });
   }
 };
+
+
+const getUserBadgesCount = async (req, res) => {
+  const userId = req.user.id; // Get from token instead of params
+
+  try {
+    // Count badges where isUnlocked is true
+    const badgesCount = await Recompense.count({
+      where: { userId: userId, isUnlocked: true }
+    });
+
+    return res.status(200).json({
+      message: `User has ${badgesCount} badge(s)`,
+      badgesCount
+    });
+  } catch (error) {
+    console.error('Error fetching badge count:', error);
+    return res.status(500).json({
+      message: 'Failed to retrieve badges count',
+      error: error.message
+    });
+  }
+};
+
+
+module.exports = {
+  awardBadgeIfStreakReached,
+  getUserBadgesCount, // Export the new method
+};
+

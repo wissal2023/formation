@@ -1,45 +1,27 @@
-const db = require('../db/models');
-const DailyStreak = db.DailyStreak;
-
-
-
-
-
-// ✅ Get a streak by ID
-exports.getDailyStreakById = async (req, res) => {
+const { DailyStreak } = require('../db/models');
+const getStreak = async (req, res) => {
   try {
-    const id = req.params.id;
-    const streak = await DailyStreak.findByPk(id, { include: db.User });
-    if (!streak) return res.status(404).json({ message: 'Not found' });
-    res.json(streak);
+    const userId = req.user.id; // from authenticated token
+    const streak = await DailyStreak.findOne({ where: { userId}, paranoid: false});
+    
+
+    
+    if (!streak) {
+      return res.status(404).json({ message: "Streak not found for user" });
+    }
+
+    res.json({ nombreStreak: streak.nombreStreak });
+    const streaks = await DailyStreak.findAll({ raw: true });
+    console.log("All streaks:", streaks);
+
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Failed to get streak:", error);
+    res.status(500).json({ message: "Failed to get streak", error: error.message });
   }
 };
 
-// ✅ Update a streak
-exports.updateDailyStreak = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const updated = await DailyStreak.update(req.body, {
-      where: { id },
-      returning: true
-    });
-    if (updated[0] === 0) return res.status(404).json({ message: 'Not found' });
-    res.json(updated[1][0]);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
-// ✅ Delete (soft delete) a streak
-exports.deleteDailyStreak = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const deleted = await DailyStreak.destroy({ where: { id } });
-    if (!deleted) return res.status(404).json({ message: 'Not found' });
-    res.json({ message: 'Streak deleted' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+module.exports = {
+  getStreak
 };

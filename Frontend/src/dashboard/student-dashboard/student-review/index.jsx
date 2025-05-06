@@ -6,12 +6,8 @@ import StudentReviewArea from './StudentReviewArea'
 const StudentReview = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <DashboardBreadcrumb />
+        
             <StudentReviewArea />
-         </main>
-         <FooterOne />
       </>
    )
 }

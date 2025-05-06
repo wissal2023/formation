@@ -1,68 +1,59 @@
-const Certification = require('../db/models/certification');
-const User = require('../db/models/user');
-const Formation = require('../db/models/formation');
-const Quiz = require('../db/models/quiz');
+const { Certification, User, Formation, Trace } = require('../db/models');  // Add Trace model
 
-// Create certification after completing a course
-exports.createCertif = async (req, res) => {
+exports.createCertification = async (req, res) => {
+  const { userId, quizId, statut } = req.body;
+
   try {
-    const { userId, formationId } = req.body;
-
-    // Check if the user and formation exist
     const user = await User.findByPk(userId);
-    const formation = await Formation.findByPk(formationId);
-
-    if (!user || !formation) {
-      return res.status(404).json({ message: 'User or Course not found' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    // Fetch all quizzes associated with the formation
-    const quizzes = await Quiz.findAll({
-      where: { formationId: formation.id }
-    });
-
-    if (quizzes.length === 0) {
-      return res.status(404).json({ message: 'No quizzes found for this course' });
+    const formation = await Formation.findOne({ where: { quizId } });
+    if (!formation) {
+      return res.status(404).json({ message: 'Formation not found for the quiz' });
     }
 
-    // Check if the user has completed all quizzes in the course
-    const completedQuizzes = quizzes.filter(quiz => quiz.userId === user.id && quiz.status === 'Completed');
-
-    if (completedQuizzes.length !== quizzes.length) {
-      return res.status(400).json({ message: 'User has not completed all quizzes in the course' });
-    }
-
-    // Create the certification for the completed course
+    // Create the certification
     const certification = await Certification.create({
-      nom: user.firstName,  // Assuming the user's first name is stored in 'firstName'
-      prenom: user.lastName,  // Assuming the user's last name is stored in 'lastName'
+      nom: user.username,
       dateObtention: new Date(),
-      statut: 'Completed', // Set the status as 'Completed'
-      formationId: formation.id // Link certification to the course (formation)
+      statut,
+      quizId,
+      formationId: formation.id,
     });
 
-    res.status(201).json({ message: 'Certification created successfully', certification });
+    // Create a trace to log the action of the user earning a certification
+    await Trace.create({
+      action: 'Certification Earned',  // Action name
+      deleted_data: {  // Save metadata about the action
+        certificationId: certification.id,
+        userId: user.id,
+        formationId: formation.id,
+      },
+      file_data: null,  // Not needed in this case
+    });
+
+    return res.status(201).json({
+      message: 'Certification created successfully',
+      certification,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error creating certification:', error);
+    return res.status(500).json({ message: 'Error creating certification', error });
   }
 };
 
-// Get all certifications for a user
-exports.getUserCertif = async (req, res) => {
-  try {
-    const { userId } = req.params;
+exports.getUserCertifications = async (req, res) => {
+  const { userId } = req.params;
 
+  try {
     const certifications = await Certification.findAll({
       where: { userId },
       include: [
         {
-          model: User,
-          attributes: ['firstName', 'lastName', 'email'],
-        },
-        {
           model: Formation,
-          attributes: ['titre'],
+          attributes: ['name'], 
         },
       ],
     });
@@ -71,38 +62,75 @@ exports.getUserCertif = async (req, res) => {
       return res.status(404).json({ message: 'No certifications found for this user' });
     }
 
-    res.status(200).json(certifications);
+    const certificationDetails = certifications.map(cert => ({
+      userName: cert.nom,  
+      formationName: cert.Formation.name,
+      dateObtention: cert.dateObtention,
+      statut: cert.statut,
+    }));
+
+    return res.status(200).json({
+      message: 'Certifications retrieved successfully',
+      certifications: certificationDetails,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error fetching certifications:', error);
+    return res.status(500).json({ message: 'Error fetching certifications', error });
   }
 };
-
-// Get a specific certification by ID
-exports.getCertifById = async (req, res) => {
-  const { id } = req.params;
+exports.displaycertification = async (req, res) => {
+  const { userId, certificationId } = req.params; 
 
   try {
-    const certification = await Certification.findByPk(id, {
+    // Retrieve the specific certification for the user
+    const certification = await Certification.findOne({
+      where: { id: certificationId, userId },  
       include: [
         {
-          model: User,
-          attributes: ['firstName', 'lastName', 'email'],
-        },
-        {
-          model: Formation,
-          attributes: ['titre'],
+          model: Formation,  
+          attributes: ['name'], 
         },
       ],
     });
 
     if (!certification) {
-      return res.status(404).json({ message: 'Certification not found' });
+      return res.status(404).json({ message: 'Certification not found for this user' });
     }
 
-    res.status(200).json(certification);
+    return res.status(200).json({
+      message: 'Certification retrieved successfully',
+      certification,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error fetching certification:', error);
+    return res.status(500).json({ message: 'Error fetching certification', error });
+  }
+};
+exports.numberOfCertifPerFormation = async (req, res) => {
+  const { formationId } = req.params;
+
+  try {
+    if (!formationId) {
+      return res.status(400).json({ message: 'Formation ID is required' });
+    }
+    const certificationCount = await Certification.count({
+      where: { formationId },
+    });
+    if (certificationCount === 0) {
+      return res.status(404).json({
+        message: `No certifications found for formation ID: ${formationId}`,
+        certificationCount: 0,
+      });
+    }
+    return res.status(200).json({
+      message: `Successfully retrieved certification count for formation ID: ${formationId}`,
+      certificationCount,
+    });
+  } catch (error) {
+    console.error('Error fetching certification count:', error);
+    return res.status(500).json({
+      message: 'Internal server error while fetching certification count',
+      error: error.message,
+    });
   }
 };

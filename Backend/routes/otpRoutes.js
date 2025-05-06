@@ -1,14 +1,19 @@
+// backend/routes/otpRoutes
 const express = require('express');
 const router = express.Router();
-const { sendOtp, verifyOtp, generateSecret, verifyGoogleOtp } = require('../Controllers/otpController');
+const authenticateToken = require('../utils/authMiddleware');
+const { sendOtp, verifyOtp, verifyTotp, generateTotpSecret} = require('../controllers/otpController');
 
-// Route pour générer le QR code et secret
-router.get('/generate-secret', generateSecret); // Utilisation directe après la déstructuration
-
-// Route pour vérifier l'OTP de Google Authenticator
-router.post('/verify-google-otp', verifyGoogleOtp);
-
-// Route pour vérifier l'OTP
+router.post('/generate-otp', sendOtp);
 router.post('/verifyOtp', verifyOtp);
+router.get('/generate-secret', authenticateToken, generateTotpSecret); 
+router.post('/verifyTotp', authenticateToken, verifyTotp);
+
+
+//router.get('/generate-secret', authenticateToken, generateSecret); 
+//router.post('/verifyTotp', authenticateToken, verifyTotp);
+
+//router.post('/verify-google-otp', verifyGoogleOtp);
+//router.get('/status', getOtpStatus);
 
 module.exports = router;

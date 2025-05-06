@@ -1,6 +1,7 @@
-// app.js
+// backend/app.js
 require('dotenv').config();
 require('./utils/cron');
+const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express(); 
@@ -10,6 +11,8 @@ const cors = require('cors');
 const createFirstAdminUser = require('./utils/createFirstAdminUser');
 
 const formationRoutes = require('./routes/formationRoutes');
+const formationDetailsRoutes = require('./routes/formationDetailsRoutes');
+
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
 const otpRoutes = require('./routes/otpRoutes');
@@ -32,6 +35,7 @@ app.use(cors({
     credentials: true,
 }));
 app.use(cookieParser());
+//app.use('/otp', otpRoutes);
 
 
 // ******************* middelware *******************
@@ -40,19 +44,32 @@ app.use((req, res, next) => {
     next();
   });
 
+// Error handler for multer (upload img)
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError || err.message.includes('Seuls les fichiers')) {
+      return res.status(400).json({ error: err.message });
+    }
+    next(err);
+});
+// Serve static files from 'assets/uploads' directory
+app.use('/assets/uploads', express.static(path.join(__dirname, 'assets', 'uploads')));
+app.use('/assets/documents', express.static(path.join(__dirname, 'assets', 'documents')));
+
+
 // ******************* HEAD ROUTES *******************
 app.use('/users', userRoute);
 app.use('/otp', otpRoutes);
 app.use('/formations', formationRoutes);
+app.use('/module', formationDetailsRoutes);
 app.use('/documents', docRoute );
+app.use('/quizzes', quizRoutes);
 app.use('/certifications', certificationRoutes);
-app.use('/streaks', dailyStreakRoutes);
+app.use('/streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/notedigitales', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
-app.use('/quizzes', quizRoutes);
 app.use('/quizprogs', quizProgRoutes);
-app.use('/api/recompenses', recompenseRoutes);
+app.use('/recompenses', recompenseRoutes);
 app.use('/reponses', reponseRoutes);
 app.use('/videos', videoRoutes);
 app.use('/helps', helpRoutes);
@@ -65,9 +82,10 @@ app.use('*', (req, res) => {
     });
 });
 
-
-
-const PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.APP_PORT || 4000;
+app.get('/', (req, res) => {
+    res.redirect('/signin');
+});
 app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
     createFirstAdminUser(); 

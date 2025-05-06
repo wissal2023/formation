@@ -14,8 +14,12 @@ module.exports = (sequelize, DataTypes) => {
   },
   isCorrect: {  
     type: DataTypes.BOOLEAN,
-    defaultValue: false
   },
+  points: {
+    type: DataTypes.INTEGER
+  },
+  //matchPair,
+  //position,
   questId: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -40,11 +44,11 @@ module.exports = (sequelize, DataTypes) => {
   }
 }, {
   paranoid: true, 
-  freezeTableName: true
 });
 
 Reponse.associate = (models) => {
-  Reponse.belongsTo(models.Question, { foreignKey: 'questionId', onDelete: 'CASCADE' });
-};
+  Reponse.belongsTo(models.Question, { foreignKey: 'questId', onDelete: 'CASCADE' });
+  };
+  
 return Reponse;
 };

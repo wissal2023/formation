@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     date: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     tentatives: {
       type: DataTypes.INTEGER,
@@ -32,25 +32,37 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('easy', 'medium', 'hard'),
       allowNull: false
     },
+    formationDetailsId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Formations', 
+        key: 'id'
+      },
+      onDelete: 'CASCADE'
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
     },
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: Sequelize.NOW
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      type: DataTypes.DATE
     }
   }, {
-    paranoid: true, // Enables soft delete
+    paranoid: true,
     freezeTableName: true,
     timestamps: true
   });
 
   // Associations
   Quiz.associate = (models) => {
-    Quiz.belongsTo(models.Formation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+    Quiz.belongsTo(models.FormationDetails, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
     Quiz.hasOne(models.Certification, { foreignKey: 'quizId', onDelete: 'CASCADE' });
     Quiz.hasMany(models.Question, { foreignKey: 'quizId', onDelete: 'CASCADE' });
     Quiz.hasMany(models.QuizProg, { foreignKey: 'quizId', onDelete: 'CASCADE' });

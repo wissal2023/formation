@@ -1,16 +1,29 @@
-
 // services/otpModels.js
+const { Otp } = require('../db/models');
 
-exports.storeOtp = async (email, otp) => {
-    // Stocke l'OTP dans la base de données
-    await supabase.from('otps').insert([{ email, otp, created_at: new Date() }]);
+// ************************ email
+// Deletes the OTP record for the given email from the databas
+const deleteOtp = async (email) => {
+  console.log("Deleting OTP for email:", email); // Log when OTP is deleted
+  await Otp.destroy({ where: { email } });
 };
 
-exports.getOtp = async (email) => {
-    // Récupère l'OTP de la base de données
-    const { data, error } = await supabase.from('otps').select('otp').eq('email', email).single();
-    if (error) {
-        throw new Error(error.message);
-    }
-    return data.otp;
+
+// ************************ qr code:
+//Retrieves the stored secret from the database.
+const getSecretForUser = async (email) => {
+  const otpEntry = await Otp.findOne({
+    where: { email },
+    attributes: ['secret'],
+    order: [['created_at', 'DESC']],  // 🆕 get the latest
+  });
+  return otpEntry ? otpEntry.secret : null;
+};
+
+
+
+
+module.exports = {
+  deleteOtp,
+  getSecretForUser
 };

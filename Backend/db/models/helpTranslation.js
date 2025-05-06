@@ -1,5 +1,5 @@
 'use strict';
-
+const { Sequelize, DataTypes } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const HelpTranslation = sequelize.define('HelpTranslation', {
     id: {
@@ -9,7 +9,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     helpId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true,
+      references: {
+        model: 'Helps',
+        key: 'id'
+      },
+      onDelete: 'CASCADE'
     },
     languageCode: {
       type: DataTypes.STRING(5),
@@ -35,6 +40,8 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW
     }
   }, {
+    timestamps: true,
+    paranoid: true,
     tableName: 'HelpTranslations',
     timestamps: true,
     indexes: [
