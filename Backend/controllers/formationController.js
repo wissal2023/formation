@@ -214,6 +214,8 @@ const deleteFormation = async (req, res) => {
 };
 //app.use('/formations', formationRoutes);
 //router.get('/completed', authenticateToken, getCompletedFormations);
+
+
 const getCompletedFormations = async (req, res) => {
   try {
     const userId = req.user.id; // Get user ID from the authenticated token

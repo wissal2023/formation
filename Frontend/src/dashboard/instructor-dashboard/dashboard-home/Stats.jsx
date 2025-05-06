@@ -19,9 +19,9 @@ const Stats = () => {
         });
 
         // Fetch completed formations
-        const formationRes = await axios.get(`${API}/formations/completed`, {
+        /*const formationRes = await axios.get(`${API}/formations/completed`, {
           withCredentials: true,
-        });
+        });*/
 
         // Fetch badge count
        /* const badgeRes = await axios.get(`${API}/recompenses/badges-count`, {
@@ -35,11 +35,11 @@ const Stats = () => {
             count: streakRes.data.nombreStreak,
             lottie: flameAnimation,
           },
-          {
+          /*{
             title: "Formations Terminées",
             count: formationRes.data.completedFormations,
             icon: "fa-solid fa-graduation-cap",
-          },
+          },*/
           /*{
             title: "Badges Débloqués",
             count: badgeRes.data.badgesCount,

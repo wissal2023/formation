@@ -95,7 +95,6 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-
 // ******************************* qr code
 //router.get('/generate-secret', authenticateToken, generateSecret);
 const generateTotpSecret = async (req, res) => {
@@ -171,10 +170,6 @@ const verifyTotp = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur' });
   }
 };
-
-
-
-
 
 module.exports = { 
   sendOtp ,
