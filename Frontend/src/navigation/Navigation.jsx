@@ -12,7 +12,6 @@ import SignIn from '../pages/Login';
 import OTPVerification from '../pages/OtpVerification';
 import TotpVerif from '../pages/TotpVerif';
 
-// Exemple de routing
 
 //*********** WISSAL************** */
 import InstructorDashboard from '../pages/InstructorDashboard';
@@ -24,6 +23,8 @@ import Course from '../pages/Course';
 import AddFormation from '../pages/AddFormation';
 import UserSetting from '../pages/UserSetting';
 import NotFound from '../pages/NotFound';
+import PrivateRoute from '../PrivateRoute.jsx';
+import SignIn from "/Users/ons/Desktop/giiit baaack/formation/Frontend/src/signIn";
 
 const AppNavigation = () => {
   return (
