@@ -11,7 +11,7 @@ const sidebar_data = [
          { id: 2, link: "/listUsers", icon: "skillgro-avatar", title: "All Users" },
          { id: 3, link: "/formations", icon: "skillgro-book", title: "All Formation" },
          { id: 4, link: "/stepper", icon: "skillgro-label", title: "Create formation stepper" },
-         { id: 5, link: "/instructor-review", icon: "skillgro-book-2", title: "Reviews" },
+         { id: 5, link: "/convert", icon: "skillgro-book-2", title: "generator" },
          { id: 6, link: "/instructor-attempts", icon: "skillgro-question", title: "My Quiz Attempts" },
          { id: 7, link: "/instructor-history", icon: "skillgro-satchel", title: "Order History" },
       ],

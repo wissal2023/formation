@@ -28,6 +28,7 @@ const reponseRoutes = require('./routes/reponseRoutes');
 const videoRoutes = require('./routes/videoRoutes');
 const helpRoutes = require('./routes/helpRoutes');
 const helpTranslationRoutes = require('./routes/helpTranslationRoutes');
+const conversionFileRoutes = require('./routes//ConversionFileRoute');
 
 app.use(express.json()); 
 app.use(cors({
@@ -73,7 +74,8 @@ app.use('/recompenses', recompenseRoutes);
 app.use('/reponses', reponseRoutes);
 app.use('/videos', videoRoutes);
 app.use('/helps', helpRoutes);
-app.use('/help-translations', helpTranslationRoutes);  
+app.use('/help-translations', helpTranslationRoutes);
+app.use('/convertor', conversionFileRoutes)  
 
 app.use('*', (req, res) => {
     res.status(404).json({
