@@ -71,20 +71,6 @@ const verifyOtp = async (req, res) => {
     // Mark OTP as verified
     otpRecord.verified = true;
     await otpRecord.save();
-
-    // Add Trace for OTP login
-    await Trace.create({
-      userId: otpRecord?.userId, // make sure you store or retrieve the userId
-      action: 'login with OTP email',
-      model: 'OtpVerification',
-      data: {
-        email,
-        method: 'auth with email OTP',
-        timestamp: new Date()
-      }
-    });
-
-
     // DELETE the OTP from the database
     await otpModel.deleteOtp(email);
 

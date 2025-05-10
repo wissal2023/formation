@@ -10,30 +10,43 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       reponseText: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       isCorrect: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false
       },
-      questId: {
+      points: {
+        type: Sequelize.INTEGER, // Points field added here
+        allowNull: true // Points field may be optional
+      },
+      questionId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Questions', 
+          model: 'Questions', // Ensure this matches the table name for Questions
           key: 'id'
         },
         onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
+      },
+      deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true
       }
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Reponses');
   }

@@ -36,7 +36,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Formations', 
+          model: 'FormationDetails',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -51,14 +51,20 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW
       },
-      deletedAt:{
-        allowNull: false,
+      deletedAt: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
+        allowNull: true,
+        defaultValue: null
       }
-      });
-    },
-    async down(queryInterface, Sequelize) {
-      await queryInterface.dropTable('Quiz');
-    }
+    });
+
+    // Add associations for related models (not handled directly in the migration, but for clarity):
+    // - Quiz has many Questions
+    // - Quiz has many QuizProgs
+    // - Quiz has one Certification
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('Quiz');
+  }
 };
