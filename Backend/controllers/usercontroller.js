@@ -7,8 +7,8 @@ const { sendAccountEmail } = require('../utils/emailService');
 const path = require('path');
 const fs = require('fs');
 const { User, Trace } = db;
-
 const updateUserStreak = require('../services/streak');
+
 const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
@@ -367,7 +367,6 @@ const updateUserController = async (req, res) => {
     return res.status(500).json({ message: 'internally error', error: err.message });
   }
 };
-
  //GET the loged in user
  const getOnceUser = async (req, res) => {
     try {

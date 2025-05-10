@@ -2,6 +2,7 @@
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import StudentProfile from '../pages/StudentProfile';
+
 //*********** ons************** */
 
 import ResetPassword from '../pages/ResetPassword';
@@ -21,6 +22,8 @@ import AddFormation from '../pages/AddFormation';
 import Convert from '../pages/Convert';
 import UserSetting from '../pages/UserSetting';
 import NotFound from '../pages/NotFound';
+import PrivateRoute from '../PrivateRoute.jsx';
+import SignIn from "/Users/ons/Desktop/giiit baaack/formation/Frontend/src/signIn";
 
 const AppNavigation = () => {
   return (
