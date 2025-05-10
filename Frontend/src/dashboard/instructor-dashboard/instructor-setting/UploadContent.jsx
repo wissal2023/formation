@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import Converting from "./Converting";
 
 
 const UploadContent = ({ formationDetailsId, onPrev, onNext }) => {
@@ -40,6 +41,7 @@ const UploadContent = ({ formationDetailsId, onPrev, onNext }) => {
  
    return (
       <div className="instructor__profile-form-wrap">
+       {/* <Converting /> */}
         <form onSubmit={handleSubmit} className="instructor__profile-form">
           <div className="form-grp">
             <label htmlFor="file">Upload your module file</label>

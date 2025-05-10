@@ -157,7 +157,6 @@ const updateDocument = async (req, res) => {
 };
 
 //move deleted document to table historisation
-
 const deleteDocument = async (req, res) => {
   try {
     const doc = await Document.findByPk(req.params.id, { paranoid: false });
@@ -181,6 +180,7 @@ const deleteDocument = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 module.exports = {
   createDocument,

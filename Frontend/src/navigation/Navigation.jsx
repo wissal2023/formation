@@ -1,7 +1,6 @@
 // frontend/src/navigation/Navigation.jsx
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Registration from '../pages/Registration';
 import StudentProfile from '../pages/StudentProfile';
 
 //*********** ons************** */
@@ -12,7 +11,6 @@ import SignIn from '../pages/Login';
 import OTPVerification from '../pages/OtpVerification';
 import TotpVerif from '../pages/TotpVerif';
 
-
 //*********** WISSAL************** */
 import InstructorDashboard from '../pages/InstructorDashboard';
 import StudentDashboard from '../pages/StudentDashboard';
@@ -21,6 +19,7 @@ import ChangePassword from '../pages/ChangePassword';
 import WelcomePage from '../pages/WelcomePage'
 import Course from '../pages/Course';
 import AddFormation from '../pages/AddFormation';
+import Convert from '../pages/Convert';
 import UserSetting from '../pages/UserSetting';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from '../PrivateRoute.jsx';
@@ -44,6 +43,8 @@ const AppNavigation = () => {
         <Route path="/editUser/:id" element={<UserSetting />} />           
         <Route path="/stepper" element={<AddFormation />} />
 
+        <Route path="/convert" element={<Convert />} />
+
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
 
@@ -61,16 +62,7 @@ const AppNavigation = () => {
         <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} />
         <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table 
         <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
-        <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table 
-        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
-
-        <Route path="/instructor-review" element={<InstructorReview />} /> {/* rating table
-        <Route path="/instructor-history" element={<InstructorHistory />} />  {/* color icons status table 
-
-        {/*<Route path="/student-dashboard" element={<StudentDashboard />} />
-        {/*<Route path="/student-wishlist" element={<StudentWishlist />} />
         <Route path="/student-wishlist" element={<StudentWishlist />} />
-
         <Route path="/about-us" element={<About />} />
         */}
         <Route path="*" element={<NotFound />} />
