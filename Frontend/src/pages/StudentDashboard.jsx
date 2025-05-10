@@ -4,7 +4,7 @@ import DashboardLayoutStudent from '../layouts/DashboardLayoutStudent';
 const StudentDashboard = () => {
    return (
       <DashboardLayoutStudent pageTitle="apprenant Dashboard">
-       {/*   <StudentDashboardArea /> */}
+        <StudentDashboardArea /> 
       </DashboardLayoutStudent>
      
    );

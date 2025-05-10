@@ -11,7 +11,6 @@ const DashboardHomeArea = () => {
             <div className="row">
                
                <Stats />
-               
             </div>
          </div>         
          {/* <DashboardCourse />
