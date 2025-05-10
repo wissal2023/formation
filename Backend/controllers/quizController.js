@@ -8,55 +8,73 @@ const sequelize = require('../db/models').sequelize; // Add this to access trans
 exports.createQuiz = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { userId, formationDetailsId, questions } = req.body;
+    const userId = req.user.id;
+    const { formationDetailsId, questions, difficulty, tentatives } = req.body;
 
+    // Check user permission (Formateur or Admin)
     const user = await User.findByPk(userId);
     if (!user || (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin')) {
       await transaction.rollback();
       return res.status(403).json({ message: 'Permission refusée ou utilisateur introuvable.' });
     }
 
+    // Check if formation exists
     const formation = await FormationDetails.findByPk(formationDetailsId);
     if (!formation) {
       await transaction.rollback();
       return res.status(404).json({ message: 'Formation non trouvée.' });
     }
 
-    const [quiz] = await Quiz.findOrCreate({
+    // Create or find the quiz for the given formationDetailsId
+    const [quiz, created] = await Quiz.findOrCreate({
       where: { formationDetailsId },
-      defaults: { difficulty: 'medium' },
+      defaults: {
+        difficulty: difficulty || 'medium',
+        tentatives: tentatives || 0,
+        totalScore: 0,
+        score: 0
+      },
       transaction
     });
 
     let questionIds = [];
 
-    for (let q of questions) {
+    // Create questions and their corresponding responses
+    for (const q of questions) {
       const createdQuestion = await Question.create({
         questionText: q.questionText,
-        optionQuet: q.optionQuet || null,
+        optionType: q.optionType || 'Multiple_choice',
         quizId: quiz.id
       }, { transaction });
 
       questionIds.push(createdQuestion.id);
 
-      for (let rep of q.reponses) {
-        await Reponse.create({
-          questId: createdQuestion.id,
-          reponseText: rep.reponseText,
-          isCorrect: rep.isCorrect,
-          points: rep.points || 1
-        }, { transaction });
+      // Check if reponses exist and are an array
+      if (Array.isArray(q.reponses)) {
+        for (const rep of q.reponses) {
+          await Reponse.create({
+            questionId: createdQuestion.id,  // Correct field name
+            reponseText: rep.reponseText,
+            isCorrect: rep.isCorrect,
+            points: rep.points || 1
+          }, { transaction });
+        }
+      } else {
+        console.warn(`No reponses found for question ID ${createdQuestion.id}`);
       }
     }
 
+    // Log creation in Trace table
     await Trace.create({
       userId,
-      page: 'Quiz',
+      model: 'Quiz',
       action: 'Création de quiz',
-      metadata: {
+      data: {
         quizId: quiz.id,
         formationDetailsId,
         questionIds,
+        difficulty: quiz.difficulty,
+        tentatives: quiz.tentatives
       }
     }, { transaction });
 
@@ -69,6 +87,9 @@ exports.createQuiz = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
+
+
+
 
 
 /*

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import LessonFaq from "./LessonFaq";
 import LessonNavTav from "./LessonNavTav";
 import LessonVideo from "./LessonVideo";
+import LessonPDF from "./LessonPDF"
 
 const LessonArea = () => {
 
@@ -24,9 +25,9 @@ const LessonArea = () => {
                         </div>
                         <div className="lesson__video-wrap-top-right">
                            <Link to="#"><i className="fas fa-times"></i></Link>
-                        </div>
+                        </div> 
                      </div>
-                     <LessonVideo />
+                     <LessonPDF />
                      <div className="lesson__next-prev-button">
                         <button className="prev-button" title="Create a Simple React App"><i className="flaticon-arrow-right"></i></button>
                         <button className="next-button" title="React for the Rest of us"><i className="flaticon-arrow-right"></i></button>

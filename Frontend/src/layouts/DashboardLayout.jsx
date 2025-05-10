@@ -3,7 +3,7 @@ import Wrapper from '../layouts/Wrapper';
 import SEO from '../components/SEO';
 import HeaderFour from '../layouts/headers/HeaderFour';
 import Breadcrumb from '../components/common/breadcrumb/DashboardBreadcrumb';
-import FooterOne from '../layouts/footers/FooterOne';
+import Footer from '../layouts/footers/Footer';
 import DashboardBanner from "../dashboard/dashboard-common/DashboardBanner";
 import DashboardSidebar from "../dashboard/dashboard-common/DashboardSidebar";
 import ChatWidget from '../components/chat/ChatWidget';
@@ -28,7 +28,8 @@ const DashboardLayout = ({ pageTitle, children }) => {
           </div>
         </section>
       </main>
-      <FooterOne />
+      <Footer />
+     
     </Wrapper>
   );
 };

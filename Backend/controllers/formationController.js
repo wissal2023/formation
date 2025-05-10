@@ -175,7 +175,36 @@ const getCompletedFormations = async (req, res) => {
     res.status(500).json({ message: "Failed to get completed formations", error: error.message });
   }
 };
+const getFormationsByUser = async (req, res) => {
+  try {
+    console.log("req.user:", req.user);
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID manquant dans le token." });
+    }
+
+    const userFormations = await Formation.findAll({
+      where: { userId },
+      include: {
+        model: User,
+        attributes: ['username'],
+      },
+    });
+
+    if (userFormations.length === 0) {
+      return res.status(404).json({ message: "Aucune formation trouvée pour cet utilisateur." });
+    }
+
+    return res.status(200).json(userFormations);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des formations par utilisateur:", error);
+    return res.status(500).json({ message: "Erreur interne du serveur", error: error.message, stack: error.stack });
+  }
+};
+
+
 
 module.exports = {
-  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation, getCompletedFormations
+  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation, getCompletedFormations,getFormationsByUser
 };

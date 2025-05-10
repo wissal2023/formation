@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import CourseTop from './CourseTop';
-import UseFormations from '../../../hooks/UseFormations';
+import UseFormationsByUser from '../../../hooks/UseFormationsByUser';
 import { Link } from 'react-router-dom';
 
-const CourseArea = () => {
-   const { formations, setFormations, loading, error } = UseFormations();
+const InstructorCourse = () => {
+   const { formations, setFormations, loading, error } = UseFormationsByUser();
 
    const itemsPerPage = 6;
    const [itemOffset, setItemOffset] = useState(0);
@@ -74,7 +74,7 @@ const CourseArea = () => {
                               </p>
                               <div className="courses__item-bottom">
                                  <div className="button">
-                                    <Link to={`/lesson/${item.id}`}>
+                                    <Link to={`/course-details/${item.id}`}>
                                        <span className="text">more details</span>
                                        <i className="flaticon-arrow-right"></i>
                                     </Link>
@@ -103,4 +103,4 @@ const CourseArea = () => {
    );
 };
 
-export default CourseArea;
+export default InstructorCourse;

@@ -1,4 +1,3 @@
-// backend/app.js
 require('dotenv').config();
 require('./utils/cron');
 const path = require('path');
@@ -12,7 +11,6 @@ const createFirstAdminUser = require('./utils/createFirstAdminUser');
 
 const formationRoutes = require('./routes/formationRoutes');
 const formationDetailsRoutes = require('./routes/formationDetailsRoutes');
-
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
 const otpRoutes = require('./routes/otpRoutes');
@@ -36,26 +34,24 @@ app.use(cors({
     credentials: true,
 }));
 app.use(cookieParser());
-//app.use('/otp', otpRoutes);
 
+// ******************* Static File Middleware *******************
+// Serve static files from 'assets/uploads' directory (PDFs and other docs)
+app.use('/uploads', express.static(path.join(__dirname, 'assets', 'uploads'))); // For PDFs or other uploaded files
 
-// ******************* middelware *******************
+// ******************* Middleware *******************
 app.use((req, res, next) => {
     req.lang = req.query.lang || req.headers['accept-language']?.split(',')[0].split('-')[0] || 'fr';
     next();
-  });
+});
 
 // Error handler for multer (upload img)
 app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError || err.message.includes('Seuls les fichiers')) {
-      return res.status(400).json({ error: err.message });
+        return res.status(400).json({ error: err.message });
     }
     next(err);
 });
-// Serve static files from 'assets/uploads' directory
-app.use('/assets/uploads', express.static(path.join(__dirname, 'assets', 'uploads')));
-app.use('/assets/documents', express.static(path.join(__dirname, 'assets', 'documents')));
-
 
 // ******************* HEAD ROUTES *******************
 app.use('/users', userRoute);
@@ -88,6 +84,7 @@ const PORT = process.env.APP_PORT || 4000;
 app.get('/', (req, res) => {
     res.redirect('/signin');
 });
+
 app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
     createFirstAdminUser(); 

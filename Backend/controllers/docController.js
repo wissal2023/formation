@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
 
-const { Document, Trace, Historisation } = require('../db/models');
+const { Document, Trace, Historisation,FormationDetails, Formation } = require('../db/models');
 
 const createDocument = async (req, res) => {
   try {
@@ -181,12 +181,38 @@ const deleteDocument = async (req, res) => {
   }
 };
 
+const getDocument = async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    const document = await Document.findByPk(id);
+    if (!document) return res.status(404).json({ message: 'Document not found' });
+
+    const filePath = path.join(__dirname, '..', 'uploads', document.filename);
+    if (!fs.existsSync(filePath)) return res.status(404).json({ message: 'File not found on server' });
+
+    res.sendFile(filePath);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching document', error });
+  }
+};
+
+const servePDF = async (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, '..', 'uploads', filename); // Adjust to your upload folder
+
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).json({ error: 'File not found' });
+    }
+};
 module.exports = {
   createDocument,
   getAllDocuments,
   getDocumentById,
   getDocumentByName,
   updateDocument,
-  deleteDocument
+  deleteDocument,
+  servePDF
 };
