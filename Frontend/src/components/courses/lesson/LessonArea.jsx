@@ -2,10 +2,9 @@ import { Link } from "react-router-dom";
 import LessonFaq from "./LessonFaq";
 import LessonNavTav from "./LessonNavTav";
 import LessonVideo from "./LessonVideo";
-import LessonPDF from "./LessonPDF"
+import LessonPDF from "./LessonPDF";
 
-const LessonArea = () => {
-
+const LessonArea = ({ filename }) => { // Accept filename as a prop here
    return (
       <section className="lesson__area section-pb-120">
          <div className="container-fluid p-0">
@@ -27,7 +26,7 @@ const LessonArea = () => {
                            <Link to="#"><i className="fas fa-times"></i></Link>
                         </div> 
                      </div>
-                     <LessonPDF />
+                     <LessonPDF filename={filename} /> {/* Pass filename to LessonPDF */}
                      <div className="lesson__next-prev-button">
                         <button className="prev-button" title="Create a Simple React App"><i className="flaticon-arrow-right"></i></button>
                         <button className="next-button" title="React for the Rest of us"><i className="flaticon-arrow-right"></i></button>
@@ -38,7 +37,7 @@ const LessonArea = () => {
             </div>
          </div>
       </section>
-   )
-}
+   );
+};
 
 export default LessonArea;

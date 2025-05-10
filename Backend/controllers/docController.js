@@ -180,33 +180,41 @@ const deleteDocument = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+const servePDF = (req, res) => {
+  const { filename } = req.params;
 
-const getDocument = async (req, res) => {
+  // Construct the full path to the PDF file
+  const pdfPath = path.join(__dirname, '..', 'assets', 'documents', filename);
+
+  // Check if the file exists
+  fs.access(pdfPath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // If the file does not exist, send a 404 error
+      return res.status(404).json({ message: 'Fichier non trouvé.' });
+    }
+
+    // If the file exists, send it as a response
+    res.sendFile(pdfPath);
+  });
+};
+const getDocumentByFormation = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
+    const document = await Document.findOne({ formation: id });
 
-    const document = await Document.findByPk(id);
-    if (!document) return res.status(404).json({ message: 'Document not found' });
+    if (!document) {
+      return res.status(404).json({ message: "Document not found" });
+    }
 
-    const filePath = path.join(__dirname, '..', 'uploads', document.filename);
-    if (!fs.existsSync(filePath)) return res.status(404).json({ message: 'File not found on server' });
-
-    res.sendFile(filePath);
+    res.status(200).json({ filename: document.filename });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching document', error });
+    console.error("Error fetching document:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-const servePDF = async (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path.join(__dirname, '..', 'uploads', filename); // Adjust to your upload folder
 
-    if (fs.existsSync(filePath)) {
-        res.sendFile(filePath);
-    } else {
-        res.status(404).json({ error: 'File not found' });
-    }
-};
 module.exports = {
   createDocument,
   getAllDocuments,
@@ -214,5 +222,6 @@ module.exports = {
   getDocumentByName,
   updateDocument,
   deleteDocument,
-  servePDF
+  servePDF,
+  getDocumentByFormation 
 };
