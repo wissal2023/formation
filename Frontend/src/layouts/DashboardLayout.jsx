@@ -27,6 +27,7 @@ const DashboardLayout = ({ pageTitle, children }) => {
             </div>
           </div>
         </section>
+        <ChatWidget/>
       </main>
       <FooterOne />
     </Wrapper>

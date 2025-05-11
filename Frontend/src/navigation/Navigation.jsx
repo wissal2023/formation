@@ -23,8 +23,6 @@ import Course from '../pages/Course';
 import AddFormation from '../pages/AddFormation';
 import UserSetting from '../pages/UserSetting';
 import NotFound from '../pages/NotFound';
-import PrivateRoute from '../PrivateRoute.jsx';
-import SignIn from "/Users/ons/Desktop/giiit baaack/formation/Frontend/src/signIn";
 
 const AppNavigation = () => {
   return (
