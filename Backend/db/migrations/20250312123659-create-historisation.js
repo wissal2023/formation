@@ -22,6 +22,19 @@ module.exports = {
         },
         onDelete: 'CASCADE'
       },
+      deleted_data: {
+        type: Sequelize.JSONB,
+        allowNull: true
+      },
+      formation_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Formations',
+          key: 'id'
+        },
+        onDelete: 'SET NULL'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -30,11 +43,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      deletedAt: { 
+      deletedAt: {
         type: Sequelize.DATE
       }
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Historisations');
   }
