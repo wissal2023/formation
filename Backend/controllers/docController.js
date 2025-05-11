@@ -184,10 +184,6 @@ const deleteDocument = async (req, res) => {
 const servePDF = (req, res) => {
   const { filename } = req.params;
 
-
-const servePDF = (req, res) => {
-  const { filename } = req.params;
-
   // Construct the full path to the PDF file
   const pdfPath = path.join(__dirname, '..', 'assets', 'documents', filename);
 
@@ -201,7 +197,8 @@ const servePDF = (req, res) => {
     // If the file exists, send it as a response
     res.sendFile(pdfPath);
   });
-
+}
+/*
 const getDocumentByFormation = async (req, res) => {
   const { id } = req.params;
 
@@ -219,6 +216,7 @@ const getDocumentByFormation = async (req, res) => {
   }
 
 };
+*/
 //app.use('/documents', docRoute );
 //router.get('/:formationDetailsId', authenticateToken, getDocumentByFormation);
 const getDocumentByFormation = async (req, res) => {

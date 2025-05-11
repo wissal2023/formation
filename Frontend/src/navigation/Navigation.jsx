@@ -6,7 +6,7 @@ import ResetPassword from '../pages/ResetPassword';
 import QrCodeDisplay from '../pages/QrCodeVerification';
 import OTPVerification from '../pages/OtpVerification';
 import TotpVerif from '../pages/TotpVerif';
-
+import ForgotPassword from '../pages/ForgotPassword.jsx';
 //*********** WISSAL************** */
 import InstructorDashboard from '../pages/InstructorDashboard';
 import StudentDashboard from '../pages/StudentDashboard';
@@ -21,10 +21,7 @@ import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
 import NotFound from '../pages/NotFound';
 import SignIn from "../pages/Login";
-
 import StudentProfile from '../pages/StudentProfile';
-
-
 const AppNavigation = () => {
   return (
     <Router>
@@ -55,8 +52,8 @@ const AppNavigation = () => {
         {/* Apprenant */}
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
-
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+       
         {/*ROUTES TO BE USED         
 
 <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} /> for the cards 
