@@ -13,6 +13,8 @@ import SignIn from '../pages/Login';
 import OTPVerification from '../pages/OtpVerification';
 import TotpVerif from '../pages/TotpVerif';
 
+import ForgotPassword from '../pages/ForgotPassword.jsx';
+
 //*********** WISSAL************** */
 import InstructorDashboard from '../pages/InstructorDashboard';
 import StudentDashboard from '../pages/StudentDashboard';
@@ -26,6 +28,8 @@ import Convert from '../pages/Convert';
 import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
 import NotFound from '../pages/NotFound';
+import PrivateRoute from '../PrivateRoute.jsx';
+
 
 const AppNavigation = () => {
   return (
@@ -49,7 +53,12 @@ const AppNavigation = () => {
         <Route path="/convert" element={<Convert />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+       
+
         <Route path="/lesson/:id" element={<Lesson />} />
+
 
 
         {/*ROUTES TO BE USED         
