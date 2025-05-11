@@ -4,13 +4,9 @@ import NoteDigital from "./NoteDigital";
 import LessonPDF from "./LessonPDF";
 import { useNavigate } from "react-router-dom";
 
-<<<<<<< HEAD
-const LessonArea = ({ formationId }) => {
 
-=======
-const LessonArea = ({ filename }) => { 
+const LessonArea = ({ filename, formationId  }) => { 
    const navigate = useNavigate();
->>>>>>> c48ccecf (editfront)
    return (
       <section className="lesson__area section-pb-120">
          <div className="container-fluid p-0">
