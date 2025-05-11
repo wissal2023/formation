@@ -20,14 +20,10 @@ import Convert from '../pages/Convert';
 import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
 import NotFound from '../pages/NotFound';
-<<<<<<< HEAD
 import SignIn from "../pages/Login";
 import StudentProfile from '../pages/StudentProfile';
-=======
 
 
-
->>>>>>> c48ccecf (editfront)
 const AppNavigation = () => {
   return (
     <Router>
@@ -49,7 +45,6 @@ const AppNavigation = () => {
         <Route path="/Myformations" element={<MyCourse />} />        
         <Route path="/Allformations" element={<Course />} />
         <Route path="/stepper" element={<AddFormation />} />
-<<<<<<< HEAD
         <Route path="/lesson/:id" element={<Lesson />} /> 
         <Route path="/formation/:id" element={<Lesson />} /> 
 
@@ -57,10 +52,7 @@ const AppNavigation = () => {
         <Route path="/convert" element={<Convert />} />
 
         {/* Apprenant */}
-=======
-        <Route path="/Myformations" element={<MyCourse />} />
-        <Route path="/convert" element={<Convert />} />
->>>>>>> c48ccecf (editfront)
+
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -25,13 +25,9 @@ const LessonArea = ({ filename }) => {
                   <div className="lesson__video-wrap">
                      <div className="lesson__video-wrap-top">
                         <div className="lesson__video-wrap-top-left">
-<<<<<<< HEAD
                            <span>Formation ID: {formationId}</span>
-=======
->>>>>>> c48ccecf (editfront)
                         </div>
                      </div>
-<<<<<<< HEAD
                      {/* Pass the ID to video if needed */}
                      <File formationId={formationId} /> 
 
@@ -43,9 +39,7 @@ const LessonArea = ({ filename }) => {
                            <i className="flaticon-arrow-right"></i>
                         </button>
                      </div>
-=======
                      <LessonPDF filename={filename} /> {/* Pass filename to LessonPDF */}
->>>>>>> c48ccecf (editfront)
                   </div>
                   <FormationDetails  formationId={formationId} />
                </div>
