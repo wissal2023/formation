@@ -1,6 +1,7 @@
 require('dotenv').config();
 require('./utils/cron');
 const path = require('path');
+const multer = require('multer');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express(); 
@@ -26,20 +27,21 @@ const reponseRoutes = require('./routes/reponseRoutes');
 const videoRoutes = require('./routes/videoRoutes');
 const helpRoutes = require('./routes/helpRoutes');
 const helpTranslationRoutes = require('./routes/helpTranslationRoutes');
-const conversionFileRoutes = require('./routes//ConversionFileRoute');
+const conversionFileRoutes = require('./routes/ConversionFileRoute');
 
 app.use(express.json()); 
 app.use(cors({
-    origin: 'http://localhost:5173', // my frontend URL
+    origin: 'http://localhost:5173',
     credentials: true,
 }));
 app.use(cookieParser());
 
 // ******************* Static File Middleware *******************
 // Serve static files from 'assets/uploads' directory (PDFs and other docs)
-app.use('/uploads', express.static(path.join(__dirname, 'assets', 'uploads'))); // For PDFs or other uploaded files
+//app.use('/uploads', express.static(path.join(__dirname, 'assets', 'uploads'))); // For PDFs or other uploaded files
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-// ******************* Middleware *******************
+// ******************* Middleware  of the translation model *******************
 app.use((req, res, next) => {
     req.lang = req.query.lang || req.headers['accept-language']?.split(',')[0].split('-')[0] || 'fr';
     next();
@@ -63,7 +65,7 @@ app.use('/quizzes', quizRoutes);
 app.use('/certifications', certificationRoutes);
 app.use('/streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
-app.use('/notedigitales', noteDigitaleRoutes);
+app.use('/Digital', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
 app.use('/quizprogs', quizProgRoutes);
 app.use('/recompenses', recompenseRoutes);

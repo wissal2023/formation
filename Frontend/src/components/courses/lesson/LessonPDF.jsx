@@ -1,56 +1,41 @@
-import { useEffect, useState } from 'react';
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import { useEffect, useState } from "react";
 import axios from 'axios';
 
-const LessonPDF = ({ formationId }) => {
-   const [documents, setDocuments] = useState([]);
-   const [error, setError] = useState(null);
+const LessonPDF = ({ filename }) => {
+   const [pdfBlobUrl, setPdfBlobUrl] = useState('');
+   const API = import.meta.env.VITE_API_URL;
 
    useEffect(() => {
-      const API = import.meta.env.VITE_API_URL;
+      if (filename) {
+         const url = `${API}/documents/view/${filename}`;
 
-      const fetchDocuments = async () => {
-         try {
-            const res = await axios.get(`${API}/documents/byFormation/${formationId}`, {
-               withCredentials: true,
-            });
+         axios.get(url, {
+            responseType: 'blob', // Get the actual PDF binary data
+            withCredentials: true
+         })
+         .then(res => {
+            const blob = new Blob([res.data], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(blob);
+            setPdfBlobUrl(blobUrl);
+         })
+         .catch(err => {
+            console.error("Error fetching PDF:", err);
+         });
 
-            const docs = res.data.documents;
-
-            if (docs.length > 0) {
-               setDocuments(docs);
-            } else {
-               setError('Aucun document PDF trouvé pour cette formation.');
-            }
-         } catch (err) {
-            console.error('❌ Erreur lors du chargement des PDF:', err);
-            setError("Erreur lors de la récupération des documents PDF.");
-         }
-      };
-
-      if (formationId) {
-         fetchDocuments();
+         // Clean up blob URL when component unmounts or filename changes
+         return () => {
+            if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+         };
       }
-   }, [formationId]);
+   }, [filename]);
 
    return (
-      <div className="lesson-pdf-list" style={{ padding: '20px' }}>
-         {error && <p style={{ color: 'red' }}>{error}</p>}
-
-         {documents.length > 0 ? (
-            documents.map((doc, index) => (
-               <div key={index} style={{ marginBottom: '40px', height: '90vh' }}>
-                  <iframe
-                     src={`${import.meta.env.VITE_API_URL}/documents/view/${doc.filename}`}
-                     width="100%"
-                     height="100%"
-                     title={`Document ${index + 1}`}
-                     style={{ border: '1px solid #ccc' }}
-                  />
-               </div>
-            ))
-         ) : (
-            !error && <p>Chargement des documents PDF...</p>
-         )}
+      <div style={{ height: '600px', width: '100%' }}>
+         <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js">
+            {pdfBlobUrl && <Viewer fileUrl={pdfBlobUrl} />}
+         </Worker>
       </div>
    );
 };

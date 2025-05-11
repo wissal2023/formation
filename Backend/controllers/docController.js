@@ -2,9 +2,10 @@
 const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
-
 const { Document, Trace, Historisation,FormationDetails, Formation } = require('../db/models');
 
+//app.use('/documents', docRoute );
+//router.post('/AddDoc', authenticateToken,uploadFile.single('file'),  createDocument);
 const createDocument = async (req, res) => {
   try {
     const user = req.user;
@@ -129,7 +130,7 @@ const getDocumentById = async (req, res) => {
   }
 };
 
-// 🔹 Get document by name
+// router.get('/:filename', authenticateToken, getDocumentByName);
 const getDocumentByName= async (req, res) => {
   try {
     const doc = await Document.findOne({ where: { filename: req.params.name } });
@@ -181,32 +182,61 @@ const deleteDocument = async (req, res) => {
   }
 };
 
-const getDocument = async (req, res) => {
+const servePDF = (req, res) => {
+  const { filename } = req.params;
+
+  // Construct the full path to the PDF file
+  const pdfPath = path.join(__dirname, '..', 'assets', 'documents', filename);
+
+  // Check if the file exists
+  fs.access(pdfPath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // If the file does not exist, send a 404 error
+      return res.status(404).json({ message: 'Fichier non trouvé.' });
+    }
+
+    // If the file exists, send it as a response
+    res.sendFile(pdfPath);
+  });
+};
+//app.use('/documents', docRoute );
+//router.get('/:formationDetailsId', authenticateToken, getDocumentByFormation);
+const getDocumentByFormation = async (req, res) => {
   try {
-    const { id } = req.params;
+    // Fetch FormationDetails based on the formationId passed in the URL
+    const formationDetails = await FormationDetails.findOne({
+      where: { formationId: req.params.formationId }, // Use formationId from URL params
+      include: {
+        model: Document, // Include the related documents
+        required: true,
+      },
+    });
 
-    const document = await Document.findByPk(id);
-    if (!document) return res.status(404).json({ message: 'Document not found' });
+    if (!formationDetails) {
+      return res.status(404).json({ message: 'Formation details not found' });
+    }
 
-    const filePath = path.join(__dirname, '..', 'uploads', document.filename);
-    if (!fs.existsSync(filePath)) return res.status(404).json({ message: 'File not found on server' });
+    // Fetch the first document related to this formation details
+    const document = formationDetails.Documents[0]; // Assuming you want the first document
 
-    res.sendFile(filePath);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching document', error });
+    if (!document) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+
+    // Get the path to the document
+    const documentPath = `/assets/documents/${document.filename}`;
+
+    res.status(200).json({
+      filename: document.filename,
+      filetype: document.filetype,
+      uploadedDate: document.uploadedDate,
+      documentUrl: documentPath, // Return the document path as part of the response
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
-const servePDF = async (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path.join(__dirname, '..', 'uploads', filename); // Adjust to your upload folder
-
-    if (fs.existsSync(filePath)) {
-        res.sendFile(filePath);
-    } else {
-        res.status(404).json({ error: 'File not found' });
-    }
-};
 module.exports = {
   createDocument,
   getAllDocuments,
@@ -214,5 +244,5 @@ module.exports = {
   getDocumentByName,
   updateDocument,
   deleteDocument,
-  servePDF
+  servePDF, getDocumentByFormation
 };

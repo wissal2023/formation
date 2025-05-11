@@ -6,10 +6,7 @@ import LessonArea from "./LessonArea"
 const Lesson = () => {
    return (
       <>
-         <HeaderOne />
-         <main className="main-area fix">
-            <LessonArea />
-         </main>
+      <LessonArea />
          <Footer/>
       </>
    )

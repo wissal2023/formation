@@ -12,7 +12,7 @@ const generateOtp = () => {
   const otp = crypto.randomInt(100000, 999999); // Générer un code OTP à 6 chiffres
   return otp;
 };
-//router.post('/generate-otp', sendOtp);
+//router.post('/otp/generate-otp', sendOtp);
 const sendOtp = async (req, res) => {
   //Extracts email from req.body
   const { email } = req.body;

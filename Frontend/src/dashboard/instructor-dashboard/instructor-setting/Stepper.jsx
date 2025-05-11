@@ -31,7 +31,7 @@ const Stepper = ({ userId, style }) => {
   
     // If current tab is the last step (Quizz), redirect
     if (activeTab === 3) {
-      navigate("/formations");
+      navigate("/Myformations");
       return;
     }
   
