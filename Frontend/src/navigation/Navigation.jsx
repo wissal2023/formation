@@ -27,8 +27,6 @@ import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
 import NotFound from '../pages/NotFound';
 
-
-
 const AppNavigation = () => {
   return (
     <Router>

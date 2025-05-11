@@ -71,6 +71,7 @@ const verifyOtp = async (req, res) => {
     // Mark OTP as verified
     otpRecord.verified = true;
     await otpRecord.save();
+
     // DELETE the OTP from the database
     await otpModel.deleteOtp(email);
 
