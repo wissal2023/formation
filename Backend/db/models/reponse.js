@@ -13,10 +13,22 @@ module.exports = (sequelize, DataTypes) => {
     },
     isCorrect: {
       type: DataTypes.BOOLEAN,
-      allowNull: false
+      allowNull: false,
+      defaultValue: false
     },
     points: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    pairIndex: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: 'Used for Match-type questions to link pairs'
+    },
+    orderIndex: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: 'Used for Reorganize-type questions to store correct order'
     },
     questionId: {
       type: DataTypes.INTEGER,

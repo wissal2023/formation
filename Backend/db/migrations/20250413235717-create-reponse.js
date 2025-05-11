@@ -21,6 +21,16 @@ module.exports = {
         type: Sequelize.INTEGER, // Points field added here
         allowNull: true // Points field may be optional
       },
+      pairIndex: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      comment: 'Used for Match-type questions to link pairs'
+    },
+    orderIndex: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      comment: 'Used for Reorganize-type questions to store correct order'
+    },
       questionId: {
         type: Sequelize.INTEGER,
         allowNull: false,

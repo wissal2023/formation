@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import './style.css';
@@ -13,127 +13,68 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     { text: "" },
   ]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
-  const [optionQuet, setOptionQuet] = useState("Multiple_choice");
+  const [optionType, setOptionType] = useState("Multiple_choice");
   const [reorganizeItems, setReorganizeItems] = useState(["", "", ""]);
   const [matchPairs, setMatchPairs] = useState([{ left: "", right: "" }]);
 
-  // Handle correct answer selection
-  const handleCorrectChange = (index) => {
-    if (optionQuet === "Multiple_choice") {
-      setCorrectAnswers((prev) =>
-        prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-      );
-    } else {
-      setCorrectAnswers([index]);
-    }
-  };
+  useEffect(() => {
+    // Reset when question type changes
+    setReorganizeItems(["", "", ""]);
+    setMatchPairs([{ left: "", right: "" }]);
+  }, [optionType]);
 
-  const handleReponseChange = (index, value) => {
-    const newReponses = [...reponses];
-    newReponses[index].text = value;
-    setReponses(newReponses);
-  };
-
-  const handleReorganizeChange = (index, value) => {
-    const newItems = [...reorganizeItems];
-    newItems[index] = value;
-    setReorganizeItems(newItems);
-  };
-
-  const handleMatchPairChange = (index, field, value) => {
-    const updatedPairs = [...matchPairs];
-    updatedPairs[index][field] = value;
-    setMatchPairs(updatedPairs);
-  };
-
-  const addStep = () => setReorganizeItems([...reorganizeItems, ""]);
-  const addMatchPair = () => setMatchPairs([...matchPairs, { left: "", right: "" }]);
-
-  const addQuestion = () => {
+  const handleAddQuestion = () => {
     if (!question.trim()) {
-      toast.error("Please enter the question.");
+      toast.error("Question text is required.");
       return;
     }
 
-    // For "Reorganize" questions
-    if (optionQuet === "Reorganize") {
-      const validItems = reorganizeItems.filter((item) => item.trim() !== "");
-      if (validItems.length < 3) {
-        toast.error("Enter at least three steps for the reorganize question.");
-        return;
-      }
-
-      setQuestions([...questions, {
-        questionText: question,
-        optionQuet: "Reorganize",
-        correctOrder: validItems,
-      }]);
-
-      resetForm();
-      return;
-    }
-
-    // For "Match" questions
-    if (optionQuet === "Match") {
-      const validPairs = matchPairs.filter(p => p.left.trim() && p.right.trim());
-      if (validPairs.length < 3) {
-        toast.error("Enter at least three match pairs.");
-        return;
-      }
-
-      setQuestions([...questions, {
-        questionText: question,
-        optionQuet: "Match",
-        matchPairs: validPairs,
-      }]);
-
-      resetForm();
-      return;
-    }
-
-    // For "Multiple_choice" and "Single_choice"
-    if (reponses.some((r) => !r.text.trim())) {
-      toast.error("All answer fields must be filled.");
-      return;
-    }
-
-    // Validate correct answers based on the question type
-    if (optionQuet === "Multiple_choice") {
-      if (correctAnswers.length < 2) {
-        toast.error("Please select at least two correct answers.");
-        return;
-      }
-      if (correctAnswers.length > 3) {
-        toast.error("You can't select more than three correct answers.");
-        return;
-      }
-    } else if (optionQuet === "Single_choice") {
-      if (correctAnswers.length !== 1) {
-        toast.error("Please select exactly one correct answer.");
-        return;
-      }
-    }
-
-    const mappedReponses = reponses.map((rep, index) => ({
-      reponseText: rep.text,
-      isCorrect: correctAnswers.includes(index),
-      points: 1,
-    }));
-
-    setQuestions([...questions, {
+    let newQuestion = {
       questionText: question,
-      optionQuet,
-      reponses: mappedReponses,
-    }]);
+      optionType: optionType,
+    };
 
-    resetForm();
-  };
+    if (optionType === "Multiple_choice" || optionType === "single_choice") {
+      const filteredResponses = reponses
+        .map((r) => r.text.trim())
+        .map((text, index) => ({ text, index }))
+        .filter((r) => r.text);
 
-  const resetForm = () => {
+      if (filteredResponses.length < 2) {
+        toast.error("At least two non-empty responses are required.");
+        return;
+      }
+
+      newQuestion.reponses = filteredResponses.map(({ text, index }) => ({
+        reponseText: text,
+        isCorrect: correctAnswers.includes(index),
+        points: 1,
+      }));
+    } else if (optionType === "match") {
+      const filteredPairs = matchPairs.filter(
+        (pair) => pair.left.trim() && pair.right.trim()
+      );
+      if (filteredPairs.length < 1) {
+        toast.error("At least one valid match pair is required.");
+        return;
+      }
+      newQuestion.matchPairs = filteredPairs;
+    } else if (optionType === "reorganize") {
+      const filteredSteps = reorganizeItems.filter((item) => item.trim());
+      if (filteredSteps.length < 2) {
+        toast.error("At least two steps are required.");
+        return;
+      }
+      newQuestion.reorganizeItems = filteredSteps;
+    }
+
+    setQuestions([...questions, newQuestion]);
+
+    // Reset fields
     setQuestion("");
+    setOptionType("Multiple_choice");
     setReponses([{ text: "" }, { text: "" }, { text: "" }, { text: "" }]);
     setCorrectAnswers([]);
-    setOptionQuet("Multiple_choice");
     setReorganizeItems(["", "", ""]);
     setMatchPairs([{ left: "", right: "" }]);
   };
@@ -142,16 +83,19 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     e.preventDefault();
 
     if (questions.length === 0) {
-      toast.error("Please add at least one question before submitting.");
+      toast.error("Please add at least one question.");
       return;
     }
 
     try {
-      // Send the quiz data to the backend
-      await axios.post(`${import.meta.env.VITE_API_URL}/quizzes/create`, {
-        formationDetailsId,
-        questions,
-      }, { withCredentials: true });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/quizzes/create`,
+        {
+          formationDetailsId,
+          questions,
+        },
+        { withCredentials: true }
+      );
 
       toast.success("Quiz created successfully!");
       onNext();
@@ -169,11 +113,14 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
         {/* Question Type Selector */}
         <div className="question-type-selector">
           <label>Question Type</label>
-          <select value={optionQuet} onChange={(e) => setOptionQuet(e.target.value)}>
+          <select
+            value={optionType}
+            onChange={(e) => setOptionType(e.target.value)}
+          >
             <option value="Multiple_choice">Multiple Choice</option>
-            <option value="Single_choice">Single Choice</option>
-            <option value="Reorganize">Reorganize</option>
-            <option value="Match">Match</option>
+            <option value="single_choice">Single Choice</option>
+            <option value="reorganize">Reorganize</option>
+            <option value="match">Match</option>
           </select>
         </div>
 
@@ -187,83 +134,131 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
           />
         </div>
 
-        {/* Multiple/Single Choice */}
-        {["Multiple_choice", "Single_choice"].includes(optionQuet) &&
+        {/* Multiple / Single Choice Options */}
+        {["Multiple_choice", "single_choice"].includes(optionType) &&
           reponses.map((rep, index) => (
             <div key={index} className="quiz-form-grp">
               <input
                 type="text"
                 placeholder={`Answer ${index + 1}`}
                 value={rep.text}
-                onChange={(e) => handleReponseChange(index, e.target.value)}
+                onChange={(e) => {
+                  const updated = [...reponses];
+                  updated[index].text = e.target.value;
+                  setReponses(updated);
+                }}
               />
-              {optionQuet === "Multiple_choice" ? (
+              {optionType === "Multiple_choice" ? (
                 <input
                   type="checkbox"
                   checked={correctAnswers.includes(index)}
-                  onChange={() => handleCorrectChange(index)}
+                  onChange={() => {
+                    const updatedAnswers = correctAnswers.includes(index)
+                      ? correctAnswers.filter((i) => i !== index)
+                      : [...correctAnswers, index];
+                    setCorrectAnswers(updatedAnswers);
+                  }}
                 />
               ) : (
                 <input
                   type="radio"
                   name="radio-group"
                   checked={correctAnswers.includes(index)}
-                  onChange={() => handleCorrectChange(index)}
+                  onChange={() => {
+                    setCorrectAnswers([index]);
+                  }}
                 />
               )}
             </div>
-          ))
-        }
+          ))}
 
-        {/* Reorganize Input */}
-        {optionQuet === "Reorganize" &&
+        {/* Reorganize */}
+        {optionType === "reorganize" &&
           reorganizeItems.map((item, index) => (
             <div key={index} className="quiz-form-grp">
               <input
                 type="text"
                 placeholder={`Step ${index + 1}`}
                 value={item}
-                onChange={(e) => handleReorganizeChange(index, e.target.value)}
+                onChange={(e) => {
+                  const updated = [...reorganizeItems];
+                  updated[index] = e.target.value;
+                  setReorganizeItems(updated);
+                }}
               />
             </div>
-          ))
-        }
+          ))}
 
-        {optionQuet === "Reorganize" && (
-          <button type="button" className="pill-button" onClick={addStep}>
+        {optionType === "reorganize" && (
+          <button
+            type="button"
+            className="pill-button"
+            onClick={() => setReorganizeItems([...reorganizeItems, ""])}
+          >
             Add Step
           </button>
         )}
 
-        {/* Match Input */}
-        {optionQuet === "Match" &&
+        {/* Match */}
+        {optionType === "match" &&
           matchPairs.map((pair, index) => (
             <div key={index} className="quiz-form-grp d-flex gap-2">
               <input
                 type="text"
                 placeholder={`Left ${index + 1}`}
                 value={pair.left}
-                onChange={(e) => handleMatchPairChange(index, "left", e.target.value)}
+                onChange={(e) => {
+                  const updated = [...matchPairs];
+                  updated[index].left = e.target.value;
+                  setMatchPairs(updated);
+                }}
               />
               <input
                 type="text"
                 placeholder={`Right ${index + 1}`}
                 value={pair.right}
-                onChange={(e) => handleMatchPairChange(index, "right", e.target.value)}
+                onChange={(e) => {
+                  const updated = [...matchPairs];
+                  updated[index].right = e.target.value;
+                  setMatchPairs(updated);
+                }}
               />
             </div>
-          ))
-        }
+          ))}
 
-        {optionQuet === "Match" && (
-          <button type="button" className="pill-button" onClick={addMatchPair}>
+        {optionType === "match" && (
+          <button
+            type="button"
+            className="pill-button"
+            onClick={() =>
+              setMatchPairs([...matchPairs, { left: "", right: "" }])
+            }
+          >
             Add Match Pair
           </button>
         )}
 
-        <button type="button" className="pill-button" onClick={addQuestion}>
+        <button
+          type="button"
+          className="pill-button mt-2"
+          onClick={handleAddQuestion}
+        >
           Add Question
         </button>
+
+        {/* Preview Added Questions */}
+        {questions.length > 0 && (
+          <div className="preview-questions mt-4">
+            <h5>Preview Questions:</h5>
+            <ul>
+              {questions.map((q, i) => (
+                <li key={i}>
+                  {i + 1}. {q.questionText} ({q.optionType})
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Navigation Buttons */}
         <div className="d-flex justify-content-between mt-3">

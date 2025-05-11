@@ -25,6 +25,7 @@ import AddFormation from '../pages/AddFormation';
 import Convert from '../pages/Convert';
 import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
+import DisplayQuiz from '../components/courses/lesson/displayQuiz';
 import NotFound from '../pages/NotFound';
 
 const AppNavigation = () => {
@@ -50,6 +51,7 @@ const AppNavigation = () => {
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
         <Route path="/lesson/:id" element={<Lesson />} />
+        <Route path="/passerQuiz/:id" element={<DisplayQuiz />} />
 
 
         {/*ROUTES TO BE USED         
