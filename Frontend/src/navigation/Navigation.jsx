@@ -26,8 +26,6 @@ import Convert from '../pages/Convert';
 import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
 import NotFound from '../pages/NotFound';
-import PrivateRoute from '../PrivateRoute.jsx';
-import SignIn from "/Users/ons/Desktop/giiit baaack/formation/Frontend/src/signIn";
 
 const AppNavigation = () => {
   return (
