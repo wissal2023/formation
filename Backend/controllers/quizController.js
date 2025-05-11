@@ -1,4 +1,7 @@
-const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails, Formation } = require('../db/models');
+
+const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails,Historisation,Formation } = require('../db/models');
+
+
 const { calculateScore } = require('../services/quizService');
 const sequelize = require('../db/models').sequelize; 
 
@@ -11,21 +14,20 @@ exports.createQuiz = async (req, res) => {
     const userId = req.user.id;
     const { formationDetailsId, questions, difficulty, tentatives } = req.body;
 
-    // Check user permission (Formateur or Admin)
     const user = await User.findByPk(userId);
     if (!user || (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin')) {
       await transaction.rollback();
       return res.status(403).json({ message: 'Permission refusée ou utilisateur introuvable.' });
     }
 
-    // Check if formation exists
-    const formationDetails = await FormationDetails.findByPk(formationDetailsId);
-    if (!formationDetails) {
+
+    const formation = await FormationDetails.findByPk(formationDetailsId);
+    if (!formation) {
+
       await transaction.rollback();
       return res.status(404).json({ message: 'Formation non trouvée.' });
     }
 
-    // Create or find the quiz for the given formationDetailsId
     const [quiz, created] = await Quiz.findOrCreate({
       where: { formationDetailsId },
       defaults: {
@@ -39,7 +41,6 @@ exports.createQuiz = async (req, res) => {
 
     let questionIds = [];
 
-    // Create questions and their corresponding responses
     for (const q of questions) {
       const createdQuestion = await Question.create({
         questionText: q.questionText,
@@ -49,33 +50,56 @@ exports.createQuiz = async (req, res) => {
 
       questionIds.push(createdQuestion.id);
 
-      // Check if reponses exist and are an array
-      if (Array.isArray(q.reponses)) {
-        for (const rep of q.reponses) {
- await Reponse.create({
-            questionId: createdQuestion.id,
-            reponseText: rep.reponseText,
-            isCorrect: rep.isCorrect,
-            points: rep.points || 1
-          }, { transaction });
+
+      if (q.optionType === 'Multiple_choice' || q.optionType === 'single_choice') {
+        if (Array.isArray(q.reponses)) {
+          for (const rep of q.reponses) {
+            await Reponse.create({
+              questionId: createdQuestion.id,
+              reponseText: rep.reponseText,
+              isCorrect: rep.isCorrect,
+              points: rep.points || 1
+            }, { transaction });
+          }
         }
-      } else {
-        console.warn(`No reponses found for question ID ${createdQuestion.id}`);
+      } else if (q.optionType === 'Match') {
+        // Handle Match type question: Store each pair as Reponses
+        if (Array.isArray(q.matchPairs)) {
+          let pairIndex = 1;
+          for (const pair of q.matchPairs) {
+            await Reponse.create({
+              questionId: createdQuestion.id,
+              reponseText: pair.left,
+              isCorrect: true,  // Or handle correctness separately
+              points: pairIndex, // Use points to indicate position or correctness
+              pairIndex, // You can add a `pairIndex` field if you want to separate pairs
+            }, { transaction });
+            await Reponse.create({
+              questionId: createdQuestion.id,
+              reponseText: pair.right,
+              isCorrect: true,  // Or handle correctness separately
+              points: pairIndex,
+              pairIndex,
+            }, { transaction });
+            pairIndex++;
+          }
+        }
+      } else if (q.optionType === 'Reorganize') {
+        // Handle Reorganize type question: Store items in Reponses with their order
+        if (Array.isArray(q.reorganizeItems)) {
+          for (let i = 0; i < q.reorganizeItems.length; i++) {
+            await Reponse.create({
+              questionId: createdQuestion.id,
+              reponseText: q.reorganizeItems[i],
+              isCorrect: false, // We might not need this, adjust based on your logic
+              points: i + 1  // Store the order in points (or any other field)
+            }, { transaction });
+          }
+
+        }
       }
     }
 
-    // Update the status of the associated formation to 'created'
-    const formation = await Formation.findOne({
-      where: { id: formationDetails.formationId },
-      transaction
-    });
-
-    if (formation) {
-      formation.status = 'created';
-      await formation.save({ transaction });
-    }
-
-    // Log creation in Trace table
     await Trace.create({
       userId,
       model: 'Quiz',
@@ -93,15 +117,10 @@ exports.createQuiz = async (req, res) => {
     return res.status(201).json({ message: 'Quiz créé avec succès.', quizId: quiz.id });
 
   } catch (error) {
-    await transaction.rollback();
-    console.error('Erreur création quiz:', error);
-    console.error('Request body:', req.body); // Log the request body for debugging
-    return res.status(500).json({ message: 'Erreur serveur', error: error.message });
-  }
+  
+  console.error("Error details:", error.response ? error.response.data : error.message);
+}
 };
-
-
-
 
 
 
@@ -190,6 +209,73 @@ exports.createQuiz = async (req, res) => {
   }
 };
 */
+exports.getQuizByFormation = async (req, res) => {
+  try {
+    const { formationId } = req.params;
+    console.log('➡️ formationId from params:', formationId);
+
+    // 1. Get formation details
+    const formationDetails = await FormationDetails.findOne({
+      where: { formationId },
+    });
+
+    if (!formationDetails) {
+      return res.status(404).json({ message: 'Détails de formation non trouvés.' });
+    }
+
+    const formationDetailsId = formationDetails.id;
+
+    // 2. Get the quiz including questions and answers
+    const quiz = await Quiz.findOne({
+      where: { formationDetailsId },
+      include: [
+        {
+          model: Question,
+          as: 'Questions',
+          include: [
+            {
+              model: Reponse,
+              as: 'Reponses',
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz non trouvé pour cette formation.' });
+    }
+
+    // 3. Extract only the questions and answers
+    const questionsWithAnswers = quiz.Questions.map((questionInstance) => {
+      const question = questionInstance.get({ plain: true });
+      return {
+        id: question.id,
+        questionText: question.questionText,
+        optionType: question.optionType, // optional: remove if not needed
+        reponses: question.Reponses.map((reponse) => ({
+          id: reponse.id,
+          reponseText: reponse.reponseText,
+          // Include these if needed:
+          // isCorrect: reponse.isCorrect,
+          // points: reponse.points
+        })),
+      };
+    });
+
+    return res.status(200).json({ questions: questionsWithAnswers });
+
+  } catch (error) {
+    console.error('❌ Erreur récupération quiz:', error);
+    return res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
+
+
+
+
+
+
 
 exports.attemptQuiz = async (req, res) => {
   try {
@@ -222,7 +308,7 @@ exports.attemptQuiz = async (req, res) => {
 
       // Get the correct answers for this question
       const correctReponses = await Reponse.findAll({
-        where: { questId: question.id, isCorrect: true },
+        where: { questionId: question.id, isCorrect: true },
       });
 
       // User's answers for the current question
@@ -426,25 +512,9 @@ exports.deleteQuiz = async (req, res) => {
     res.status(500).json({ message: 'Error deleting quiz', error });
   }
 };
-exports.getQuizById = async (req, res) => {
-  try {
-    const quizId = req.params.id;
-    const quiz = await Quiz.findByPk(quizId, {
-      include: [
-        { model: Question, include: [Reponse] }
-      ]
-    });
 
-    if (!quiz) {
-      return res.status(404).json({ message: 'Quiz not found' });
-    }
 
-    return res.status(200).json({ message: 'Quiz found successfully', quiz });
-  } catch (error) {
-    console.error("Error fetching quiz:", error);
-    return res.status(500).json({ message: 'Error fetching quiz', error });
-  }
-};
+
 exports.getAllQuizzesByUser = async (req, res) => {
   try {
     const userId = req.user.id;
