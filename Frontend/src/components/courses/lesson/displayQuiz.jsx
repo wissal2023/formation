@@ -115,7 +115,7 @@ const DisplayQuiz = () => {
     userAnswers[currentQuestion?.id] || currentQuestion?.reorganizeItems || [];
 
   return (
-    <div className="quiz-container">
+    <div className="quiz-containera">
       <div className="quiz-header">
         <h1>{quiz.title || "Quiz d'évaluation"}</h1>
       </div>
@@ -255,9 +255,9 @@ const DisplayQuiz = () => {
         </div>
 
         {currentQuestionIndex === quiz.questions.length - 1 && (
-          <div className="submit-section">
+          <div className="submit-sectiona">
             <button
-              className="submit-btn"
+              className="submit-btna"
               onClick={handleSubmit}
             >
               Soumettre
