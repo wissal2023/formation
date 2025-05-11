@@ -88,7 +88,7 @@ const verifyOtp = async (req, res) => {
       },
     });
 
-    // 6. Supprimer l’OTP
+    // DELETE the OTP from the database
     await otpModel.deleteOtp(email);
 
     return res.status(200).json({ message: 'OTP verified and deleted successfully' });

@@ -8,3 +8,4 @@ ollama pull nomic-embed-text
 ollama pull llama3:8b
 ollama list
 
+python app.py
