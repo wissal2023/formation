@@ -46,9 +46,7 @@ const AppNavigation = () => {
         <Route path="/editUser/:id" element={<UserSetting />} />           
         <Route path="/stepper" element={<AddFormation />} />
         <Route path="/Myformations" element={<MyCourse />} />
-
         <Route path="/convert" element={<Convert />} />
-
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
         <Route path="/lesson/:id" element={<Lesson />} />
@@ -80,7 +78,7 @@ const AppNavigation = () => {
         <Route path="/student-wishlist" element={<StudentWishlist />} />
         <Route path="/about-us" element={<About />} />
         */}
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={null} />
       </Routes>
     </Router>
    

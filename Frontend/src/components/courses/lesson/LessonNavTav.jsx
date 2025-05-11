@@ -1,13 +1,15 @@
 import { useState } from "react";
 import Overview from "../course-details/Overview";
 import Reviews from "../course-details/Reviews";
+import { useParams } from "react-router-dom";
 import Instructors from "../course-details/Instructors";
 
-const tab_title = ["Overview", "Instructors", "Reviews"];
+const tab_title = ["Overview","Reviews"];
 
 const LessonNavTav = () => {
 
    const [activeTab, setActiveTab] = useState(0);
+    const { id: formationId } = useParams();
 
    const handleTabClick = (index) => {
       setActiveTab(index);
@@ -24,12 +26,9 @@ const LessonNavTav = () => {
          </ul>
          <div className="tab-content" id="myTabContent">
             <div className={`tab-pane fade ${activeTab === 0 ? 'show active' : ''}`} id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab">
-               <Overview />
+               <Overview formationId={formationId}/>
             </div>
-            <div className={`tab-pane fade ${activeTab === 1 ? 'show active' : ''}`} id="instructors-tab-pane" role="tabpanel" aria-labelledby="instructors-tab">
-               <Instructors />
-            </div>
-            <div className={`tab-pane fade ${activeTab === 2 ? 'show active' : ''}`} id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab">
+            <div className={`tab-pane fade ${activeTab === 1 ? 'show active' : ''}`} id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab">
                <Reviews />
             </div>
          </div>

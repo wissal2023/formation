@@ -38,7 +38,7 @@ const HeaderFour = () => {
                      <div className="tgmenu__wrap">
                         <nav className="tgmenu__nav">
                            <div className="logo">
-                              <Link to="/"><img src="/assets/img/logo/Image2.png" alt="Logo" style={{ maxHeight: '60px'}} /></Link>
+                              <img src="/assets/img/logo/Image2.png" alt="Logo" style={{ maxHeight: '60px'}} />
                            </div>
                            <div className="tgmenu__navbar-wrap tgmenu__main-menu d-none d-xl-flex">
                               <NavMenuOne />
