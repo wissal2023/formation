@@ -1,8 +1,10 @@
 import FormationDetails from "./FormationDetails";
 import File from "./File";
 import NoteDigital from "./NoteDigital";
+import LessonPDF from "./LessonPDF";
 
 const LessonArea = ({ formationId }) => {
+
    return (
       <section className="lesson__area section-pb-120">
          <div className="container-fluid p-0">
@@ -19,7 +21,6 @@ const LessonArea = ({ formationId }) => {
                            <span>Formation ID: {formationId}</span>
                         </div>
                      </div>
-
                      {/* Pass the ID to video if needed */}
                      <File formationId={formationId} /> 
 

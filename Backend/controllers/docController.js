@@ -181,6 +181,9 @@ const deleteDocument = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+const servePDF = (req, res) => {
+  const { filename } = req.params;
+
 
 const servePDF = (req, res) => {
   const { filename } = req.params;
@@ -198,6 +201,23 @@ const servePDF = (req, res) => {
     // If the file exists, send it as a response
     res.sendFile(pdfPath);
   });
+
+const getDocumentByFormation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const document = await Document.findOne({ formation: id });
+
+    if (!document) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    res.status(200).json({ filename: document.filename });
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+
 };
 //app.use('/documents', docRoute );
 //router.get('/:formationDetailsId', authenticateToken, getDocumentByFormation);
@@ -215,6 +235,7 @@ const getDocumentByFormation = async (req, res) => {
     if (!formationDetails) {
       return res.status(404).json({ message: 'Formation details not found' });
     }
+
 
     // Fetch the first document related to this formation details
     const document = formationDetails.Documents[0]; // Assuming you want the first document
@@ -244,5 +265,7 @@ module.exports = {
   getDocumentByName,
   updateDocument,
   deleteDocument,
-  servePDF, getDocumentByFormation
+  servePDF,
+  getDocumentByFormation
+
 };

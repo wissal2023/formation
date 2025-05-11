@@ -1,4 +1,3 @@
-// backend/routes/docRoute.js:
 const express = require('express');
 const router = express.Router();
 const authenticateToken = require('../utils/authMiddleware');
@@ -16,5 +15,6 @@ router.get('/:formationId', authenticateToken, getDocumentByFormation);
 //router.get('/', authenticateToken, getAllDocuments);
 //router.get('/:formationDetailsId', authenticateToken, getDocumentByName);
 //router.get('/:id',authenticateToken,  getDocumentById);
+
 
 module.exports = router;
