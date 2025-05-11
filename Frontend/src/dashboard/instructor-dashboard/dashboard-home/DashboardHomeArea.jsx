@@ -10,6 +10,7 @@ const DashboardHomeArea = () => {
             </div>
             <div className="row">
                <Stats />
+
             </div>
          </div>         
          {/* <DashboardCourse />

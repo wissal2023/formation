@@ -32,7 +32,7 @@ const Details = ({ formationId }) => {
             console.error(err);
          }
       };
-    
+     
       if (formationId) {
          console.log("📌 formationId received in Overview:", formationId);
          fetchData();

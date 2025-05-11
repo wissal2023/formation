@@ -22,7 +22,6 @@ import Lesson from '../pages/Lesson';
 import NotFound from '../pages/NotFound';
 import SignIn from "../pages/Login";
 import StudentProfile from '../pages/StudentProfile';
- (dee)
 
 const AppNavigation = () => {
   return (
@@ -56,7 +55,7 @@ const AppNavigation = () => {
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-       
+
         {/*ROUTES TO BE USED         
 
 <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} /> for the cards 
