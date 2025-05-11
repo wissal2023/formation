@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import BtnArrow from '../svg/BtnArrow';
 import axios from 'axios';
 import { TYPE_FLAGS} from "../constants/typeFlag"; 
-
+import './style.css';
 
 // Validation schema
 const schema = yup.object({
@@ -73,7 +73,7 @@ const FormationForm = ({ onNext }) => {
             </select>
           <p className="form_error">{errors.typeFlag?.message}</p>
         </div>
-        <button type="submit" className="btn btn-two arrow-btn">
+        <button type="submit" className="pill-button">
          Next <BtnArrow />
         </button>
       </form>

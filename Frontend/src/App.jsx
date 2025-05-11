@@ -1,10 +1,10 @@
 
 import { HelmetProvider } from 'react-helmet-async';
-import { Provider } from 'react-redux';
 import AppNavigation from './navigation/Navigation';
-import { ToastContainer, toast } from 'react-toastify';
 import  store from './redux/store';
-
+import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
 
   return (
@@ -15,7 +15,6 @@ function App() {
             <AppNavigation />
         </div>
       </HelmetProvider> 
-
     </Provider>
   );
 }

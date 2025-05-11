@@ -1,179 +1,282 @@
-import {  useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import * as yup from "yup";
-import { toast } from 'react-toastify';
-  
-// Validation schema
-const schema = yup.object({
- 
-}).required();
+import { toast } from "react-toastify";
+import './style.css';
 
 const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
-   
-   const [questions, setQuestions] = useState([]);
-   const [question, setQuestion] = useState("");
-   const [reponses, setReponses] = useState([{ text: "", points: 1 },{ text: "", points: 1 }, { text: "", points: 1 }, { text: "", points: 1 }]);
-   const [correctAnswers, setCorrectAnswers] = useState([]);
-   const [optionQuet, setOptionQuet] = useState("Multiple_choice");
-  
-   // Handle correct answers for multiple choices
-   const handleCorrectChange = (value) => {
-      if (optionQuet === "Multiple_choice") {
+  const [questions, setQuestions] = useState([]);
+  const [question, setQuestion] = useState("");
+  const [reponses, setReponses] = useState([
+    { text: "" },
+    { text: "" },
+    { text: "" },
+    { text: "" },
+  ]);
+  const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [optionQuet, setOptionQuet] = useState("Multiple_choice");
+  const [reorganizeItems, setReorganizeItems] = useState(["", "", ""]);
+  const [matchPairs, setMatchPairs] = useState([{ left: "", right: "" }]);
+
+  // Handle correct answer selection
+  const handleCorrectChange = (index) => {
+    if (optionQuet === "Multiple_choice") {
       setCorrectAnswers((prev) =>
-         prev.includes(value)
-            ? prev.filter((val) => val !== value)
-            : [...prev, value]
+        prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
       );
-      } else {
-      setCorrectAnswers(value);
+    } else {
+      setCorrectAnswers([index]);
+    }
+  };
+
+  const handleReponseChange = (index, value) => {
+    const newReponses = [...reponses];
+    newReponses[index].text = value;
+    setReponses(newReponses);
+  };
+
+  const handleReorganizeChange = (index, value) => {
+    const newItems = [...reorganizeItems];
+    newItems[index] = value;
+    setReorganizeItems(newItems);
+  };
+
+  const handleMatchPairChange = (index, field, value) => {
+    const updatedPairs = [...matchPairs];
+    updatedPairs[index][field] = value;
+    setMatchPairs(updatedPairs);
+  };
+
+  const addStep = () => setReorganizeItems([...reorganizeItems, ""]);
+  const addMatchPair = () => setMatchPairs([...matchPairs, { left: "", right: "" }]);
+
+  const addQuestion = () => {
+    if (!question.trim()) {
+      toast.error("Please enter the question.");
+      return;
+    }
+
+    // For "Reorganize" questions
+    if (optionQuet === "Reorganize") {
+      const validItems = reorganizeItems.filter((item) => item.trim() !== "");
+      if (validItems.length < 3) {
+        toast.error("Enter at least three steps for the reorganize question.");
+        return;
       }
-   };
 
-   const addQuestion = () => {
-      const questionData = {
-        question,
-        optionQuet,
-        reponses,
-        correctAnswers
-      };
-    
-      setQuestions([...questions, questionData]);
-      setQuestion("");
-      setReponses([{ text: "", points: 1 },
-                   { text: "", points: 1 }, 
-                   { text: "", points: 1 }, 
-                   { text: "", points: 1 }]);
-      setCorrectAnswers([]);
-      setOptionQuet("Multiple_choice");
-    };
-    
+      setQuestions([...questions, {
+        questionText: question,
+        optionQuet: "Reorganize",
+        correctOrder: validItems,
+      }]);
 
-    const handleReponseChange = (index, newValue) => {
-      const newReponses = [...reponses];
-      newReponses[index] = newValue;
-      setReponses(newReponses);
-    };
-    
+      resetForm();
+      return;
+    }
 
-   const handleSubmit = async (e) => {
-      e.preventDefault();
-
-      try {
-         const response = await axios.post(`${import.meta.env.VITE_API_URL}/quizzes/create`, {
-            questions,            
-            formationDetailsId, 
-            withCredentials: true
-         });
-
-         toast.success("Quiz created successfully!");
-         onNext(); 
-      } catch (error) {
-         toast.error("Error creating quiz.");
-         console.error(error);
+    // For "Match" questions
+    if (optionQuet === "Match") {
+      const validPairs = matchPairs.filter(p => p.left.trim() && p.right.trim());
+      if (validPairs.length < 3) {
+        toast.error("Enter at least three match pairs.");
+        return;
       }
-   };
 
-   return (
-      <div className="col-lg-7">
-         <form onSubmit={handleSubmit} className="customer__form-wrap">
-            <span className="title">Create Quiz</span>
-               {/* Question Type Selector */}
-               <div className="form-grp">
-               <label>Question Type</label>
-               <select value={optionQuet} onChange={(e) => setOptionQuet(e.target.value)}>
-                  <option value="Multiple_choice">Multiple Choice</option>
-                  <option value="Yes/No">Yes / No</option>
-                  <option value="reorginize">Reorganize</option>
-                  <option value="Match">Match</option>
-                  <option value="Drag/Drop">Drag & Drop</option>
-               </select>
-               </div>
+      setQuestions([...questions, {
+        questionText: question,
+        optionQuet: "Match",
+        matchPairs: validPairs,
+      }]);
 
-               {/* Correct answer(s) input - multiple checkboxes for Multiple_choice */}
-               {optionQuet === "Multiple_choice" && (
-               <div className="form-grp">
-                  <label>Correct Answers</label>
-                  {reponses.map((r, i) => (
-                     <div key={i}>
-                        <input
-                           type="text"
-                           value={r.text}
-                           onChange={(e) =>
-                           handleReponseChange(i, { ...r, text: e.target.value })
-                           }
-                        />
-                        <input
-                           type="number"
-                           value={r.points}
-                           onChange={(e) =>
-                           handleReponseChange(i, { ...r, points: parseInt(e.target.value) })
-                           }
-                        />
-                     </div>
-                     ))}
+      resetForm();
+      return;
+    }
 
-               </div>
-               )}
+    // For "Multiple_choice" and "Single_choice"
+    if (reponses.some((r) => !r.text.trim())) {
+      toast.error("All answer fields must be filled.");
+      return;
+    }
 
-               {/* Dropdown for Yes/No or single-answer types */}
-               {optionQuet === "Yes/No" && (
-               <div className="form-grp">
-                  <label>Correct Answer</label>
-                  <select onChange={(e) => setCorrectAnswers(e.target.value)}>
-                     <option value="">Select</option>
-                     <option value="Yes">Yes</option>
-                     <option value="No">No</option>
-                  </select>
-               </div>
-               )}
-               {reponses.map((rep, index) => (
-  <div key={index} className="form-grp">
-    <input
-      type="text"
-      value={rep.text}
-      onChange={(e) => {
-        const newReps = [...reponses];
-        newReps[index].text = e.target.value;
-        setReponses(newReps);
-      }}
-      placeholder={`Réponse ${index + 1}`}
-    />
-    <input
-      type="number"
-      value={rep.points}
-      onChange={(e) => {
-        const newReps = [...reponses];
-        newReps[index].points = parseInt(e.target.value, 10);
-        setReponses(newReps);
-      }}
-      placeholder="Points"
-    />
-    {optionQuet === "Multiple_choice" && (
-      <input
-        type="checkbox"
-        checked={correctAnswers.includes(rep.text)}
-        onChange={() => handleCorrectChange(rep.text)}
-      />
-    )}
-  </div>
-))}
+    // Validate correct answers based on the question type
+    if (optionQuet === "Multiple_choice") {
+      if (correctAnswers.length < 2) {
+        toast.error("Please select at least two correct answers.");
+        return;
+      }
+      if (correctAnswers.length > 3) {
+        toast.error("You can't select more than three correct answers.");
+        return;
+      }
+    } else if (optionQuet === "Single_choice") {
+      if (correctAnswers.length !== 1) {
+        toast.error("Please select exactly one correct answer.");
+        return;
+      }
+    }
 
-<button type="button" className="btn btn-secondary" onClick={addQuestion}>
-  Ajouter la question
-</button>
+    const mappedReponses = reponses.map((rep, index) => ({
+      reponseText: rep.text,
+      isCorrect: correctAnswers.includes(index),
+      points: 1,
+    }));
 
+    setQuestions([...questions, {
+      questionText: question,
+      optionQuet,
+      reponses: mappedReponses,
+    }]);
 
-            <div className="d-flex justify-content-between mt-3">
-               <button type="button" className="btn btn-secondary" onClick={onPrev}>
-                  Previous
-               </button>
-               <button type="submit" className="btn btn-primary">
-                  Submit Quiz
-               </button>
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setQuestion("");
+    setReponses([{ text: "" }, { text: "" }, { text: "" }, { text: "" }]);
+    setCorrectAnswers([]);
+    setOptionQuet("Multiple_choice");
+    setReorganizeItems(["", "", ""]);
+    setMatchPairs([{ left: "", right: "" }]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (questions.length === 0) {
+      toast.error("Please add at least one question before submitting.");
+      return;
+    }
+
+    try {
+      // Send the quiz data to the backend
+      await axios.post(`${import.meta.env.VITE_API_URL}/quizzes/create`, {
+        formationDetailsId,
+        questions,
+      }, { withCredentials: true });
+
+      toast.success("Quiz created successfully!");
+      onNext();
+    } catch (error) {
+      toast.error("Error creating quiz.");
+      console.error(error);
+    }
+  };
+
+  return (
+    <div className="instructor__profile-form-wrap">
+      <form onSubmit={handleSubmit} className="customer__form-wrap">
+        <span className="title">Create Quiz</span>
+
+        {/* Question Type Selector */}
+        <div className="question-type-selector">
+          <label>Question Type</label>
+          <select value={optionQuet} onChange={(e) => setOptionQuet(e.target.value)}>
+            <option value="Multiple_choice">Multiple Choice</option>
+            <option value="Single_choice">Single Choice</option>
+            <option value="Reorganize">Reorganize</option>
+            <option value="Match">Match</option>
+          </select>
+        </div>
+
+        {/* Question Input */}
+        <div className="quiz-form-grp">
+          <input
+            type="text"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Enter your question"
+          />
+        </div>
+
+        {/* Multiple/Single Choice */}
+        {["Multiple_choice", "Single_choice"].includes(optionQuet) &&
+          reponses.map((rep, index) => (
+            <div key={index} className="quiz-form-grp">
+              <input
+                type="text"
+                placeholder={`Answer ${index + 1}`}
+                value={rep.text}
+                onChange={(e) => handleReponseChange(index, e.target.value)}
+              />
+              {optionQuet === "Multiple_choice" ? (
+                <input
+                  type="checkbox"
+                  checked={correctAnswers.includes(index)}
+                  onChange={() => handleCorrectChange(index)}
+                />
+              ) : (
+                <input
+                  type="radio"
+                  name="radio-group"
+                  checked={correctAnswers.includes(index)}
+                  onChange={() => handleCorrectChange(index)}
+                />
+              )}
             </div>
-         </form>
-      </div>
-   );
+          ))
+        }
 
-}
-export default Quizz;
+        {/* Reorganize Input */}
+        {optionQuet === "Reorganize" &&
+          reorganizeItems.map((item, index) => (
+            <div key={index} className="quiz-form-grp">
+              <input
+                type="text"
+                placeholder={`Step ${index + 1}`}
+                value={item}
+                onChange={(e) => handleReorganizeChange(index, e.target.value)}
+              />
+            </div>
+          ))
+        }
+
+        {optionQuet === "Reorganize" && (
+          <button type="button" className="pill-button" onClick={addStep}>
+            Add Step
+          </button>
+        )}
+
+        {/* Match Input */}
+        {optionQuet === "Match" &&
+          matchPairs.map((pair, index) => (
+            <div key={index} className="quiz-form-grp d-flex gap-2">
+              <input
+                type="text"
+                placeholder={`Left ${index + 1}`}
+                value={pair.left}
+                onChange={(e) => handleMatchPairChange(index, "left", e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder={`Right ${index + 1}`}
+                value={pair.right}
+                onChange={(e) => handleMatchPairChange(index, "right", e.target.value)}
+              />
+            </div>
+          ))
+        }
+
+        {optionQuet === "Match" && (
+          <button type="button" className="pill-button" onClick={addMatchPair}>
+            Add Match Pair
+          </button>
+        )}
+
+        <button type="button" className="pill-button" onClick={addQuestion}>
+          Add Question
+        </button>
+
+        {/* Navigation Buttons */}
+        <div className="d-flex justify-content-between mt-3">
+          <button type="button" className="pill-button" onClick={onPrev}>
+            Previous
+          </button>
+          <button type="submit" className="pill-button">
+            Submit Quiz
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default Quizz;

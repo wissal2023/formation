@@ -8,12 +8,12 @@ const sidebar_data = [
       title: "Welcome",
       sidebar_details: [
          { id: 1, link: "/dashboard", icon: "fas fa-home", title: "Dashboard" },
-         { id: 2, link: "/listUsers", icon: "skillgro-avatar", title: "All Users" },
-         { id: 3, link: "/formations", icon: "skillgro-book", title: "All Formation" },
-         { id: 4, link: "/stepper", icon: "skillgro-label", title: "Create formation stepper" },
-         { id: 5, link: "/instructor-review", icon: "skillgro-book-2", title: "Reviews" },
-         { id: 6, link: "/instructor-attempts", icon: "skillgro-question", title: "My Quiz Attempts" },
-         { id: 7, link: "/instructor-history", icon: "skillgro-satchel", title: "Order History" },
+         { id: 2, link: "/listUsers", icon: "skillgro-avatar", title: "utilisateurs" },
+         { id: 3, link: "/formations", icon: "skillgro-book", title: "formations" },
+         { id: 4, link: "/stepper", icon: "skillgro-label", title: "Ajouter formation" },
+         //{ id: 5, link: "/convert", icon: "skillgro-book-2", title: "generator" },
+         //{ id: 6, link: "/instructor-attempts", icon: "skillgro-question", title: "My Quiz Attempts" },
+         //{ id: 7, link: "/instructor-history", icon: "skillgro-satchel", title: "Order History" },
       ],
    },
    {
@@ -21,10 +21,10 @@ const sidebar_data = [
       title: "INSTRUCTOR",
       class_name: "mt-40",
       sidebar_details: [
-         { id: 1, link: "/instructor-courses", icon: "skillgro-video-tutorial", title: "My Courses" },
-         { id: 2, link: "/instructor-announcement", icon: "skillgro-marketing", title: "Announcements" },
-         { id: 3, link: "/instructor-quiz", icon: "skillgro-chat", title: "Quiz Attempts" },
-         { id: 4, link: "/instructor-assignment", icon: "skillgro-list", title: "Assignments" },
+         { id: 1, link: "/Myformations", icon: "skillgro-video-tutorial", title: "Mes formations" },
+         //{ id: 2, link: "/instructor-announcement", icon: "skillgro-marketing", title: "Announcements" },
+         //{ id: 3, link: "/instructor-quiz", icon: "skillgro-chat", title: "Quiz Attempts" },
+         //{ id: 4, link: "/instructor-assignment", icon: "skillgro-list", title: "Assignments" },
       ],
    },
    {
@@ -32,7 +32,7 @@ const sidebar_data = [
       title: "User",
       class_name: "mt-30",
       sidebar_details: [
-         { id: 1, link: "/instructor-setting", icon: "skillgro-settings", title: "Settings" },
+         //{ id: 1, link: "/instructor-setting", icon: "skillgro-settings", title: "Settings" },
          { id: 2, link: "/logout", icon: "skillgro-logout", title: "Logout" },
       ],
    },

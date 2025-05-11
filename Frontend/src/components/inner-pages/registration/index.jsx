@@ -1,4 +1,4 @@
-import FooterOne from "../../../layouts/footers/FooterOne"
+import Footer from "../../../layouts/footers/Footer"
 import HeaderOne from "../../../layouts/headers/HeaderOne"
 import BreadcrumbOne from "../../common/breadcrumb/BreadcrumbOne"
 import RegistrationArea from "./RegistrationArea"
@@ -11,7 +11,7 @@ const Registration = () => {
             <BreadcrumbOne title="Student SingUp" sub_title="SingUp" />
             <RegistrationArea />
          </main>
-         <FooterOne style={false} style_2={false} />
+         <Footer style={false} style_2={false} />
       </>
    )
 }

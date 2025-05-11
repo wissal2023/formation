@@ -74,7 +74,7 @@ const CourseArea = () => {
                               </p>
                               <div className="courses__item-bottom">
                                  <div className="button">
-                                    <Link to={`/course-details/${item.id}`}>
+                                    <Link to={`/lesson/${item.id}`}>
                                        <span className="text">more details</span>
                                        <i className="flaticon-arrow-right"></i>
                                     </Link>

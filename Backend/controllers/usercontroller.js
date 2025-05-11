@@ -423,9 +423,6 @@ const updateProfileController = async (req, res) => {
   }
 };
  
-
-
-
 //************************ NEEDS TO BE UPDATED ***************************/
 
 const toggleUserActivation = async (req, res) => {
@@ -574,7 +571,7 @@ const modifyPasswordController = async (req, res) => {
   }
 };
 module.exports = {
-  getAuthenticatedUser,
+    getAuthenticatedUser,
     addUserController,
     loginUserController,
     logoutUserController,
