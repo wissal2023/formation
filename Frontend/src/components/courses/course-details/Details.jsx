@@ -33,11 +33,22 @@ const Details = ({ formationId }) => {
          }
       };
 
+<<<<<<< HEAD:Frontend/src/components/courses/course-details/Details.jsx
       if (formationId) {
          console.log("formationId received:", formationId);
          fetchData();
       }
    }, [formationId]);
+=======
+     
+   if (formationId) {
+      console.log("📌 formationId received in Overview:", formationId);
+      fetchData();
+   } else {
+      console.warn("❌ formationId is undefined or null");
+   }
+}, [formationId]);
+>>>>>>> c48ccecf (editfront):Frontend/src/components/courses/course-details/Overview.jsx
 
    return (
       <div className="courses__overview-wrap">
