@@ -11,8 +11,7 @@ import QrCodeDisplay from '../pages/QrCodeVerification';
 import SignIn from '../pages/Login';
 import OTPVerification from '../pages/OtpVerification';
 import TotpVerif from '../pages/TotpVerif';
-
-
+import ForgotPassword from '../pages/ForgotPassword.jsx';
 //*********** WISSAL************** */
 import InstructorDashboard from '../pages/InstructorDashboard';
 import StudentDashboard from '../pages/StudentDashboard';
@@ -24,7 +23,7 @@ import AddFormation from '../pages/AddFormation';
 import UserSetting from '../pages/UserSetting';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from '../PrivateRoute.jsx';
-import SignIn from "/Users/ons/Desktop/giiit baaack/formation/Frontend/src/signIn";
+
 
 const AppNavigation = () => {
   return (
@@ -46,8 +45,8 @@ const AppNavigation = () => {
 
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
-
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+       
         {/*ROUTES TO BE USED         
         <Route path="/instructor-attempts" element={<InstructorAttempt />} /> 
         <Route path="/course-details" element={<CourseDetails />} />

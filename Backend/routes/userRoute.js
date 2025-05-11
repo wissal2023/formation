@@ -7,10 +7,12 @@ const authenticateToken = require('../utils/authMiddleware');
 const { addUserController, loginUserController, logoutUserController, 
         updatePasswordController, getAllUsers, getOnceUser, getUserByName,
         updateUserController, updateProfileController, getUserByIdController,
-        getAuthenticatedUser } = require('../controllers/usercontroller'); // On utilise maintenant userController pour tout
+        getAuthenticatedUser,forgotPasswordController, modifyPasswordController } = require('../controllers/usercontroller'); // On utilise maintenant userController pour tout
 router.get('/auth', getAuthenticatedUser);
 router.post('/login', loginUserController);
 router.post("/change-password", authenticateToken, updatePasswordController);
+router.post('/forgot-password', forgotPasswordController);
+router.post('/update-password', modifyPasswordController);
 router.post('/register', authenticateToken, addUserController);
 router.post('/logout', authenticateToken,logoutUserController);
 router.get('/getOnce', authenticateToken, getOnceUser);
