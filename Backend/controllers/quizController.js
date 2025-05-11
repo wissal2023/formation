@@ -1,6 +1,9 @@
-const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails,Historisation } = require('../db/models');
+
+const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails,Historisation,Formation } = require('../db/models');
+
+
 const { calculateScore } = require('../services/quizService');
-const sequelize = require('../db/models').sequelize; // Add this to access transactions
+const sequelize = require('../db/models').sequelize; 
 
 
 //app.use('/quizzes', quizRoutes);
@@ -17,8 +20,10 @@ exports.createQuiz = async (req, res) => {
       return res.status(403).json({ message: 'Permission refusée ou utilisateur introuvable.' });
     }
 
+
     const formation = await FormationDetails.findByPk(formationDetailsId);
     if (!formation) {
+
       await transaction.rollback();
       return res.status(404).json({ message: 'Formation non trouvée.' });
     }
@@ -44,6 +49,7 @@ exports.createQuiz = async (req, res) => {
       }, { transaction });
 
       questionIds.push(createdQuestion.id);
+
 
       if (q.optionType === 'Multiple_choice' || q.optionType === 'single_choice') {
         if (Array.isArray(q.reponses)) {
@@ -89,9 +95,11 @@ exports.createQuiz = async (req, res) => {
               points: i + 1  // Store the order in points (or any other field)
             }, { transaction });
           }
+
         }
       }
     }
+
     await Trace.create({
       userId,
       model: 'Quiz',
@@ -113,6 +121,7 @@ exports.createQuiz = async (req, res) => {
   console.error("Error details:", error.response ? error.response.data : error.message);
 }
 };
+
 
 
 /*

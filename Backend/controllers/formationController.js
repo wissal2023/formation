@@ -1,4 +1,4 @@
-const { sequelize, Formation, FormationDetails, Video, Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
+const { sequelize, Formation, FormationDetails, Quizz, Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
 const { USER_ROLES } = require('../db/constants/roles');
 
 //app.use('/formations', formationRoutes);
@@ -27,32 +27,91 @@ const createFormation = async (req, res) => {
     return res.status(500).json({ message: 'Erreur création formation', error: error.message });
   }
 };
-
-
-// get all
+// get all formations
 const getAllFormations = async (req, res) => {
   try {
     const user = req.user;
 
-    // Tous les utilisateurs authentifiés peuvent voir toutes les formations
-    if (USER_ROLES.includes(user.roleUtilisateur)) {
-      const formations = await Formation.findAll({
-        include: {
-          model: User,
-          attributes: ['username'], // only get the username
-        },
-      }
-
-      );
-      return res.status(200).json(formations);
+    if (!user || !user.roleUtilisateur) {
+      return res.status(403).json({ message: 'Rôle utilisateur non autorisé.' });
     }
+     
+    const formations = await Formation.findAll({
+      include: [
+        { model: User, attributes: ['username'] },
+        {
+          model: FormationDetails,
+          include: [
+            { model: Document },
+            { model: Quiz }
+          ]
+        }
+      ]
+    });
 
-    return res.status(403).json({ message: 'Rôle utilisateur non autorisé.' });
+      const enrichedFormations = formations.map(formation => {
+      let progress = 0;
 
+      // +25% if titre and thematique exist
+      if (formation.titre && formation.thematique) progress += 25;
+
+      // +25% if FormationDetails exist
+      if (formation.FormationDetail) progress += 25;
+
+      // +25% if FormationDetails has Documents
+      if (formation.FormationDetail && formation.FormationDetail.Documents?.length > 0) progress += 25;
+
+      // +25% if FormationDetails has Quizzes
+      if (formation.FormationDetail && formation.FormationDetail.Quizzes?.length > 0) progress += 25;
+
+      return {
+        ...formation.toJSON(),
+        progress,
+        isCompleted: progress === 100
+      };
+    });
+
+    return res.status(200).json(enrichedFormations);
+    
   } catch (error) {
+    console.error('Error in getAllFormations:', error);
     res.status(500).json({ message: 'Erreur lors de la récupération des formations', error });
   }
 };
+
+
+
+
+// get all formation that are created (formation, formationDetails, document, quizz)
+const getfilteredFormation = async (req, res) => {
+  try {
+    const formations = await Formation.findAll({
+      where: {
+        status: 'created' // Only get formations that are marked as completed
+      },
+      include: [
+        {
+          model: FormationDetails,
+          required: true // Ensures that only formations with details are included
+        },
+        {
+          model: Document, // Assuming this is the model for uploaded content
+          required: true // Ensures that only formations with documents are included
+        },
+        {
+          model: Quiz,
+          required: true // Ensures that only formations with quizzes are included
+        }
+      ]
+    });
+
+    return res.status(200).json(formations);
+  } catch (error) {
+    console.error("Error fetching formations:", error);
+    return res.status(500).json({ message: 'Error fetching formations', error: error.message });
+  }
+};
+
 
 
 // get by id

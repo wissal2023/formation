@@ -3,22 +3,17 @@ const router = express.Router();
 const authenticateToken = require('../utils/authMiddleware');
 
 const { 
-    createFormation, 
-    getAllFormations, 
-    getFormationById, 
-    updateFormation, 
-    deleteFormation, 
-    getCompletedFormations,
-    getFormationsByUser 
-} = require('../controllers/formationController'); 
+    createFormation, getAllFormations, getFormationById, updateFormation, 
+    deleteFormation, getCompletedFormations, getFormationsByUser 
+    } = require('../controllers/formationController'); 
 
-// ✅ Specific routes first
+//  Specific routes first
 router.post('/AddFormation', authenticateToken, createFormation);
 router.get('/completed', authenticateToken, getCompletedFormations);
 router.get('/all', authenticateToken, getAllFormations);
-router.get('/formationbyuser', authenticateToken, getFormationsByUser); // moved up ✅
+router.get('/formationbyuser', authenticateToken, getFormationsByUser); 
 
-// ❗ Generic routes after
+//  Generic routes after
 router.get('/:id', authenticateToken, getFormationById);
 router.put('/:id', updateFormation);
 router.delete('/:id', deleteFormation);

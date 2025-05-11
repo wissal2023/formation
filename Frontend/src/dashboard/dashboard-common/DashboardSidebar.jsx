@@ -8,12 +8,20 @@ const sidebar_data = [
       title: "Welcome",
       sidebar_details: [
          { id: 1, link: "/dashboard", icon: "fas fa-home", title: "Dashboard" },
+         { id: 2, link: "/listUsers", icon: "skillgro-avatar", title: "All Users" },
+         { id: 3, link: "/Allformations", icon: "skillgro-book", title: "All Formation" },
+         { id: 4, link: "/stepper", icon: "skillgro-label", title: "Create formation stepper" },
+         { id: 5, link: "/convert", icon: "skillgro-book-2", title: "generator" },
+         { id: 6, link: "/Myformations", icon: "skillgro-question", title: "My formations" },
+         { id: 7, link: "/instructor-history", icon: "skillgro-satchel", title: "Order History" },
+
          { id: 2, link: "/listUsers", icon: "skillgro-avatar", title: "utilisateurs" },
          { id: 3, link: "/formations", icon: "skillgro-book", title: "formations" },
          { id: 4, link: "/stepper", icon: "skillgro-label", title: "Ajouter formation" },
          //{ id: 5, link: "/convert", icon: "skillgro-book-2", title: "generator" },
          //{ id: 6, link: "/instructor-attempts", icon: "skillgro-question", title: "My Quiz Attempts" },
          //{ id: 7, link: "/instructor-history", icon: "skillgro-satchel", title: "Order History" },
+
       ],
    },
    {

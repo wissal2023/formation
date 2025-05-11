@@ -1,15 +1,11 @@
-const { FormationDetails, Trace } = require('../db/models');
+const { FormationDetails, Trace, Formation, User } = require('../db/models');
 
+//app.use('/module', formationDetailsRoutes);
+//router.post('/addDetail', authenticateToken, createFormationDetails);
 const createFormationDetails = async (req, res) => {
   try {
     const user = req.user;
     const { formationId, duree, ...detailsData } = req.body;
-
-    console.log("📥 Received data in backend module/addDetail:", req.body);
-    console.log("🧠 Extracted formationId:", formationId);
-    console.log("📝 Remaining detailsData:", detailsData);
-    console.log("👤 Authenticated user:", user?.id);
-    console.log("🧠 Received duree:", duree);
 
     let dureeInMinutes;
 
@@ -44,19 +40,25 @@ const createFormationDetails = async (req, res) => {
     return res.status(500).json({ message: 'Erreur création formation details', error: error.message });
   }
 };
-const getPlanByFormationId = async (req, res) => {
+
+// Get all formation 
+// router.get('/:formationId/details', authenticateToken, getAllDetails);
+const getAllDetails = async (req, res) => {
   try {
     const { formationId } = req.params;
     const detail = await FormationDetails.findOne({
       where: { formationId },
-      attributes: ['plan']
+      attributes: ['description', 'plan']
     });
 
     if (!detail) {
-      return res.status(404).json({ message: 'Formation detail not found' });
+      return res.status(404).json({ message: 'Formation details not found' });
     }
 
-    res.json({ plan: detail.plan });
+    res.json({
+      description: detail.description,
+      plan: detail.plan
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -64,27 +66,9 @@ const getPlanByFormationId = async (req, res) => {
 
 
 
-const getDescriptionByFormationId = async (req, res) => {
-  try {
-    const { formationId } = req.params;
-    const detail = await FormationDetails.findOne({
-      where: { formationId },
-      attributes: ['description']
-    });
-
-    if (!detail) {
-      return res.status(404).json({ message: 'Formation detail not found' });
-    }
-
-    res.json({ description: detail.description });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
 
 module.exports = {
   createFormationDetails, 
-  getDescriptionByFormationId,
-  getPlanByFormationId
+  getAllDetails
 
 };
