@@ -3,7 +3,7 @@ import BreadcrumbOne from "../components/common/breadcrumb/BreadcrumbOne";
 import SEO from "../components/SEO";
 import DashboardBannerTwo from "../dashboard/dashboard-common/DashboardBannerTwo";
 import DashboardSidebarTwo from "../dashboard/dashboard-common/DashboardSidebarTwo";
-import FooterOne from "./footers/FooterOne";
+import Footer from "./footers/Footer";
 import HeaderFour from "./headers/HeaderFour";
 import Wrapper from "./Wrapper";
 import ChatWidget from '../components/chat/ChatWidget';
@@ -30,7 +30,7 @@ const DashboardLayoutStudent = ({ pageTitle, children }) => {
       </section>
         <ChatWidget />
       </main>
-      <FooterOne />
+      <Footer />
     </Wrapper>
   );
 };

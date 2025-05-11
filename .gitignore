@@ -17,18 +17,14 @@ __pycache__/
 .gitignore
 
 # Platform-specific files (you mentioned plateform/, which seems to be the root)
-plateform/.history
-plateform/.DS_Store
-plateform/package-lock.json
-plateform/Backend/.vscode
-plateform/Backend/.DS_Store
-plateform/Backend/package-lock.json
-plateform/Frontend/.DS_Store
-plateform/Frontend/package-lock.json
+.history
+.DS_Store
+package-lock.json
+Backend/.vscode
+Backend/.DS_Store
+Backend/package-lock.json
+Frontend/.DS_Store
+Frontend/package-lock.json
 
-# IntelliJ & JetBrains
-/workspace.xml
-/httpRequests/
-/dataSources/
-/dataSources.local.xml
-/shelf/
+**/venv/
+__pycache__/

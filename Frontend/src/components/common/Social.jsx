@@ -10,7 +10,7 @@ const Social = () => {
             </Link>
          </li>
          <li>
-            <Link to="https://www.facebook.com/" target="_blank">
+            <Link to="https://www.instagram.com/teamwillgroup/" target="_blank">
                <InjectableSvg src="/assets/img/icons/instagram.svg" alt="img" className="injectable" />
             </Link>
          </li>

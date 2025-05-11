@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import Converting from "./Converting";
 
 
 const UploadContent = ({ formationDetailsId, onPrev, onNext }) => {
@@ -40,6 +41,7 @@ const UploadContent = ({ formationDetailsId, onPrev, onNext }) => {
  
    return (
       <div className="instructor__profile-form-wrap">
+       {/* <Converting /> */}
         <form onSubmit={handleSubmit} className="instructor__profile-form">
           <div className="form-grp">
             <label htmlFor="file">Upload your module file</label>
@@ -47,10 +49,10 @@ const UploadContent = ({ formationDetailsId, onPrev, onNext }) => {
           </div>
  
           <div className="d-flex justify-content-between mt-4">
-            <button type="button" className="btn btn-outline-secondary" onClick={onPrev}>
+            <button type="button" className="pill-button" onClick={onPrev}>
               Back
             </button>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="pill-button">
               Upload and Next
             </button>
           </div>
