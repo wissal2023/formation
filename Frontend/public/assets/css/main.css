@@ -139,6 +139,15 @@ a:focus,
   box-shadow: none;
 }
 
+.disabled-button {
+   background-color: #ccc;
+   color: #666;
+   cursor: not-allowed;
+   padding: 8px 16px;
+   border: none;
+   border-radius: 4px;
+}
+
 a:hover,
 button:hover {
   color: var(--tg-theme-secondary);

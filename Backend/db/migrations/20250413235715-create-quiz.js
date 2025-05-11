@@ -58,10 +58,6 @@ module.exports = {
       }
     });
 
-    // Add associations for related models (not handled directly in the migration, but for clarity):
-    // - Quiz has many Questions
-    // - Quiz has many QuizProgs
-    // - Quiz has one Certification
   },
 
   async down(queryInterface, Sequelize) {

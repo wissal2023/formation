@@ -1,6 +1,6 @@
-const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails } = require('../db/models');
+const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails, Formation } = require('../db/models');
 const { calculateScore } = require('../services/quizService');
-const sequelize = require('../db/models').sequelize; // Add this to access transactions
+const sequelize = require('../db/models').sequelize; 
 
 
 //app.use('/quizzes', quizRoutes);
@@ -19,8 +19,8 @@ exports.createQuiz = async (req, res) => {
     }
 
     // Check if formation exists
-    const formation = await FormationDetails.findByPk(formationDetailsId);
-    if (!formation) {
+    const formationDetails = await FormationDetails.findByPk(formationDetailsId);
+    if (!formationDetails) {
       await transaction.rollback();
       return res.status(404).json({ message: 'Formation non trouvée.' });
     }
@@ -52,8 +52,8 @@ exports.createQuiz = async (req, res) => {
       // Check if reponses exist and are an array
       if (Array.isArray(q.reponses)) {
         for (const rep of q.reponses) {
-          await Reponse.create({
-            questionId: createdQuestion.id,  // Correct field name
+ await Reponse.create({
+            questionId: createdQuestion.id,
             reponseText: rep.reponseText,
             isCorrect: rep.isCorrect,
             points: rep.points || 1
@@ -62,6 +62,17 @@ exports.createQuiz = async (req, res) => {
       } else {
         console.warn(`No reponses found for question ID ${createdQuestion.id}`);
       }
+    }
+
+    // Update the status of the associated formation to 'created'
+    const formation = await Formation.findOne({
+      where: { id: formationDetails.formationId },
+      transaction
+    });
+
+    if (formation) {
+      formation.status = 'created';
+      await formation.save({ transaction });
     }
 
     // Log creation in Trace table
@@ -84,9 +95,11 @@ exports.createQuiz = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     console.error('Erreur création quiz:', error);
+    console.error('Request body:', req.body); // Log the request body for debugging
     return res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
+
 
 
 

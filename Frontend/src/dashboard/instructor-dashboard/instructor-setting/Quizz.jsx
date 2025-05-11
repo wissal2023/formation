@@ -13,13 +13,15 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     { text: "" },
   ]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
-  const [optionQuet, setOptionQuet] = useState("Multiple_choice");
+  const [optionType, setOptionQuet] = useState("Multiple_choice");
   const [reorganizeItems, setReorganizeItems] = useState(["", "", ""]);
   const [matchPairs, setMatchPairs] = useState([{ left: "", right: "" }]);
+  const addStep = () => setReorganizeItems([...reorganizeItems, ""]);
+  const addMatchPair = () => setMatchPairs([...matchPairs, { left: "", right: "" }]);
 
   // Handle correct answer selection
   const handleCorrectChange = (index) => {
-    if (optionQuet === "Multiple_choice") {
+    if (optionType  === "Multiple_choice") {
       setCorrectAnswers((prev) =>
         prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
       );
@@ -46,9 +48,6 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     setMatchPairs(updatedPairs);
   };
 
-  const addStep = () => setReorganizeItems([...reorganizeItems, ""]);
-  const addMatchPair = () => setMatchPairs([...matchPairs, { left: "", right: "" }]);
-
   const addQuestion = () => {
     if (!question.trim()) {
       toast.error("Please enter the question.");
@@ -56,16 +55,16 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     }
 
     // For "Reorganize" questions
-    if (optionQuet === "Reorganize") {
+    if (optionType  === "reorganize") {
       const validItems = reorganizeItems.filter((item) => item.trim() !== "");
       if (validItems.length < 3) {
         toast.error("Enter at least three steps for the reorganize question.");
         return;
       }
 
-      setQuestions([...questions, {
+       setQuestions([...questions, {
         questionText: question,
-        optionQuet: "Reorganize",
+        optionQuet: "reorganize",
         correctOrder: validItems,
       }]);
 
@@ -74,16 +73,16 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     }
 
     // For "Match" questions
-    if (optionQuet === "Match") {
+    if (optionType  === "match") {
       const validPairs = matchPairs.filter(p => p.left.trim() && p.right.trim());
-      if (validPairs.length < 3) {
-        toast.error("Enter at least three match pairs.");
+      if (validPairs.length < 2) {
+        toast.error("Enter at least Two match pairs.");
         return;
       }
 
       setQuestions([...questions, {
         questionText: question,
-        optionQuet: "Match",
+        optionType : "match",
         matchPairs: validPairs,
       }]);
 
@@ -98,18 +97,14 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     }
 
     // Validate correct answers based on the question type
-    if (optionQuet === "Multiple_choice") {
-      if (correctAnswers.length < 2) {
-        toast.error("Please select at least two correct answers.");
+    if (optionType  === "Multiple_choice") {
+      if (correctAnswers.length < 1) {
+        toast.error("Please select at least one correct answers.");
         return;
       }
-      if (correctAnswers.length > 3) {
-        toast.error("You can't select more than three correct answers.");
-        return;
-      }
-    } else if (optionQuet === "Single_choice") {
+    } else if (optionType  === "Single_choice") {
       if (correctAnswers.length !== 1) {
-        toast.error("Please select exactly one correct answer.");
+        toast.error("Please select one correct answer.");
         return;
       }
     }
@@ -122,7 +117,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
 
     setQuestions([...questions, {
       questionText: question,
-      optionQuet,
+      optionType ,
       reponses: mappedReponses,
     }]);
 
@@ -139,12 +134,18 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
+     e.preventDefault();
     if (questions.length === 0) {
-      toast.error("Please add at least one question before submitting.");
-      return;
+        toast.error("Please add at least three questions before submitting.");
+        return;
     }
+    // Log the payload before sending
+    const payload = {
+        formationDetailsId,
+        questions,
+    };
+    console.log("Payload being sent to API:", payload);
+
 
     try {
       // Send the quiz data to the backend
@@ -156,7 +157,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
       toast.success("Quiz created successfully!");
       onNext();
     } catch (error) {
-      toast.error("Error creating quiz.");
+      toast.error(error.response?.data?.message || "Error creating quiz.");
       console.error(error);
     }
   };
@@ -169,7 +170,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
         {/* Question Type Selector */}
         <div className="question-type-selector">
           <label>Question Type</label>
-          <select value={optionQuet} onChange={(e) => setOptionQuet(e.target.value)}>
+          <select value={optionType } onChange={(e) => setOptionQuet(e.target.value)}>
             <option value="Multiple_choice">Multiple Choice</option>
             <option value="Single_choice">Single Choice</option>
             <option value="Reorganize">Reorganize</option>
@@ -188,7 +189,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
         </div>
 
         {/* Multiple/Single Choice */}
-        {["Multiple_choice", "Single_choice"].includes(optionQuet) &&
+        {["Multiple_choice", "Single_choice"].includes(optionType ) &&
           reponses.map((rep, index) => (
             <div key={index} className="quiz-form-grp">
               <input
@@ -197,7 +198,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
                 value={rep.text}
                 onChange={(e) => handleReponseChange(index, e.target.value)}
               />
-              {optionQuet === "Multiple_choice" ? (
+              {optionType  === "Multiple_choice" ? (
                 <input
                   type="checkbox"
                   checked={correctAnswers.includes(index)}
@@ -216,7 +217,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
         }
 
         {/* Reorganize Input */}
-        {optionQuet === "Reorganize" &&
+        {optionType  === "Reorganize" &&
           reorganizeItems.map((item, index) => (
             <div key={index} className="quiz-form-grp">
               <input
@@ -229,14 +230,14 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
           ))
         }
 
-        {optionQuet === "Reorganize" && (
+        {optionType  === "Reorganize" && (
           <button type="button" className="pill-button" onClick={addStep}>
             Add Step
           </button>
         )}
 
         {/* Match Input */}
-        {optionQuet === "Match" &&
+        {optionType  === "Match" &&
           matchPairs.map((pair, index) => (
             <div key={index} className="quiz-form-grp d-flex gap-2">
               <input
@@ -255,24 +256,15 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
           ))
         }
 
-        {optionQuet === "Match" && (
-          <button type="button" className="pill-button" onClick={addMatchPair}>
-            Add Match Pair
-          </button>
+        {optionType  === "Match" && (
+          <button type="button" className="pill-button" onClick={addMatchPair}>Add Match Pair</button>
         )}
-
-        <button type="button" className="pill-button" onClick={addQuestion}>
-          Add Question
-        </button>
+        <button type="button" className="pill-button" onClick={addQuestion}>Add Question</button>
 
         {/* Navigation Buttons */}
         <div className="d-flex justify-content-between mt-3">
-          <button type="button" className="pill-button" onClick={onPrev}>
-            Previous
-          </button>
-          <button type="submit" className="pill-button">
-            Submit Quiz
-          </button>
+          <button type="button" className="pill-button" onClick={onPrev}>Previous</button>
+          <button type="submit" className="pill-button"> Submit Quiz</button>
         </div>
       </form>
     </div>

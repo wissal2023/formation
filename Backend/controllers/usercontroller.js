@@ -13,7 +13,7 @@ const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
 
-//router.post('/login', loginUserController);
+//router.post('/users/login', loginUserController);
 const loginUserController = async (req, res) => { 
   const { email, mdp } = req.body;
 
@@ -95,7 +95,8 @@ const loginUserController = async (req, res) => {
     });
   }
 };
-//router.get('/auth', getAuthenticatedUser);
+
+//router.get('/users/auth', getAuthenticatedUser);
 const getAuthenticatedUser = (req, res) => {
   const token = req.cookies.token;
 
@@ -297,7 +298,7 @@ const getUserByIdController = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
-// update user as an admin
+// router.put('/edit/:id', authenticateToken, uploadImage.single('photo'), updateUserController);
 const updateUserController = async (req, res) => {
   const userId = req.params.id;
 
@@ -386,7 +387,7 @@ const updateUserController = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
       }
 };  
-// update Profile as a formateur or apprenant
+//router.put('/profile/:id', authenticateToken,uploadImage.single('photo'), updateProfileController);
 const updateProfileController = async (req, res) => {
   const userId = req.params.id;
 

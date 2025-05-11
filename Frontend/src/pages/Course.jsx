@@ -4,7 +4,7 @@ import CourseArea from "../components/courses/course/CourseArea"
 
 const Course = () => {
   return (
-      <DashboardLayout pageTitle="all formation">
+      <DashboardLayout pageTitle=" All formation">
           <CourseArea />
       </DashboardLayout>
   );

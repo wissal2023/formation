@@ -12,7 +12,7 @@ const generateOtp = () => {
   const otp = crypto.randomInt(100000, 999999); // Générer un code OTP à 6 chiffres
   return otp;
 };
-//router.post('/generate-otp', sendOtp);
+//router.post('/otp/generate-otp', sendOtp);
 const sendOtp = async (req, res) => {
   //Extracts email from req.body
   const { email } = req.body;
@@ -70,7 +70,6 @@ const verifyOtp = async (req, res) => {
     otpRecord.verified = true;
     await otpRecord.save();
 
-
     // 4. Trouver l'utilisateur par email
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -88,9 +87,6 @@ const verifyOtp = async (req, res) => {
         timestamp: new Date(),
       },
     });
-
-    // 6. Supprimer l’OTP
-
     // DELETE the OTP from the database
 
     await otpModel.deleteOtp(email);
