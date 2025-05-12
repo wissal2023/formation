@@ -1,24 +1,38 @@
 
-import { Link, useParams } from "react-router-dom";
-import LessonFaq from "./LessonFaq";
-import LessonNavTav from "./LessonNavTav";
-import LessonVideo from "./LessonVideo";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import FormationDetails from "./FormationDetails";
+import File from "./File";
+import NoteDigital from "./NoteDigital";
 import LessonPDF from "./LessonPDF";
 import { useNavigate } from "react-router-dom";
-const LessonArea = ({ filename, formationId  }) => { 
+const LessonArea = ({ formationId }) => {
+   const [documentData, setDocumentData] = useState(null);
    const navigate = useNavigate();
-   const {  id:formationId  } = useParams(); // Correctly extracting 'id' from URL params
-   
+   useEffect(() => {
+      const fetchDocument = async () => {
+         try {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/documents/${formationId}`, {
+               withCredentials: true,
+            });
+            setDocumentData(res.data); // This includes filename, filetype, etc.
+         } catch (err) {
+            console.error("Error fetching document details:", err);
+         }
+      };
+
+      if (formationId) fetchDocument();
+   }, [formationId]);
+
    return (
       <section className="lesson__area section-pb-120">
          <div className="container-fluid p-0">
             <div className="row gx-0">
                <div className="col-xl-3 col-lg-4">
                      <h2 className="title">Course Content</h2>
-                     {/* to be changed to the note digital */}
                      <NoteDigital formationId={formationId} />
                </div>
-             
+
                <div className="col-xl-9 col-lg-8">
                   <div className="lesson__video-wrap">
                      <div className="lesson__video-wrap-top">
@@ -38,17 +52,21 @@ const LessonArea = ({ filename, formationId  }) => {
                            <i className="flaticon-arrow-right"></i>
                         </button>
                      </div>
-                     <LessonPDF filename={filename} /> {/* Pass filename to LessonPDF */}
-                  </div>
-
-             
-                  {/* Button to go to quiz */}
+                     {/* Conditionally render based on filetype */}
+                     {documentData?.filetype?.includes('mp4') && (
+                        <File formationId={formationId} />
+                     )}
+                     {documentData?.filetype?.includes('pdf') && (
+                        <LessonPDF filename={documentData.filename} />
+                     )}
+                  </div>       
+                   {/* Button to go to quiz */}
                   <div className="pill-button-container">
                      <Link to={`/passerQuiz/${formationId}`} className="pill-button">
                         Go to Quiz
                      </Link>
                   </div>
-                 
+                  <FormationDetails formationId={formationId} />
                   {/* Lesson navigation tab */}
                   <LessonNavTav />
 
@@ -58,5 +76,4 @@ const LessonArea = ({ filename, formationId  }) => {
       </section>
    );
 };
-
-export default LessonArea;
+export default LessonArea;

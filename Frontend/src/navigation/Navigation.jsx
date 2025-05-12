@@ -56,7 +56,7 @@ const AppNavigation = () => {
 
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
-        <Route path="/lesson/:id" element={<Lesson />} />
+        <Route path="/formation/:id" element={<Lesson />} />
         <Route path="/passerQuiz/:id" element={<DisplayQuiz />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 

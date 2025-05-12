@@ -41,8 +41,10 @@ const createFormationDetails = async (req, res) => {
   }
 };
 
+
 // Get all formation 
 // router.get('/:formationId/details', authenticateToken, getAllDetails);
+
 const getAllDetails = async (req, res) => {
   try {
     const { formationId } = req.params;
@@ -63,8 +65,6 @@ const getAllDetails = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
-
 
 
 module.exports = {

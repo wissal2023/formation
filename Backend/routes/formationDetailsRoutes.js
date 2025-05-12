@@ -7,4 +7,5 @@ const { createFormationDetails, getAllDetails
 router.post('/addDetail', authenticateToken, createFormationDetails);
  router.get('/:formationId/details', authenticateToken, getAllDetails);
 
+
 module.exports = router;
