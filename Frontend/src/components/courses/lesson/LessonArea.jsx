@@ -5,8 +5,6 @@ import LessonNavTav from "./LessonNavTav";
 import LessonVideo from "./LessonVideo";
 import LessonPDF from "./LessonPDF";
 import { useNavigate } from "react-router-dom";
-
-
 const LessonArea = ({ filename, formationId  }) => { 
    const navigate = useNavigate();
    const {  id:formationId  } = useParams(); // Correctly extracting 'id' from URL params
@@ -28,6 +26,7 @@ const LessonArea = ({ filename, formationId  }) => {
                            <span>Formation ID: {formationId}</span>
                         </div>
                      </div>
+                  </div>
                      {/* Pass the ID to video if needed */}
                      <File formationId={formationId} /> 
 
@@ -42,14 +41,14 @@ const LessonArea = ({ filename, formationId  }) => {
                      <LessonPDF filename={filename} /> {/* Pass filename to LessonPDF */}
                   </div>
 
-                  
+             
                   {/* Button to go to quiz */}
                   <div className="pill-button-container">
                      <Link to={`/passerQuiz/${formationId}`} className="pill-button">
                         Go to Quiz
                      </Link>
                   </div>
-                  
+                 
                   {/* Lesson navigation tab */}
                   <LessonNavTav />
 
@@ -60,4 +59,4 @@ const LessonArea = ({ filename, formationId  }) => {
    );
 };
 
-export default LessonArea;
+export default LessonArea;
