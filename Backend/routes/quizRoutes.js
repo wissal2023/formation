@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const quizController = require('../controllers/quizController');
+const authenticateToken = require('../utils/authMiddleware');
 
-router.post('/create', quizController.createQuiz);
-
-router.post('/quizzes/:id/attempt', quizController.attemptQuiz);
-router.put('/quizzes/:id', quizController.updateQuiz);
-router.get('/formations/:formationId/quizzes', quizController.getAllQuizzes);
-router.delete('/quizzes/:quizId', quizController.deleteQuiz); 
-router.get('/quizzes/:id', quizController.getQuizById); 
-router.get('/user/quizzes', quizController.getAllQuizzesByUser); 
-router.get('/user/quiz-attempts', quizController.getQuizAttemptsByUser); 
-router.get('/quizzes/:quizId/result', quizController.getQuizResult);
+// Protected routes
+router.post('/create', authenticateToken, quizController.createQuiz);
+router.post('/:id/attempt', authenticateToken, quizController.attemptQuiz);
+router.put('/:id', authenticateToken, quizController.updateQuiz);
+router.delete('/:quizId', authenticateToken, quizController.deleteQuiz);
+// Public or optionally protected routes
+router.get('/formation/:formationId', quizController.getQuizByFormation);
+// User-specific routes (should be protected)
+router.get('/user/quizzes', authenticateToken, quizController.getAllQuizzesByUser);
+router.get('/user/quiz-attempts', authenticateToken, quizController.getQuizAttemptsByUser);
+router.get('/:quizId/result', authenticateToken, quizController.getQuizResult);
 
 module.exports = router;

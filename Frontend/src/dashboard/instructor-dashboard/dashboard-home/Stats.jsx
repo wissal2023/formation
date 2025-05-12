@@ -2,8 +2,7 @@ import Count from "../../../components/common/Count";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Lottie from "lottie-react";
-import flameAnimation from "../../../assets/img/lotti/flame.json";
-// import formationAnimation from "../../../assets/img/lotti/formation.json";
+import flameAnimation from '../../../../public/assets/img/lotti/flame.json'; // Adjust the path as necessary
 
 const Stats = () => {
   const [dashboardCountData, setDashboardCountData] = useState([]);
@@ -61,10 +60,8 @@ const Stats = () => {
           <div key={`${item.title}-${index}`} className="col-lg-4 col-md-4 col-sm-6">
             <div className="dashboard__counter-item">
               <div className="icon" style={{ width: 50, height: 50 }}>
-                {item.lottie ? (
+                {item.lottie && (
                   <Lottie animationData={item.lottie} loop={true} />
-                ) : (
-                  <i className={item.icon || "fa-solid fa-chart-bar"} style={{ fontSize: "2rem" }}></i>
                 )}
               </div>
               <div className="content">

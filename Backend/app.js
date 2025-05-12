@@ -1,7 +1,7 @@
-// backend/app.js
 require('dotenv').config();
 require('./utils/cron');
 const path = require('path');
+const multer = require('multer');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express(); 
@@ -12,7 +12,6 @@ const createFirstAdminUser = require('./utils/createFirstAdminUser');
 
 const formationRoutes = require('./routes/formationRoutes');
 const formationDetailsRoutes = require('./routes/formationDetailsRoutes');
-
 const userRoute = require('./routes/userRoute'); 
 const docRoute = require('./routes/docRoute'); 
 const otpRoutes = require('./routes/otpRoutes');
@@ -28,33 +27,33 @@ const reponseRoutes = require('./routes/reponseRoutes');
 const videoRoutes = require('./routes/videoRoutes');
 const helpRoutes = require('./routes/helpRoutes');
 const helpTranslationRoutes = require('./routes/helpTranslationRoutes');
+const conversionFileRoutes = require('./routes/ConversionFileRoute');
 
 app.use(express.json()); 
 app.use(cors({
-    origin: 'http://localhost:5173', // my frontend URL
+    origin: 'http://localhost:5173',
     credentials: true,
 }));
 app.use(cookieParser());
-//app.use('/otp', otpRoutes);
 
+// ******************* Static File Middleware *******************
+// Serve static files from 'assets/uploads' directory (PDFs and other docs)
+//app.use('/uploads', express.static(path.join(__dirname, 'assets', 'uploads'))); // For PDFs or other uploaded files
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-// ******************* middelware *******************
+// ******************* Middleware  of the translation model *******************
 app.use((req, res, next) => {
     req.lang = req.query.lang || req.headers['accept-language']?.split(',')[0].split('-')[0] || 'fr';
     next();
-  });
+});
 
 // Error handler for multer (upload img)
 app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError || err.message.includes('Seuls les fichiers')) {
-      return res.status(400).json({ error: err.message });
+        return res.status(400).json({ error: err.message });
     }
     next(err);
 });
-// Serve static files from 'assets/uploads' directory
-app.use('/assets/uploads', express.static(path.join(__dirname, 'assets', 'uploads')));
-app.use('/assets/documents', express.static(path.join(__dirname, 'assets', 'documents')));
-
 
 // ******************* HEAD ROUTES *******************
 app.use('/users', userRoute);
@@ -66,14 +65,15 @@ app.use('/quizzes', quizRoutes);
 app.use('/certifications', certificationRoutes);
 app.use('/streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
-app.use('/notedigitales', noteDigitaleRoutes);
+app.use('/Digital', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
 app.use('/quizprogs', quizProgRoutes);
 app.use('/recompenses', recompenseRoutes);
 app.use('/reponses', reponseRoutes);
 app.use('/videos', videoRoutes);
 app.use('/helps', helpRoutes);
-app.use('/help-translations', helpTranslationRoutes);  
+app.use('/help-translations', helpTranslationRoutes);
+app.use('/convertor', conversionFileRoutes)  
 
 app.use('*', (req, res) => {
     res.status(404).json({
@@ -86,6 +86,7 @@ const PORT = process.env.APP_PORT || 4000;
 app.get('/', (req, res) => {
     res.redirect('/signin');
 });
+
 app.listen(PORT, () => {
     console.log('Server up & running on port', PORT);
     createFirstAdminUser(); 

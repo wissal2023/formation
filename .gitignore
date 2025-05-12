@@ -1,7 +1,6 @@
 # IDE and system files
 .idea/
 .vscode/
-.DS_Store
 
 # Node and Python environment
 **/node_modules/
@@ -14,21 +13,13 @@ __pycache__/
 
 # Git metadata/history
 .history/
-.gitignore
 
-# Platform-specific files (you mentioned plateform/, which seems to be the root)
-plateform/.history
-plateform/.DS_Store
-plateform/package-lock.json
-plateform/Backend/.vscode
-plateform/Backend/.DS_Store
-plateform/Backend/package-lock.json
-plateform/Frontend/.DS_Store
-plateform/Frontend/package-lock.json
+.history
+package-lock.json
+Backend/.vscode
+Backend/package-lock.json
+Frontend/package-lock.json
 
-# IntelliJ & JetBrains
-/workspace.xml
-/httpRequests/
-/dataSources/
-/dataSources.local.xml
-/shelf/
+**/venv/
+__pycache__/
+/Python/output/

@@ -54,4 +54,23 @@ const sendAccountEmail = async ({ email, username, password }) => {
     }
 };
 
-module.exports = { sendOtpEmail, sendAccountEmail };
+
+const sendTemporaryPasswordEmail = async (to, tempPassword) => {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to,
+      subject: 'Mot de passe temporaire - Teamwill',
+      html: `
+        <p>Bonjour,</p>
+        <p>Voici votre mot de passe temporaire :</p>
+        <h2>${tempPassword}</h2>
+        <p>Utilisez-le pour vous connecter et le changer immédiatement.</p>
+        <p>Ce mot de passe est valide pour une courte durée.</p>
+      `,
+    };
+  
+    await transporter.sendMail(mailOptions);
+  };
+  
+  
+module.exports = { sendOtpEmail, sendAccountEmail,sendTemporaryPasswordEmail };

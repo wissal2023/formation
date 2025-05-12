@@ -4,7 +4,7 @@ const speakeasy = require('speakeasy');
 const qrcode = require('qrcode'); 
 const bcrypt = require('bcrypt'); 
 const { sendOtpEmail } = require('../utils/emailService');
-const { Otp, Trace } = require('../db/models');
+const { User, Otp, Trace } = require('../db/models');
 const crypto = require('crypto');
 
 // ******************************* email 
@@ -12,7 +12,7 @@ const generateOtp = () => {
   const otp = crypto.randomInt(100000, 999999); // Générer un code OTP à 6 chiffres
   return otp;
 };
-//router.post('/generate-otp', sendOtp);
+//router.post('/otp/generate-otp', sendOtp);
 const sendOtp = async (req, res) => {
   //Extracts email from req.body
   const { email } = req.body;
@@ -45,39 +45,58 @@ const sendOtp = async (req, res) => {
 };
 //router.post('/verifyOtp', verifyOtp);
 const verifyOtp = async (req, res) => {
-  
   const { email, otp } = req.body;
   console.log("Received OTP request with email:", email);
   console.log("Received OTP:", otp);
 
   try {
-    //Finds the latest OTP for the given email.
-    const { email, otp } = req.body;
+    // 1. Chercher le dernier OTP pour cet email
     const otpRecord = await Otp.findOne({
       where: { email: email },
-      order: [['created_at', 'DESC']], 
+      order: [['created_at', 'DESC']],
     });
 
     if (!otpRecord) {
       return res.status(400).json({ message: 'OTP not found.' });
     }
 
-    // Compare the OTP entered by the user with the stored hashed OTP
+    // 2. Vérifier que l'OTP correspond
     const isOtpValid = await bcrypt.compare(otp, otpRecord.otp);
     if (!isOtpValid) {
       return res.status(400).json({ message: 'Invalid OTP.' });
     }
 
-    // Mark OTP as verified
+    // 3. Marquer l'OTP comme vérifié
     otpRecord.verified = true;
     await otpRecord.save();
 
+<<<<<<< HEAD
     // Add Trace for OTP login
    
   
 
 
+=======
+    // 4. Trouver l'utilisateur par email
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // 5. Ajouter la trace
+    await Trace.create({
+      userId: user.id,
+      action: 'login with OTP email',
+      model: 'OtpVerification',
+      data: {
+        email,
+        method: 'auth with email OTP',
+        timestamp: new Date(),
+      },
+    });
+>>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
     // DELETE the OTP from the database
+
     await otpModel.deleteOtp(email);
 
     return res.status(200).json({ message: 'OTP verified and deleted successfully' });

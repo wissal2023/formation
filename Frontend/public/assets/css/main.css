@@ -139,6 +139,15 @@ a:focus,
   box-shadow: none;
 }
 
+.disabled-button {
+   background-color: #ccc;
+   color: #666;
+   cursor: not-allowed;
+   padding: 8px 16px;
+   border: none;
+   border-radius: 4px;
+}
+
 a:hover,
 button:hover {
   color: var(--tg-theme-secondary);
@@ -19441,7 +19450,6 @@ blockquote > p {
   width: 100%;
 }
 
-
 .profile__content-wrap .list-wrap li {
   display: -webkit-box;
   display: -moz-box;
@@ -19537,7 +19545,6 @@ blockquote > p {
 .instructor__cover-info-left .thumb {
   width: 120px;
   height: 120px;
-  
 }
 .instructor__cover-info-left .thumb img {
   border-radius: 50%;
@@ -19547,30 +19554,6 @@ blockquote > p {
   padding: 4px;
 }
 .instructor__cover-info-left button {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 40px;
-  height: 40px;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--tg-common-color-white);
-  border: none;
-  color: var(--tg-theme-primary);
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -o-border-radius: 50%;
-  -ms-border-radius: 50%;
-  border-radius: 50%;
-  font-size: 14px;
-  padding: 0;
-}
-.instructor__cover-info-left .upload-label {
   position: absolute;
   right: 0;
   bottom: 0;
@@ -20245,7 +20228,6 @@ blockquote > p {
   gap: 15px;
   margin-bottom: 35px;
 }
-
 .footer__social li a {
   color: var(--tg-common-color-gray-5);
 }
@@ -20660,3 +20642,32 @@ blockquote > p {
 }
 
 /*# sourceMappingURL=main.css.map */
+.pill-button {
+    background-color: #a4b452;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 4px 6px 0px #0b005c;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    -webkit-transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    -moz-transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    -ms-transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    -o-transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+  
+  .pill-button:hover {
+    background-color: #dfe3d5; /* Yellow */
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: none; /* Shadow removed */
+  }
+  
+  .pill-button:active {
+    transform: translateY(1px);
+    box-shadow: 2px 4px 0px #0b005c;
+  }
+  

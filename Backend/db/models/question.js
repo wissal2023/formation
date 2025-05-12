@@ -1,40 +1,58 @@
 'use strict';
-const { Sequelize, DataTypes } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
   const Question = sequelize.define('Question', {
     id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
       type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
     },
     questionText: {
       type: DataTypes.STRING,
+      allowNull: false
+    },
+    quizId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'Quiz',
+        key: 'id'
+      },
+      onDelete: 'CASCADE'
     },
-
-  quizId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Quiz', 
-      key: 'id'
+    optionType: {
+      type: DataTypes.ENUM('Multiple_choice', 'single_choice', 'reorganize', 'match', 'drag_drop'),
+      allowNull: false
     },
-    onDelete: 'CASCADE'
-  },
-  optionQuet: {
-    type: DataTypes.ENUM('Multiple_choice', 'Yes/No', 'reorginize', 'Match', 'Drag/Drop'),
-    allowNull: false
-  },
-
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      type: DataTypes.DATE
+    }
+  }, {
     paranoid: true,
+    freezeTableName: true,
+    timestamps: true,
+    tableName: 'Questions'
   });
 
-  // Associations
   Question.associate = (models) => {
-    Question.hasMany(models.Reponse, { foreignKey: 'questId' });
-    Question.belongsTo(models.Quiz, { foreignKey: 'quizId', onDelete: 'CASCADE' });
+    Question.belongsTo(models.Quiz, {
+      foreignKey: 'quizId',
+      onDelete: 'CASCADE'
+    });
+
+    Question.hasMany(models.Reponse, {
+      foreignKey: 'questionId',
+      onDelete: 'CASCADE'
+    });
   };
 
   return Question;

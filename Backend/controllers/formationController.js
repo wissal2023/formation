@@ -1,4 +1,4 @@
-const { sequelize, Formation, FormationDetails, Video, Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
+const { sequelize, Formation, FormationDetails, Quizz, Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
 const { USER_ROLES } = require('../db/constants/roles');
 
 //app.use('/formations', formationRoutes);
@@ -27,101 +27,91 @@ const createFormation = async (req, res) => {
     return res.status(500).json({ message: 'Erreur création formation', error: error.message });
   }
 };
-
-
-
-/*
-exports.createFormation = async (req, res) => {
-  const transaction = await sequelize.transaction();
-  
-  try {      
-      const user = req.user;
-      const userId = user.id;
-
-    if (!user) 
-      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
-    if (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin')
-      return res.status(403).json({ message: 'Permission refusée.' });
-
-    const { formationData, detailsData, createEmptyVideo = false } = req.body;
-
-    // Step 1: Create Formation
-    const formation = await Formation.create({
-      ...formationData,
-      userId
-    }, { transaction });
-
-    // Step 2: Create FormationDetails
-    const formationDetails = await FormationDetails.create({
-      ...detailsData,
-      formationId: formation.id
-    }, { transaction });
-
-    // Step 3: create a blank Video and link to FormationDetails
-    let videoId = null;
-    if (createEmptyVideo) {
-      const emptyVideo = await Video.create({
-        titre: '', // placeholder
-        duree: 0,
-        nomSection: '',
-        nbreSection: '',
-        formationDetailsId: formationDetails.id //  link to FormationDetails
-      }, { transaction });
-
-      videoId = emptyVideo.id;
-    }
-
-    // Step 4: Trace the creation
-    await Trace.create({
-      userId,
-      model: 'Formation',
-      action: 'Création de formation',
-      data: {
-        formationId: formation.id,
-        titre: formation.titre,
-        formationDetailsId: formationDetails.id,
-        videoId
-      }
-    }, { transaction });
-
-    await transaction.commit();
-    return res.status(201).json({
-      message: 'Formation, FormationDetails et vidéo vide créés',
-      formation,
-      formationDetails,
-      videoId
-    });
-  } catch (error) {
-    await transaction.rollback();
-    console.error('Erreur lors de la création:', error);
-    return res.status(500).json({ message: 'Erreur lors de la création', error });
-  }
-};
-*/
-// get all
+// get all formations
 const getAllFormations = async (req, res) => {
   try {
     const user = req.user;
 
-    // Tous les utilisateurs authentifiés peuvent voir toutes les formations
-    if (USER_ROLES.includes(user.roleUtilisateur)) {
-      const formations = await Formation.findAll({
-        include: {
-          model: User,
-          attributes: ['username'], // only get the username
-        },
-      }
-
-      );
-      return res.status(200).json(formations);
+    if (!user || !user.roleUtilisateur) {
+      return res.status(403).json({ message: 'Rôle utilisateur non autorisé.' });
     }
+     
+    const formations = await Formation.findAll({
+      include: [
+        { model: User, attributes: ['username'] },
+        {
+          model: FormationDetails,
+          include: [
+            { model: Document },
+            { model: Quiz }
+          ]
+        }
+      ]
+    });
 
-    return res.status(403).json({ message: 'Rôle utilisateur non autorisé.' });
+      const enrichedFormations = formations.map(formation => {
+      let progress = 0;
 
+      // +25% if titre and thematique exist
+      if (formation.titre && formation.thematique) progress += 25;
+
+      // +25% if FormationDetails exist
+      if (formation.FormationDetail) progress += 25;
+
+      // +25% if FormationDetails has Documents
+      if (formation.FormationDetail && formation.FormationDetail.Documents?.length > 0) progress += 25;
+
+      // +25% if FormationDetails has Quizzes
+      if (formation.FormationDetail && formation.FormationDetail.Quizzes?.length > 0) progress += 25;
+
+      return {
+        ...formation.toJSON(),
+        progress,
+        isCompleted: progress === 100
+      };
+    });
+
+    return res.status(200).json(enrichedFormations);
+    
   } catch (error) {
+    console.error('Error in getAllFormations:', error);
     res.status(500).json({ message: 'Erreur lors de la récupération des formations', error });
   }
 };
+
+
+
+
+// get all formation that are created (formation, formationDetails, document, quizz)
+const getfilteredFormation = async (req, res) => {
+  try {
+    const formations = await Formation.findAll({
+      where: {
+        status: 'created' // Only get formations that are marked as completed
+      },
+      include: [
+        {
+          model: FormationDetails,
+          required: true // Ensures that only formations with details are included
+        },
+        {
+          model: Document, // Assuming this is the model for uploaded content
+          required: true // Ensures that only formations with documents are included
+        },
+        {
+          model: Quiz,
+          required: true // Ensures that only formations with quizzes are included
+        }
+      ]
+    });
+
+    return res.status(200).json(formations);
+  } catch (error) {
+    console.error("Error fetching formations:", error);
+    return res.status(500).json({ message: 'Error fetching formations', error: error.message });
+  }
+};
+
 
 
 // get by id
@@ -244,7 +234,36 @@ const getCompletedFormations = async (req, res) => {
     res.status(500).json({ message: "Failed to get completed formations", error: error.message });
   }
 };
+const getFormationsByUser = async (req, res) => {
+  try {
+    console.log("req.user:", req.user);
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID manquant dans le token." });
+    }
+
+    const userFormations = await Formation.findAll({
+      where: { userId },
+      include: {
+        model: User,
+        attributes: ['username'],
+      },
+    });
+
+    if (userFormations.length === 0) {
+      return res.status(404).json({ message: "Aucune formation trouvée pour cet utilisateur." });
+    }
+
+    return res.status(200).json(userFormations);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des formations par utilisateur:", error);
+    return res.status(500).json({ message: "Erreur interne du serveur", error: error.message, stack: error.stack });
+  }
+};
+
+
 
 module.exports = {
-  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation, getCompletedFormations
+  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation, getCompletedFormations,getFormationsByUser
 };

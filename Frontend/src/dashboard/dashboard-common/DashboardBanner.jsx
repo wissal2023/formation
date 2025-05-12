@@ -67,8 +67,8 @@ const DashboardBanner = ({ style }) => {
                {/* Role-based button */}
                {(user?.roleUtilisateur === "Admin" || user?.roleUtilisateur === "Formateur") && (
                   <div className="dashboard__instructor-info-right">
-                     <button className="btn btn-two arrow-btn" onClick={() => setShowModal(true)}>
-                        {user?.roleUtilisateur === "Admin" ? "Create a New User" : "Add a Formation"} <BtnArrow />
+                     <button className="pill-button" onClick={() => setShowModal(true)}>
+                        {user?.roleUtilisateur === "Admin" ? "ajouter un utilisateur" : "Ajouter une formation"} <BtnArrow />
                      </button>
                   </div>
                )}

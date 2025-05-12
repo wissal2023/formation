@@ -8,6 +8,7 @@ const listUsers = () => {
    const [errorMsg, setErrorMsg] = useState("");
    const [selectedUser, setSelectedUser] = useState(null); // stores clicked user
    const [showModal, setShowModal] = useState(false); // toggle modal
+   const [confirmDelete, setConfirmDelete] = useState(null); // pour stocker l'ID de l'utilisateur à supprimer
    const navigate = useNavigate(); 
 
  
@@ -53,7 +54,38 @@ const listUsers = () => {
         setErrorMsg("Erreur ou accès refusé");
       }
     };
-    
+
+   // Définition de la fonction handleDeleteClick
+   const handleDeleteClick = (userId, username) => {
+     // Afficher la confirmation de suppression
+     setConfirmDelete({ id: userId, name: username });
+   };
+
+   // Fonction pour confirmer la suppression
+   const confirmDeleteUser = async () => {
+     if (!confirmDelete) return;
+
+     try {
+       await axios.delete(`${import.meta.env.VITE_API_URL}/users/delete/${confirmDelete.id}`, {
+         withCredentials: true,
+       });
+       
+       // Mettre à jour la liste en retirant l'utilisateur supprimé
+       setUsers(users.filter(user => user.id !== confirmDelete.id));
+       
+       // Réinitialiser l'état de confirmation
+       setConfirmDelete(null);
+       
+     } catch (err) {
+       console.error("Erreur lors de la suppression de l'utilisateur", err);
+       setErrorMsg("Erreur lors de la suppression: " + (err.response?.data?.message || err.message));
+     }
+   };
+
+   // Annuler la suppression
+   const cancelDelete = () => {
+     setConfirmDelete(null);
+   };
 
    const closeModal = () => {
       setShowModal(false);
@@ -131,7 +163,10 @@ const listUsers = () => {
                           </Link> 
                           <Link to='#' onClick={() => handleEditClick(user.id)} title="edit">
                             <i className="skillgro-writing"></i>
-                          </Link>                           
+                          </Link>      
+                          <Link to='#' onClick={() => handleDeleteClick(user.id, user.username)} title="delete">
+                            <i className="skillgro-trash"></i>
+                          </Link>                      
                         </div>
                       </td>
                     </tr>
@@ -140,7 +175,7 @@ const listUsers = () => {
                 </table>
               </div>
             </div>
-             {/* MODAL */}
+             {/* MODAL détails utilisateur */}
              {showModal && selectedUser && (
                <div className="modal-overlay">
                   <div className="modal-content" >
@@ -149,6 +184,29 @@ const listUsers = () => {
                   </div>
                </div>
                )}
+               
+             {/* MODAL confirmation de suppression */}
+             {confirmDelete && (
+               <div className="modal-overlay">
+                  <div className="modal-content confirmation-modal">
+                     <h5>Confirmer la suppression</h5>
+                     <p>Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>{confirmDelete.name}</strong>?</p>
+                     <p>Cette action est irréversible.</p>
+                     <div className="button-group">
+                        <button 
+                          onClick={confirmDeleteUser} 
+                          className="btn btn-danger">
+                          Confirmer
+                        </button>
+                        <button 
+                          onClick={cancelDelete} 
+                          className="btn btn-secondary">
+                          Annuler
+                        </button>
+                     </div>
+                  </div>
+               </div>
+             )}
           </div>
         </div>
       </div>

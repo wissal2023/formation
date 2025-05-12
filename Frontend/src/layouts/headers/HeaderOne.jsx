@@ -1,79 +1,25 @@
-import CustomSelect from "../../ui/CustomSelect"
-import TotalWishlist from "../../components/common/TotalWishlist"
-import { useState  } from "react";
-import UseSticky from "../../hooks/UseSticky";
 import { Link } from "react-router-dom";
-import NavMenu from "./menu/NavMenu";
-import InjectableSvg from "../../hooks/InjectableSvg";
-
-import TotalCart from "../../components/common/TotalCart";
-import MobileSidebar from "./menu/MobileSidebar";
-
-
+import UseSticky from "../../hooks/UseSticky";
 
 const HeaderOne = () => {
-
-   const [selectedOption, setSelectedOption] = useState(null);
-
-   const handleSelectChange = (option) => {
-      setSelectedOption(option);
-   };
-
    const { sticky } = UseSticky();
-   const [isActive, setIsActive] = useState(false);
 
    return (
-      <>
-         <header>
-            <div id="header-fixed-height"></div>
-            <div id="sticky-header" className={`tg-header__area ${sticky ? "sticky-menu": ""}`}>
-               <div className="container custom-container">
-                  <div className="row">
-                     <div className="col-12">
-                        <div className="tgmenu__wrap">
-                           <nav className="tgmenu__nav">
-                              <div className="logo">
-                                 <Link to="/"><img src="/assets/img/logo/logo.svg" alt="Logo" /></Link>
-                              </div>
-                              <div className="tgmenu__navbar-wrap tgmenu__main-menu d-none d-xl-flex">
-                                 <NavMenu />
-                              </div>
-                              <div className="tgmenu__search d-none d-md-block">
-                                 <CustomSelect value={selectedOption} onChange={handleSelectChange} />
-                              </div>
-                              <div className="tgmenu__action">
-                                 <ul className="list-wrap">
-                                    <li className="wishlist-icon">
-                                       <Link to="/wishlist" className="cart-count">
-                                          <InjectableSvg src="/assets/img/icons/heart.svg" className="injectable" alt="img" />
-                                          <TotalWishlist />
-                                       </Link>
-                                    </li>
-                                    <li className="mini-cart-icon">
-                                       <Link to="/cart" className="cart-count">
-                                          <InjectableSvg src="/assets/img/icons/cart.svg" className="injectable" alt="img" />
-                                          <TotalCart />
-                                       </Link>
-                                    </li>
-                                    <li className="header-btn login-btn">
-                                       <Link to="/login">Log in</Link>
-                                    </li>
-                                 </ul>
-                              </div>
-                              <div className="mobile-login-btn">
-                                 <Link to="/login"><InjectableSvg src="/assets/img/icons/user.svg" alt="" className="injectable" /></Link>
-                              </div>
-                              <div onClick={() => setIsActive(true)} className="mobile-nav-toggler"><i className="tg-flaticon-menu-1"></i></div>
-                           </nav>
-                        </div>
-                     </div>
+      <header>
+         <div id="header-fixed-height"></div>
+         <div id="sticky-header" className={`tg-header__area ${sticky ? "sticky-menu" : ""}`}>
+            <nav className="tgmenu__nav container custom-container">
+               <div className="tgmenu__wrap">
+                  <div className="logo">
+                     <Link to="/">
+                        <img src="/assets/img/logo/Image2.png" alt="Logo" />
+                     </Link>
                   </div>
                </div>
-            </div>
-         </header>
-         <MobileSidebar isActive={isActive} setIsActive={setIsActive} />
-      </>
-   )
-}
+            </nav>
+         </div>
+      </header>
+   );
+};
 
-export default HeaderOne
+export default HeaderOne;

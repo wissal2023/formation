@@ -1,13 +1,10 @@
 'use strict';
-const { Sequelize, DataTypes } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
   const Quiz = sequelize.define('Quiz', {
     id: {
-      allowNull: false,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
+      primaryKey: true
     },
     totalScore: {
       type: DataTypes.FLOAT,
@@ -36,19 +33,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Formations', 
+        model: 'FormationDetails',
         key: 'id'
       },
       onDelete: 'CASCADE'
     },
     createdAt: {
-      allowNull: false,
       type: DataTypes.DATE,
+      allowNull: false,
       defaultValue: DataTypes.NOW
     },
     updatedAt: {
-      allowNull: false,
       type: DataTypes.DATE,
+      allowNull: false,
       defaultValue: DataTypes.NOW
     },
     deletedAt: {
@@ -57,18 +54,31 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     paranoid: true,
     freezeTableName: true,
-    timestamps: true
+    timestamps: true,
+    tableName: 'Quiz'
   });
 
-  // Associations
   Quiz.associate = (models) => {
-    Quiz.belongsTo(models.FormationDetails, { foreignKey: 'formationDetailsId', onDelete: 'CASCADE' });
-    Quiz.hasOne(models.Certification, { foreignKey: 'quizId', onDelete: 'CASCADE' });
-    Quiz.hasMany(models.Question, { foreignKey: 'quizId', onDelete: 'CASCADE' });
-    Quiz.hasMany(models.QuizProg, { foreignKey: 'quizId', onDelete: 'CASCADE' });
- 
+    Quiz.belongsTo(models.FormationDetails, {
+      foreignKey: 'formationDetailsId',
+      onDelete: 'CASCADE'
+    });
+
+    Quiz.hasOne(models.Certification, {
+      foreignKey: 'quizId',
+      onDelete: 'CASCADE'
+    });
+
+    Quiz.hasMany(models.Question, {
+      foreignKey: 'quizId',
+      onDelete: 'CASCADE'
+    });
+
+    Quiz.hasMany(models.QuizProg, {
+      foreignKey: 'quizId',
+      onDelete: 'CASCADE'
+    });
   };
-  
 
   return Quiz;
 };

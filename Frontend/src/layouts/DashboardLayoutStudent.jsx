@@ -1,9 +1,9 @@
 // src/layouts/DashboardLayoutStudent.jsx
 import BreadcrumbOne from "../components/common/breadcrumb/BreadcrumbOne";
 import SEO from "../components/SEO";
-import DashboardBannerTwo from "../dashboard/dashboard-common/DashboardBannerTwo";
+import DashboardBanner from "../dashboard/dashboard-common/DashboardBanner";
 import DashboardSidebarTwo from "../dashboard/dashboard-common/DashboardSidebarTwo";
-import FooterOne from "./footers/FooterOne";
+import Footer from "./footers/Footer";
 import HeaderFour from "./headers/HeaderFour";
 import Wrapper from "./Wrapper";
 import ChatWidget from '../components/chat/ChatWidget';
@@ -17,7 +17,7 @@ const DashboardLayoutStudent = ({ pageTitle, children }) => {
         <BreadcrumbOne />
         <section className="dashboard__area section-pb-120">
          <div className="container">
-            <DashboardBannerTwo />
+            <DashboardBanner />
             <div className="dashboard__inner-wrap">
                <div className="row">
                   <DashboardSidebarTwo />
@@ -30,7 +30,7 @@ const DashboardLayoutStudent = ({ pageTitle, children }) => {
       </section>
         <ChatWidget />
       </main>
-      <FooterOne />
+      <Footer />
     </Wrapper>
   );
 };

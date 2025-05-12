@@ -55,31 +55,58 @@ const CourseArea = () => {
                      <div key={item.id} className="col">
                         <div className="courses__item shine__animate-item">
                            <div className="courses__item-thumb">
-                              <Link to={`/course-details/${item.id}`} className="shine__animate-link">
+                              <Link to={`#/${item.id}`} className="shine__animate-link">
                                  <img src={imagePath} alt="img" />
                               </Link>
                            </div>
                            <div className="courses__item-content">
                               <ul className="courses__item-meta list-wrap">
                                  <li className="courses__item-tag">
-                                    <Link to="/course">{item.thematique}</Link>
+                                    <Link to="#">{item.thematique}</Link>
                                  </li>
                                  <li className="avg-rating"><i className="fas fa-star"></i> ({item.rating || 0} Reviews)</li>
                               </ul>
                               <h5 className="title">
-                                 <Link to={`/course-details/${item.id}`}>{item.titre}</Link>
+                                 <Link to={`#${item.id}`}>{item.titre}</Link>
                               </h5>
                               <p className="author">
                                  By <Link to="#">{item.User?.username || 'Unknown'}</Link>
                               </p>
+                              <div className="progress-bar-container mt-2">
+                                 <div className="progress" style={{ height: '8px', backgroundColor: '#f1f1f1', borderRadius: '4px' }}>
+                                    <div className="progress-bar"
+                                       style={{
+                                          width: `${item.progress || 0}%`,
+                                          backgroundColor: item.progress === 100 ? '#28a745' : '#ffc107',
+                                          height: '100%',
+                                          borderRadius: '4px',
+                                          transition: 'width 0.3s ease'
+                                       }}
+                                    ></div>
+                                 </div>
+                                 <small>{item.progress || 0}% completed</small>
+                              </div>
                               <div className="courses__item-bottom">
                                  <div className="button">
-                                    <Link to={`/course-details/${item.id}`}>
-                                       <span className="text">more details</span>
-                                       <i className="flaticon-arrow-right"></i>
-                                    </Link>
+                                    {item.progress === 100 ? (
+                                       <Link to={`/formation/${item.id}`}>
+                                          <span className="text">more details</span>
+                                          <i className="flaticon-arrow-right"></i>
+                                       </Link>
+                                    ) : (
+                                        <button className="disabled-button" disabled style={{
+                                          backgroundColor: '#dfe652',
+                                          cursor: 'not-allowed',
+                                          padding: '8px 16px',
+                                          border: 'none',
+                                          borderRadius: '4px'
+                                       }}>
+                                          <span className="text">Not finished yet</span>
+                                       </button>
+                                    )}
                                  </div>
                               </div>
+
                            </div>
                         </div>
                      </div>
@@ -104,3 +131,4 @@ const CourseArea = () => {
 };
 
 export default CourseArea;
+

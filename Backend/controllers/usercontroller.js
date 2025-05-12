@@ -3,16 +3,30 @@ const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
+<<<<<<< HEAD
 const { sendAccountEmail } = require('../utils/emailService');
 const { User, Trace } = db;
 
+=======
+const { sendAccountEmail , sendTemporaryPasswordEmail } = require('../utils/emailService');
+const path = require('path');
+const fs = require('fs');
+const { User, Trace, Historisation } = db;
+const sequelize = db.sequelize;
+const updateUserStreak = require('../services/streak');
+>>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 
 const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
 
+<<<<<<< HEAD
 //router.post('/login', loginUserController);
 const loginUserController = async (req, res) => {
+=======
+//router.post('/users/login', loginUserController);
+const loginUserController = async (req, res) => { 
+>>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
   const { email, mdp } = req.body;
 
   try {
@@ -82,7 +96,7 @@ const loginUserController = async (req, res) => {
       });
   }
 };
-//router.get('/auth', getAuthenticatedUser);
+//router.get('/users/auth', getAuthenticatedUser);
 const getAuthenticatedUser = (req, res) => {
   const token = req.cookies.token;
 
@@ -103,6 +117,7 @@ const getAuthenticatedUser = (req, res) => {
     res.status(401).json({ message: "Token invalide" });
   }
 };
+
 //logout
 const logoutUserController = async (req, res) => {
   try {
@@ -137,6 +152,7 @@ const logoutUserController = async (req, res) => {
       });
   }
 };
+
 // change mdp first thing
 const updatePasswordController = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
@@ -258,6 +274,7 @@ const getAllUsers = async (req, res) => {
     });
   }
 };
+
 // get user by id
 const getUserByIdController = async (req, res) => {
   const { id } = req.params;
@@ -285,6 +302,7 @@ const getUserByIdController = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
+<<<<<<< HEAD
 const getUser = async (req, res) => {
   const { id } = req.params;
 
@@ -309,6 +327,9 @@ const getUser = async (req, res) => {
   }
 };
 // update user as an admin
+=======
+// router.put('/edit/:id', authenticateToken, uploadImage.single('photo'), updateUserController);
+>>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 const updateUserController = async (req, res) => {
   const userId = req.params.id;
 
@@ -379,8 +400,13 @@ const updateUserController = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
  //GET the loged in user
  const getOnceUser = async (req, res) => {
+=======
+//GET the loged in user
+const getOnceUser = async (req, res) => {
+>>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
     try {
         const userId = req.user.id;
         const user = await User.findByPk(userId, {
@@ -395,8 +421,8 @@ const updateUserController = async (req, res) => {
       } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
       }
-};  
-// update Profile as a formateur or apprenant
+};
+//router.put('/profile/:id', authenticateToken,uploadImage.single('photo'), updateProfileController);
 const updateProfileController = async (req, res) => {
   const userId = req.params.id;
 
@@ -432,6 +458,7 @@ const updateProfileController = async (req, res) => {
     return res.status(500).json({ message: 'Erreur interne.', error: err.message });
   }
 };
+<<<<<<< HEAD
 /*
 const updateUserProfileController = async (req, res) => {
   const userId = req.params.id;
@@ -539,11 +566,13 @@ const updateUserProfileController = async (req, res) => {
 
 
 //************************ NEEDS TO BE UPDATED ***************************/
+=======
+>>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 
 const toggleUserActivation = async (req, res) => {
-const userId = req.params.id;
+  const userId = req.params.id;
 
-try {
+  try {
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
 
@@ -551,58 +580,196 @@ try {
     await user.save();
 
     res.status(200).json({ message: `Utilisateur ${user.isActive ? 'activé' : 'désactivé'}.`, user });
-} catch (err) {
+  } catch (err) {
     res.status(500).json({ error: err.message });
-}
+  }
 };
 
 //get user by name 
 const getUserByName = async (req, res) => {
-    const { name } = req.params;
+  const { name } = req.params;
 
-    try {
-        const user = await User.findOne({ where: { username: name } });
+  try {
+    const user = await User.findOne({ where: { username: name } });
 
-        if (!user) {
-            return res.status(404).json({ message: 'Utilisateur non trouvé.' });
-        }
-
-        res.status(200).json({
-            message: 'Utilisateur récupéré avec succès.',
-            user,
-        });
-
-    } catch (err) {
-        res.status(500).json({
-            message: 'Erreur lors de la récupération de l\'utilisateur.',
-            error: err.message,
-        });
-    }
-};
-
-//delete user (soft delete)
-exports.deleteUser = async (req, res) => {
-    try {
-    const { id } = req.params;
-
-    // First check if user exists
-    const user = await User.findByPk(id);
     if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
     }
 
-    // Perform soft delete (sets deletedAt timestamp)
-    await user.destroy();
+    res.status(200).json({
+      message: 'Utilisateur récupéré avec succès.',
+      user,
+    });
 
-    res.status(200).json({ message: 'User deleted successfully (soft delete)' });
-    
-    } catch (err) {
-    res.status(500).json({ error: err.message });
-    }
+  } catch (err) {
+    res.status(500).json({
+      message: 'Erreur lors de la récupération de l\'utilisateur.',
+      error: err.message,
+    });
+  }
 };
 
+//delete user (soft delete) - FONCTION CORRIGÉE
+// Solution temporaire pour contourner le problème d'historisation
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    console.log("1. Début de la fonction deleteUser");
+    
+    // Test si db est correctement importé
+    console.log("2. Test des imports:", {
+      userModel: !!User,
+      traceModel: !!Trace,
+      historiqueModel: !!Historisation,
+      sequelizeInstance: !!sequelize
+    });
+    
+    // Recherche de l'utilisateur SANS transaction
+    console.log(`3. Recherche de l'utilisateur avec id=${id}`);
+    const userToDelete = await User.findByPk(id);
+    
+    if (!userToDelete) {
+      console.log("4. Utilisateur non trouvé");
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+    
+    console.log("5. Utilisateur trouvé:", userToDelete.id);
+    
+    // Supprimer l'utilisateur SANS transaction et SANS historisation
+    console.log("6. Suppression de l'utilisateur");
+    try {
+      await userToDelete.destroy();
+      console.log("7. Utilisateur supprimé avec succès");
+      
+      // Créer une trace SANS transaction
+      console.log("8. Création de la trace");
+      await Trace.create({
+        userId: req.user ? req.user.id : null,
+        action: 'deleted',
+        model: 'User',
+        data: {
+          deletedUserId: userToDelete.id,
+          deletedUsername: userToDelete.username || 'non spécifié'
+        }
+      });
+      console.log("9. Trace créée avec succès");
+      
+      return res.status(200).json({ 
+        success: true,
+        message: 'Utilisateur supprimé avec succès (sans historisation)' 
+      });
+    } catch (destroyError) {
+      console.error("Erreur lors de la suppression:", destroyError);
+      return res.status(500).json({ 
+        message: 'Erreur lors de la suppression',
+        error: destroyError.message,
+        stack: destroyError.stack
+      });
+    }
+    
+  } catch (error) {
+    console.error("ERREUR GÉNÉRALE:", error);
+    console.error("Type d'erreur:", error.name);
+    console.error("Message d'erreur:", error.message);
+    console.error("Stack trace:", error.stack);
+    
+    return res.status(500).json({
+      success: false,
+      message: 'Erreur générale lors de la suppression',
+      errorType: error.name,
+      errorMessage: error.message,
+      stack: error.stack
+    });
+  }
+};
+const forgotPasswordController = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "Aucun utilisateur trouvé avec cet email." });
+    }
+
+    const newPassword = generateRandomPassword();
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.mdp = hashedPassword;
+    user.mustUpdatePassword = true;
+    await user.save();
+
+    // 👉 Appel de ta fonction d'envoi de mot de passe temporaire
+    await sendTemporaryPasswordEmail(user.email, newPassword);
+
+    await Trace.create({
+      userId: user.id,
+      action: 'reset password',
+      model: 'User',
+      data: {
+        email: user.email,
+        username: user.username,
+        resetAt: new Date()
+      }
+    });
+
+    res.status(200).json({ message: 'Un nouveau mot de passe a été envoyé à votre email.' });
+
+  } catch (error) {
+    console.error('Erreur de reset mdp:', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
+const modifyPasswordController = async (req, res) => {
+  const { email, currentPassword, newPassword, rePassword } = req.body;
+
+  // Vérification des champs
+  if (!email || !currentPassword || !newPassword || !rePassword) {
+    return res.status(400).json({ message: "Champs manquants." });
+  }
+
+  if (newPassword !== rePassword) {
+    return res.status(400).json({ message: "Les nouveaux mots de passe ne correspondent pas." });
+  }
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable." });
+    }
+
+    // Vérification du mot de passe actuel (temporaire ou réel)
+    const isMatch = await bcrypt.compare(currentPassword, user.mdp);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Mot de passe actuel incorrect." });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.mdp = hashedNewPassword;
+    user.mustUpdatePassword = false;
+    await user.save();
+
+    await Trace.create({
+      userId: user.id,
+      action: 'update password',
+      model: 'User',
+      data: {
+        email: user.email,
+        updatedAt: new Date()
+      }
+    });
+
+    res.status(200).json({ message: 'Mot de passe mis à jour avec succès.' });
+
+  } catch (error) {
+    console.error('Erreur de mise à jour du mot de passe :', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
 module.exports = {
-  getAuthenticatedUser,
+    getAuthenticatedUser,
     addUserController,
     loginUserController,
     logoutUserController,
@@ -614,6 +781,11 @@ module.exports = {
     getAllUsers,
     getOnceUser, 
     getUserByName,
+<<<<<<< HEAD
     getUser,
     updateUserProfileController
+=======
+    forgotPasswordController,
+    modifyPasswordController
+>>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 };
