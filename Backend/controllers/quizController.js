@@ -262,12 +262,6 @@ exports.getQuizByFormation = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 exports.attemptQuiz = async (req, res) => {
   try {
     const quizId = req.params.id;
@@ -503,8 +497,6 @@ exports.deleteQuiz = async (req, res) => {
     res.status(500).json({ message: 'Error deleting quiz', error });
   }
 };
-
-
 
 exports.getAllQuizzesByUser = async (req, res) => {
   try {

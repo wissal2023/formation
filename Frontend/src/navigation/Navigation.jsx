@@ -50,7 +50,7 @@ const AppNavigation = () => {
         <Route path="/convert" element={<Convert />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/student-profile" element={<StudentProfile />} />
-        <Route path="/lesson/:id" element={<Lesson />} />
+        <Route path="/formation/:id" element={<Lesson />} />
         <Route path="/passerQuiz/:id" element={<DisplayQuiz />} />
 
 

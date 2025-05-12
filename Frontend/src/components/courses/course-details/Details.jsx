@@ -1,31 +1,25 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Overview = ({ formationId }) => {
+const Details = ({ formationId }) => {
    const [description, setDescription] = useState('');
    const [plan, setPlan] = useState([]);
    const [error, setError] = useState(null);
 
    useEffect(() => {
       const fetchData = async () => {
-         const API = import.meta.env.VITE_API_URL;
-
          try {
-            const [descRes, planRes] = await Promise.all([
-               axios.get(`${API}/module/${formationId}/description`, {
-                  withCredentials: true,
-               }),
-               axios.get(`${API}/module/${formationId}/plan`, {
-                  withCredentials: true,
-               }),
-            ]);
+            // Fetch both description and plan in a single call
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/module/${formationId}/details`, {
+               withCredentials: true,
+            });
 
-            console.log("✅ Response Data:", descRes.data, planRes.data);
+            console.log("Response Data:", response.data);
 
-            setDescription(descRes.data.description);
+            setDescription(response.data.description);
 
             // If plan is stored as a string (e.g., "step1, step2, step3"), convert it to array
-            const planData = planRes.data.plan;
+            const planData = response.data.plan;
             const planArray = Array.isArray(planData)
                ? planData
                : typeof planData === 'string'
@@ -38,15 +32,14 @@ const Overview = ({ formationId }) => {
             console.error(err);
          }
       };
-
      
-   if (formationId) {
-      console.log("📌 formationId received in Overview:", formationId);
-      fetchData();
-   } else {
-      console.warn("❌ formationId is undefined or null");
-   }
-}, [formationId]);
+      if (formationId) {
+         console.log("📌 formationId received in Overview:", formationId);
+         fetchData();
+      } else {
+         console.warn("❌ formationId is undefined or null");
+      }
+   }, [formationId]);
 
    return (
       <div className="courses__overview-wrap">
@@ -72,4 +65,4 @@ const Overview = ({ formationId }) => {
    );
 };
 
-export default Overview;
+export default Details;
