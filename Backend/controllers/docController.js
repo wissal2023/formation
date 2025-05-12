@@ -2,9 +2,10 @@
 const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
-
 const { Document, Trace, Historisation,FormationDetails, Formation } = require('../db/models');
 
+//app.use('/documents', docRoute );
+//router.post('/AddDoc', authenticateToken,uploadFile.single('file'),  createDocument);
 const createDocument = async (req, res) => {
   try {
     const user = req.user;
@@ -129,7 +130,7 @@ const getDocumentById = async (req, res) => {
   }
 };
 
-// 🔹 Get document by name
+// router.get('/:filename', authenticateToken, getDocumentByName);
 const getDocumentByName= async (req, res) => {
   try {
     const doc = await Document.findOne({ where: { filename: req.params.name } });
@@ -196,7 +197,8 @@ const servePDF = (req, res) => {
     // If the file exists, send it as a response
     res.sendFile(pdfPath);
   });
-};
+}
+/*
 const getDocumentByFormation = async (req, res) => {
   const { id } = req.params;
 
@@ -212,8 +214,47 @@ const getDocumentByFormation = async (req, res) => {
     console.error("Error fetching document:", error);
     res.status(500).json({ message: "Server error" });
   }
-};
 
+};
+*/
+//app.use('/documents', docRoute );
+//router.get('/:formationDetailsId', authenticateToken, getDocumentByFormation);
+const getDocumentByFormation = async (req, res) => {
+  try {
+    // Fetch FormationDetails based on the formationId passed in the URL
+    const formationDetails = await FormationDetails.findOne({
+      where: { formationId: req.params.formationId }, // Use formationId from URL params
+      include: {
+        model: Document, // Include the related documents
+        required: true,
+      },
+    });
+
+    if (!formationDetails) {
+      return res.status(404).json({ message: 'Formation details not found' });
+    }
+
+
+    // Fetch the first document related to this formation details
+    const document = formationDetails.Documents[0]; // Assuming you want the first document
+
+    if (!document) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+
+    // Get the path to the document
+    const documentPath = `/assets/documents/${document.filename}`;
+
+    res.status(200).json({
+      filename: document.filename,
+      filetype: document.filetype,
+      uploadedDate: document.uploadedDate,
+      documentUrl: documentPath, // Return the document path as part of the response
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 module.exports = {
   createDocument,
@@ -223,5 +264,6 @@ module.exports = {
   updateDocument,
   deleteDocument,
   servePDF,
-  getDocumentByFormation 
+  getDocumentByFormation
+
 };

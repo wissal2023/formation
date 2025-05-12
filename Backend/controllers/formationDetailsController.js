@@ -1,15 +1,11 @@
-const { FormationDetails, Trace } = require('../db/models');
+const { FormationDetails, Trace, Formation, User } = require('../db/models');
 
+//app.use('/module', formationDetailsRoutes);
+//router.post('/addDetail', authenticateToken, createFormationDetails);
 const createFormationDetails = async (req, res) => {
   try {
     const user = req.user;
     const { formationId, duree, ...detailsData } = req.body;
-
-    console.log("📥 Received data in backend module/addDetail:", req.body);
-    console.log("🧠 Extracted formationId:", formationId);
-    console.log("📝 Remaining detailsData:", detailsData);
-    console.log("👤 Authenticated user:", user?.id);
-    console.log("🧠 Received duree:", duree);
 
     let dureeInMinutes;
 
@@ -44,6 +40,11 @@ const createFormationDetails = async (req, res) => {
     return res.status(500).json({ message: 'Erreur création formation details', error: error.message });
   }
 };
+
+
+// Get all formation 
+// router.get('/:formationId/details', authenticateToken, getAllDetails);
+
 const getAllDetails = async (req, res) => {
   try {
     const { formationId } = req.params;

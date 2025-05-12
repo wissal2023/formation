@@ -14,8 +14,12 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
   ]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [optionType, setOptionType] = useState("Multiple_choice");
+
   const [reorganizeItems, setReorganizeItems] = useState(["", "", ""]);
   const [matchPairs, setMatchPairs] = useState([{ left: "", right: "" }]);
+  const addStep = () => setReorganizeItems([...reorganizeItems, ""]);
+  const addMatchPair = () => setMatchPairs([...matchPairs, { left: "", right: "" }]);
+
 
   useEffect(() => {
     // Reset when question type changes
@@ -40,6 +44,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
         .map((text, index) => ({ text, index }))
         .filter((r) => r.text);
 
+
       if (filteredResponses.length < 2) {
         toast.error("At least two non-empty responses are required.");
         return;
@@ -63,6 +68,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
       const filteredSteps = reorganizeItems.filter((item) => item.trim());
       if (filteredSteps.length < 2) {
         toast.error("At least two steps are required.");
+
         return;
       }
       newQuestion.reorganizeItems = filteredSteps;
@@ -70,7 +76,9 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
 
     setQuestions([...questions, newQuestion]);
 
+
     // Reset fields
+
     setQuestion("");
     setOptionType("Multiple_choice");
     setReponses([{ text: "" }, { text: "" }, { text: "" }, { text: "" }]);
@@ -80,12 +88,19 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
+     e.preventDefault();
     if (questions.length === 0) {
       toast.error("Please add at least one question.");
       return;
+
     }
+    // Log the payload before sending
+    const payload = {
+        formationDetailsId,
+        questions,
+    };
+    console.log("Payload being sent to API:", payload);
+
 
     try {
       await axios.post(
@@ -100,7 +115,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
       toast.success("Quiz created successfully!");
       onNext();
     } catch (error) {
-      toast.error("Error creating quiz.");
+      toast.error(error.response?.data?.message || "Error creating quiz.");
       console.error(error);
     }
   };
@@ -113,10 +128,12 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
         {/* Question Type Selector */}
         <div className="question-type-selector">
           <label>Question Type</label>
+
           <select
             value={optionType}
             onChange={(e) => setOptionType(e.target.value)}
           >
+
             <option value="Multiple_choice">Multiple Choice</option>
             <option value="single_choice">Single Choice</option>
             <option value="reorganize">Reorganize</option>
@@ -148,6 +165,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
                   setReponses(updated);
                 }}
               />
+
               {optionType === "Multiple_choice" ? (
                 <input
                   type="checkbox"
@@ -174,6 +192,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
 
         {/* Reorganize */}
         {optionType === "reorganize" &&
+
           reorganizeItems.map((item, index) => (
             <div key={index} className="quiz-form-grp">
               <input
@@ -201,6 +220,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
 
         {/* Match */}
         {optionType === "match" &&
+
           matchPairs.map((pair, index) => (
             <div key={index} className="quiz-form-grp d-flex gap-2">
               <input
@@ -224,6 +244,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
                 }}
               />
             </div>
+
           ))}
 
         {optionType === "match" && (
@@ -246,6 +267,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
           Add Question
         </button>
 
+
         {/* Preview Added Questions */}
         {questions.length > 0 && (
           <div className="preview-questions mt-4">
@@ -262,12 +284,8 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
 
         {/* Navigation Buttons */}
         <div className="d-flex justify-content-between mt-3">
-          <button type="button" className="pill-button" onClick={onPrev}>
-            Previous
-          </button>
-          <button type="submit" className="pill-button">
-            Submit Quiz
-          </button>
+          <button type="button" className="pill-button" onClick={onPrev}>Previous</button>
+          <button type="submit" className="pill-button"> Submit Quiz</button>
         </div>
       </form>
     </div>

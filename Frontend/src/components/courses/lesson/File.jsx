@@ -14,7 +14,6 @@ const File = ({ formationId }) => {
             });
 
             console.log("Document response:", response.data);
-
             // Ensure the document URL is constructed correctly
             const fullDocumentUrl = `${import.meta.env.VITE_API_URL}${response.data.documentUrl}`;
             if (response.data && response.data.documentUrl) {

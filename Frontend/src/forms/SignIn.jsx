@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-// control saisie
+// Validation avec Yup
 const schema = yup.object({
   email: yup.string().required("Email requis").email("Format invalide"),
   password: yup.string().required("Mot de passe requis"),
@@ -20,6 +20,7 @@ const SignIn = () => {
   const {
     register,
     handleSubmit,
+    watch,
     reset,
     formState: { errors },
   } = useForm({
@@ -36,20 +37,19 @@ const SignIn = () => {
         email: data.email,
         mdp: data.password,
       }, {
-        withCredentials: true, // send and receive cookies
+        withCredentials: true,
       });
-  
+
       if (response.status === 200) {
-        // Set any non-sensitive data you need (username, role) in a state management or session storage if needed
         const { username, roleUtilisateur, mustUpdatePassword } = response.data;
 
         toast.success("Connexion réussie", { position: 'top-center' });
-  
+
         if (mustUpdatePassword) {
           navigate('/change-password');
           return;
         }
-  
+
         navigate('/ResetPassword');
       }
     } catch (error) {
@@ -59,39 +59,45 @@ const SignIn = () => {
         { position: 'top-center' }
       );
     }
-  
+
     reset();
   };
-  
+
+  const currentEmail = watch("email");
 
   return (
-      <div className="login-container">
-        <img src="assets/img/logo/Image2.png" alt="Logo" className="logo" />
-        <h2 className="title">Teamwill</h2>
-        <h3 className="subtitle">CONNEXION</h3>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="input-group">
-            <FaUser className="icon" />
-            <input  type="text" placeholder="Email" {...register("email")} />
-          </div>
-          {errors.email && <p className="form_error">{errors.email.message}</p>}
+    <div className="login-container">
+      <img src="assets/img/logo/Image2.png" alt="Logo" className="logo" />
+      <h2 className="title">Teamwill</h2>
+      <h3 className="subtitle">CONNEXION</h3>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="input-group">
+          <FaUser className="icon" />
+          <input type="text" placeholder="Email" {...register("email")} />
+        </div>
+        {errors.email && <p className="form_error">{errors.email.message}</p>}
 
-          <div className="input-group">
-            {passwordVisible ? (
-              <FaEyeSlash className="icon" onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }} />
-            ) : (
-              <FaEye className="icon" onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }} />
-            )}
-            <input type={passwordVisible ? 'text' : 'password'} placeholder="Mot de passe" {...register("password")} />
-          </div>
-          {errors.password && <p className="form_error">{errors.password.message}</p>}
+        <div className="input-group">
+          {passwordVisible ? (
+            <FaEyeSlash className="icon" onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }} />
+          ) : (
+            <FaEye className="icon" onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }} />
+          )}
+          <input type={passwordVisible ? 'text' : 'password'} placeholder="Mot de passe" {...register("password")} />
+        </div>
+        {errors.password && <p className="form_error">{errors.password.message}</p>}
 
-          <button type="submit" className="submit-btn">Valider</button>
-        </form>
-        <span className="forgot-password" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
-          Mot de passe oublié
-        </span>
-      </div>
+        <button type="submit" className="submit-btn">Valider</button>
+      </form>
+
+      <span
+        className="forgot-password"
+        style={{ opacity: 1, cursor: 'pointer', color: '#007BFF' }}
+        onClick={() => navigate('/forgot-password', { state: { email: currentEmail } })}
+      >
+        Mot de passe oublié ?
+      </span>
+    </div>
   );
 };
 

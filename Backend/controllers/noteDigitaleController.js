@@ -1,13 +1,18 @@
 const { NoteDigitale, Formation, User, Trace } = require('../db/models');
 
+//app.use('/notedigitales', noteDigitaleRoutes);
+//router.post('/notes', noteController.createNote);  
 exports.createNote = async (req, res) => {
-  const { userId, titre, content, formationId } = req.body;
+  const { titre, content } = req.body;
+  const { formationId } = req.params;
+  const userId = req.user.id; // Assuming userId is available from authenticateToken middleware
 
   try {
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
     const formation = await Formation.findByPk(formationId);
     if (!formation) {
       return res.status(404).json({ message: 'Formation not found' });
@@ -20,7 +25,6 @@ exports.createNote = async (req, res) => {
       userId,
     });
 
-    // Trace the note creation
     await Trace.create({
       userId,
       action: 'Create Note',
@@ -41,6 +45,7 @@ exports.createNote = async (req, res) => {
     return res.status(500).json({ message: 'Error creating note', error });
   }
 };
+
 
 exports.getNotesByFormation = async (req, res) => {
   const { formationId } = req.params;

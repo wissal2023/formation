@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    content: {  // Added field for storing content of the note
+    content: {  
       type: DataTypes.TEXT,
       allowNull: false
     },
@@ -36,8 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: Sequelize.NOW
     }
   }, {
+    
+    tableName: 'NoteDigitales', // <-- ajouter cette ligne
     timestamps: true,
-    paranoid: true, 
+    paranoid: true,
     freezeTableName: true
   });
 

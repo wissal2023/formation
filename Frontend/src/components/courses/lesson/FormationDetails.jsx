@@ -6,14 +6,13 @@ const tab_title = ["Overview", "Reviews"];
 
 const FormationDetails = ({ formationId }) => {
   const [activeTab, setActiveTab] = useState(0);
-
   const handleTabClick = (index) => {
     setActiveTab(index);
   };
 
   return (
-    <>
-    <div className="coursesdetails-content lessondetails-content">
+ <div className="courses__details-content lesson__details-content">
+ 
       <ul className="nav nav-tabs" id="myTab" role="tablist">
         {tab_title.map((tab, index) => (
           <li key={index} onClick={() => handleTabClick(index)} className="nav-item" role="presentation">
@@ -30,7 +29,6 @@ const FormationDetails = ({ formationId }) => {
         </div>
       </div>
     </div>
-    </>
   );
 };
 
