@@ -1,7 +1,7 @@
 
 const InstructorProfileContent = ({ style }) => {
     return (
-       <div className="dashboard__content-wrap">
+      <div className="dashboard__content-wrap" style={{ maxWidth: '900px' }}> 
           <div className="dashboard__content-title">
              <h4 className="title">My Profile</h4>
           </div>

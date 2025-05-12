@@ -1,4 +1,5 @@
 'use strict';
+const { USER_ROLES } = require('../constants/roles'); 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -14,6 +15,14 @@ module.exports = {
         allowNull: false,
         unique: true
       },
+      firstName: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      lastName: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -23,12 +32,8 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      defaultMdp: {
-        type: Sequelize.STRING,
-        allowNull: true
-      }, 
       roleUtilisateur: {
-        type: Sequelize.ENUM('Admin', 'Formateur', 'Apprenant'),
+        type: Sequelize.ENUM(...USER_ROLES), // Replace with actual roles
         allowNull: false
       },
       photo: {
@@ -43,13 +48,18 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false
       },
-      derConnx: {
-        type: Sequelize.DATE
+      defaultMdp: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       mustUpdatePassword: {
         type: Sequelize.BOOLEAN,
-        defaultValue: true 
-      }, 
+        defaultValue: true
+      },
+      derConnx: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -58,11 +68,13 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      deletedAt: { 
-        type: Sequelize.DATE
+      deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true
       }
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Users');
   }

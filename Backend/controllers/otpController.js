@@ -70,6 +70,13 @@ const verifyOtp = async (req, res) => {
     otpRecord.verified = true;
     await otpRecord.save();
 
+<<<<<<< HEAD
+    // Add Trace for OTP login
+   
+  
+
+
+=======
     // 4. Trouver l'utilisateur par email
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -87,6 +94,7 @@ const verifyOtp = async (req, res) => {
         timestamp: new Date(),
       },
     });
+>>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
     // DELETE the OTP from the database
 
     await otpModel.deleteOtp(email);

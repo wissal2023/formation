@@ -61,6 +61,9 @@ const AppNavigation = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
 
+        
+
+
         {/*ROUTES TO BE USED         
 
 <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} /> for the cards 
