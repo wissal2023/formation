@@ -1,98 +1,85 @@
-// controllers/usercontroller.js
+// controllers/userController.js
 const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
 const { sendAccountEmail } = require('../utils/emailService');
-const path = require('path');
-const fs = require('fs');
 const { User, Trace } = db;
-const updateUserStreak = require('../services/streak');
+
 
 const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
 
 //router.post('/login', loginUserController);
-const loginUserController = async (req, res) => { 
+const loginUserController = async (req, res) => {
   const { email, mdp } = req.body;
 
   try {
-    const user = await User.findOne({ where: { email } });
+
+      const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: "Aucun compte trouvé avec cet email." });
     }      
-
     if (!user.isActive) {
       return res.status(403).json({ message: "Votre compte est désactivé. Veuillez contacter l'administrateur." });
     }
-
     const isMatch = await bcrypt.compare(mdp, user.mdp);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Mot de passe incorrect' });
+        return res.status(400).json({ message: 'Mot de passe incorrect' });
     }
 
-    //await updateStreak(user.id);
-    try {
-      await updateUserStreak(user.id);
-    } catch (streakErr) {
-      console.error('Streak error:', streakErr.message);
-      // You can decide if you want to block login or just log the error
-    }
       // Update derConnx
     user.derConnx = new Date();
     await user.save();
-    
+
     // Add Trace
     await Trace.create({
-      userId: user.id,
-      action: 'logging in',
-      model: 'User', 
-      data: {
-        email: user.email,
-        role: user.roleUtilisateur,
-        derConnx: new Date(),
-      }
-    });
+        userId: user.id,
+        action: 'logging in',
+        model: 'User', 
+        data: {
+          email: user.email,
+          role: user.roleUtilisateur,
+          derConnx: new Date(),
+        }
+      });
 
-    // Calculate seconds until next midnight
-    const now = new Date();
-    const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0); // Set time to next midnight
-    const secondsUntilMidnight = Math.floor((midnight - now) / 1000);
-    // Generate JWT token that expires at midnight
+    // Generate JWT token
     const token = jwt.sign(
-      {
-        id: user.id,
-        roleUtilisateur: user.roleUtilisateur,
-        username: user.username,
-        email: user.email,
-      },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: secondsUntilMidnight }
+        { id: user.id, 
+          role: user.roleUtilisateur,  
+          username: user.username, 
+          email: user.email, 
+        },
+            process.env.JWT_SECRET_KEY,
+        { expiresIn: '9h' }
     );
+
     // Send token in HttpOnly cookie
     res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      maxAge: secondsUntilMidnight * 1000, // cookie expiry in ms
-      sameSite: 'Lax',
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+        maxAge: 3600000,
+        sameSite: 'Lax',
     });
-    
+
     res.status(200).json({
-      message: 'Connexion réussie.',
-      userId: user.id,
-      roleUtilisateur: user.roleUtilisateur,
-      mustUpdatePassword: user.mustUpdatePassword,
-      username: user.username,
+        message: 'Connexion réussie.',
+        userId: user.id,
+        roleUtilisateur: user.roleUtilisateur,
+        mustUpdatePassword: user.mustUpdatePassword,
+        username: user.username, 
+        photo: user.photo, 
+
     });
 
   } catch (error) {
-    res.status(500).json({
-      message: 'Erreur lors de la connexion.',
-      error: error.message,
-    });
+      res.status(500).json({
+          message: 'Erreur lors de la connexion.',
+          error: error.message,
+      });
   }
 };
 //router.get('/auth', getAuthenticatedUser);
@@ -107,7 +94,8 @@ const getAuthenticatedUser = (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     res.json({ 
       id: decoded.id, 
-      email: decoded.email, 
+      email: decoded.email,
+      photo: decoded.photo, 
       username: decoded.username, 
       roleUtilisateur: decoded.role 
     });
@@ -297,6 +285,29 @@ const getUserByIdController = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
+const getUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findByPk(id, {
+      attributes: ['id', 'username', 'email', 'roleUtilisateur', 'isActive', 'derConnx','photo', 'tel','firstName','lastName']
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    if (user.photo) {
+      user.photo = `/assets/uploads/${user.photo}`;
+    }
+
+    console.log(user.tel); 
+    return res.status(200).json({ message: 'successfully.', user });
+
+  } catch (error) {    
+    return res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
 // update user as an admin
 const updateUserController = async (req, res) => {
   const userId = req.params.id;
@@ -367,21 +378,20 @@ const updateUserController = async (req, res) => {
     return res.status(500).json({ message: 'internally error', error: err.message });
   }
 };
+
  //GET the loged in user
  const getOnceUser = async (req, res) => {
     try {
-      const user = await User.findByPk(req.user.id);
-      if (!user) {
-        return res.status(404).json({ message: 'user not found' });
-      }
-
-      res.status(200).json({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        roleUtilisateur: user.roleUtilisateur,
-      });
+        const userId = req.user.id;
+        const user = await User.findByPk(userId, {
+          attributes: ['email', 'roleUtilisateur', 'username']
+        });
+        
+        if (!user) {
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
     
+        res.status(200).json(user);
       } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
       }
@@ -422,7 +432,109 @@ const updateProfileController = async (req, res) => {
     return res.status(500).json({ message: 'Erreur interne.', error: err.message });
   }
 };
- 
+/*
+const updateUserProfileController = async (req, res) => {
+  const userId = req.params.id;
+
+  // Check if the user has the correct role
+  if (!['Formateur', 'Apprenant'].includes(req.user.roleUtilisateur)) {
+    return res.status(403).json({ message: 'Accès refusé.' });
+  }
+
+  // Ensure users can only update their own profile
+  if (parseInt(userId) !== req.user.id) {
+    return res.status(403).json({ message: 'Vous ne pouvez modifier que votre propre profil.' });
+  }
+
+  // Extract the fields to update
+  const { username, photo, tel, firstName, lastName, occupation, bio } = req.body;
+
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+
+    // Verify the username is unique if it's being modified
+    if (username && username !== user.username) {
+      const existingUsername = await User.findOne({ where: { username } });
+      if (existingUsername) {
+        return res.status(400).json({ message: 'Ce nom d\'utilisateur est déjà pris.' });
+      }
+    }
+
+    // Update fields
+    user.username = username || user.username;
+    user.photo = photo || user.photo;
+    user.tel = tel || user.tel;
+    user.firstName = firstName || user.firstName;  // New field
+    user.lastName = lastName || user.lastName;    // New field
+    user.occupation = occupation || user.occupation;  // New field
+    user.bio = bio || user.bio;   
+
+    await user.save();
+    return res.status(200).json({ message: 'Profil mis à jour avec succès.', user });
+  } catch (err) {
+    return res.status(500).json({ message: 'Erreur interne.', error: err.message });
+  }
+};*/
+
+const updateUserProfileController = async (req, res) => {
+  const userId = parseInt(req.params.id);
+
+  if (!['Formateur', 'Apprenant'].includes(req.user.roleUtilisateur)) {
+    return res.status(403).json({ message: 'Accès refusé.' });
+  }
+
+  if (userId !== req.user.id) {
+    return res.status(403).json({ message: 'Vous ne pouvez modifier que votre propre profil.' });
+  }
+
+  const { username, tel, firstName, lastName, occupation, bio, email } = req.body;
+
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+
+    if (username && username !== user.username) {
+      const existingUsername = await User.findOne({ where: { username } });
+      if (existingUsername) {
+        return res.status(400).json({ message: 'Ce nom d\'utilisateur est déjà pris.' });
+      }
+    }
+
+    // Handle image upload
+    let photo = user.photo;
+    if (req.file) {
+      // Delete old photo if it exists
+      if (photo && fs.existsSync(path.join(__dirname, "..", photo))) {
+        fs.unlinkSync(path.join(__dirname, "..", photo));
+      }
+      photo = `${req.file.filename}`; // ✅ Save relative URL
+    }
+
+    // Update user fields
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.tel = tel || user.tel;
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.occupation = occupation || user.occupation;
+    user.bio = bio || user.bio;
+    user.photo = photo;
+
+    await user.save();
+
+    const updatedUser = {
+      ...user.toJSON(),
+      photo: user.photo ? `${req.protocol}://${req.get('host')}${user.photo}` : null,
+    };
+
+    return res.status(200).json({ message: 'Profil mis à jour avec succès.', user: updatedUser });
+  } catch (err) {
+    console.error("Update error:", err);
+    return res.status(500).json({ message: 'Erreur interne.', error: err.message });
+  }
+};
+
 
 
 
@@ -501,5 +613,7 @@ module.exports = {
     getUserByIdController,
     getAllUsers,
     getOnceUser, 
-    getUserByName
+    getUserByName,
+    getUser,
+    updateUserProfileController
 };

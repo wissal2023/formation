@@ -1,19 +1,21 @@
 import { useState } from 'react';
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
+import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-// control saisie
-const schema = yup.object({
-  email: yup.string().required("Email requis").email("Format invalide"),
-  password: yup.string().required("Mot de passe requis"),
-}).required();
+// Validation schema for the form
+const schema = yup
+  .object({
+    email: yup.string().required("Email requis").email("Format invalide"),
+    password: yup.string().required("Mot de passe requis"),
+  })
+  .required();
 
-const SignIn = () => {
+const signIn = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -23,11 +25,11 @@ const SignIn = () => {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   });
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(prev => !prev);
+    setPasswordVisible((prev) => !prev);
   };
 
   const onSubmit = async (data) => {
@@ -35,44 +37,45 @@ const SignIn = () => {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, {
         email: data.email,
         mdp: data.password,
-      }, {
-        withCredentials: true, // send and receive cookies
-      });
-  
+      }, { withCredentials: true });
+
       if (response.status === 200) {
-        // Set any non-sensitive data you need (username, role) in a state management or session storage if needed
-        const { username, roleUtilisateur, mustUpdatePassword } = response.data;
+        localStorage.setItem('username', response.data.username);
+        localStorage.setItem('roleUtilisateur', response.data.roleUtilisateur);
+        localStorage.setItem('data',JSON.stringify( response.data));
 
         toast.success("Connexion réussie", { position: 'top-center' });
-  
-        if (mustUpdatePassword) {
+
+        if (response.data.mustUpdatePassword) {
           navigate('/change-password');
           return;
         }
-  
-        navigate('/ResetPassword');
+
+        navigate('/welcome');
       }
     } catch (error) {
       console.error('Erreur login:', error);
-      toast.error(
-        error.response?.data?.message || "Erreur serveur ou réseau.",
-        { position: 'top-center' }
-      );
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message, { position: 'top-center' });
+      } else {
+        toast.error("Erreur serveur ou réseau.", { position: 'top-center' });
+      }
     }
-  
-    reset();
+
+    reset();  // Reset form fields after submit
   };
-  
 
   return (
+    <div className="login-wrapper">
       <div className="login-container">
         <img src="assets/img/logo/Image2.png" alt="Logo" className="logo" />
         <h2 className="title">Teamwill</h2>
         <h3 className="subtitle">CONNEXION</h3>
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="input-group">
             <FaUser className="icon" />
-            <input  type="text" placeholder="Email" {...register("email")} />
+            <input type="text" placeholder="Email" {...register("email")} />
           </div>
           {errors.email && <p className="form_error">{errors.email.message}</p>}
 
@@ -88,11 +91,13 @@ const SignIn = () => {
 
           <button type="submit" className="submit-btn">Valider</button>
         </form>
+
         <span className="forgot-password" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
           Mot de passe oublié
         </span>
       </div>
+    </div>
   );
 };
 
-export default SignIn;
+export default signIn;

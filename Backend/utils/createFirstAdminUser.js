@@ -24,6 +24,8 @@ async function createFirstAdminUser() {
       mdp: hashedPassword,
       defaultMdp: hashedPassword,
       username: 'Default_Admin',
+      firstName:'AdminFN',
+      lastName:'AdminLN',
       roleUtilisateur: 'Admin',
       isActive: true
     });
@@ -58,7 +60,7 @@ async function createFirstAdminUser() {
     console.log('Admin credentials sent to email');
     console.log('Admin Auth Token:', token);
   } catch (err) {
-    console.error('Error creating admin user:', err.message);
+    console.error('Error creating admin user:', err);
   }
 }
 
