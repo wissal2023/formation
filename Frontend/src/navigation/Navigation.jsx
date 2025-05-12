@@ -20,7 +20,6 @@ import Convert from '../pages/Convert';
 import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
 import DisplayQuiz from '../components/courses/lesson/displayQuiz';
-import NotFound from '../pages/NotFound';
 import SignIn from "../pages/Login";
 import StudentProfile from '../pages/StudentProfile';
 

@@ -33,7 +33,7 @@ module.exports = {
         allowNull: false
       },
       roleUtilisateur: {
-        type: Sequelize.ENUM(...USER_ROLES), // Replace with actual roles
+        type: Sequelize.ENUM(...USER_ROLES), 
         allowNull: false
       },
       photo: {
