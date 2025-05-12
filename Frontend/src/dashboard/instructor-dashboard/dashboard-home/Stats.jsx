@@ -2,7 +2,7 @@ import Count from "../../../components/common/Count";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Lottie from "lottie-react";
-import flameAnimation from '../../../../public/assets/img/lotti/flame.json'; // Adjust the path as necessary
+import flameAnimation from '../../../../public/assets/img/lotti/flame.json'; 
 
 const Stats = () => {
   const [dashboardCountData, setDashboardCountData] = useState([]);

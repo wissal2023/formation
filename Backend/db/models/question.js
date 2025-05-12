@@ -1,4 +1,7 @@
 'use strict';
+
+const { OPTION_TYPE } = require("../constants/optionType");
+
 module.exports = (sequelize, DataTypes) => {
   const Question = sequelize.define('Question', {
     id: {
@@ -20,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE'
     },
     optionType: {
-      type: DataTypes.ENUM('Multiple_choice', 'single_choice', 'reorganize', 'match', 'drag_drop'),
+      type: DataTypes.ENUM(...OPTION_TYPE),
       allowNull: false
     },
     createdAt: {

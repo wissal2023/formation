@@ -1,7 +1,5 @@
-export const STATUS_ENUMS = [
+export const STATUS_FORMATIONS = [
     'created',
-    'enrolled', 
-    'in_progress',
-    'completed'
+   'finished'
 ];
 

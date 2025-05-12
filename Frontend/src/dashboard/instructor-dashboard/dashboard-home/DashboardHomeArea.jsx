@@ -20,8 +20,12 @@ const DashboardHomeArea = () => {
          </div>         
          {/* <DashboardCourse />
          <DashboardReviewTable />*/}
+<<<<<<< HEAD
+         
+=======
 
      
+>>>>>>> 7feea6689d828ab872f8a85aa940654498d5f79d
       </div>
    );
 };

@@ -2,7 +2,6 @@ import BtnArrow from "../../svg/BtnArrow";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import RegistrationArea from "../../components/inner-pages/registration/RegistrationArea"
-import FormationArea from "../../components/inner-pages/formation/FormationArea"
 
 const DashboardBanner = ({ style }) => {
    const [user, setUser] = useState(null);
@@ -81,8 +80,8 @@ const DashboardBanner = ({ style }) => {
                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                   <button className="close-btn" onClick={() => setShowModal(false)}>✕</button>
                   
+                 {/* Show RegistrationArea only for Admin */}
                   {user?.roleUtilisateur === "Admin" && <RegistrationArea />}
-                  {user?.roleUtilisateur === "Formateur" && <FormationArea closeModal={() => setShowModal(false)} />}
                   </div>
             </div>
          )}

@@ -39,8 +39,6 @@ router.delete('/delete/:id', authenticateToken, deleteUser);
 router.put('/profile/:id', authenticateToken,uploadImage.single('photo'), updateProfileController);
 >>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 router.get('/:name', getUserByName);
-router.get('/login', (req, res) => {
-  res.json({ message: 'Bienvenue sur le dashboard admin', user: req.user });
-});
+
 
 module.exports = router;

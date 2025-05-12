@@ -62,15 +62,15 @@ app.use('/formations', formationRoutes);
 app.use('/module', formationDetailsRoutes);
 app.use('/documents', docRoute );
 app.use('/quizzes', quizRoutes);
-app.use('/certifications', certificationRoutes);
 app.use('/streak', dailyStreakRoutes);
 app.use('/evaluations', evaluationRoutes);
 app.use('/Digital', noteDigitaleRoutes);
 app.use('/questions', questionRoutes);
+app.use('/reponses', reponseRoutes);
 app.use('/quizprogs', quizProgRoutes);
 app.use('/recompenses', recompenseRoutes);
-app.use('/reponses', reponseRoutes);
 app.use('/videos', videoRoutes);
+app.use('/certifications', certificationRoutes);
 app.use('/helps', helpRoutes);
 app.use('/help-translations', helpTranslationRoutes);
 app.use('/convertor', conversionFileRoutes)  
