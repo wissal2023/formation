@@ -1,10 +1,10 @@
-import InstructorProfileContent from '../dashboard/instructor-dashboard/profile/InstructorProfileContent';
+import StudentProfileContent from '../dashboard/student-dashboard/student-profile/StudentProfileContent';
 import DashboardLayoutStudent from '../layouts/DashboardLayoutStudent';
 
 const StudentProfile = () => {
    return (
       <DashboardLayoutStudent pageTitle="edit profile">
-         <InstructorProfileContent style={true} />
+         <StudentProfileContent style={true} />
       </DashboardLayoutStudent>
    );
 };

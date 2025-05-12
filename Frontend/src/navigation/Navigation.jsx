@@ -21,6 +21,7 @@ import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
 import DisplayQuiz from '../components/courses/lesson/displayQuiz';
 import NotFound from '../pages/NotFound';
+import DisplayQuiz from '../components/courses/lesson/displayQuiz';
 import SignIn from "../pages/Login";
 import StudentProfile from '../pages/StudentProfile';
 
@@ -58,6 +59,9 @@ const AppNavigation = () => {
         <Route path="/formation/:id" element={<Lesson />} />
         <Route path="/passerQuiz/:id" element={<DisplayQuiz />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+
+
+        
 
 
         {/*ROUTES TO BE USED         

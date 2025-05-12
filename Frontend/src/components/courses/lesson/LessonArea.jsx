@@ -6,7 +6,6 @@ import File from "./File";
 import NoteDigital from "./NoteDigital";
 import LessonPDF from "./LessonPDF";
 import { useNavigate } from "react-router-dom";
-
 const LessonArea = ({ formationId }) => {
    const [documentData, setDocumentData] = useState(null);
    const navigate = useNavigate();
@@ -41,6 +40,7 @@ const LessonArea = ({ formationId }) => {
                            <span>Formation ID: {formationId}</span>
                         </div>
                      </div>
+                  </div>
                      {/* Pass the ID to video if needed */}
                      <File formationId={formationId} /> 
 
@@ -52,7 +52,6 @@ const LessonArea = ({ formationId }) => {
                            <i className="flaticon-arrow-right"></i>
                         </button>
                      </div>
-
                      {/* Conditionally render based on filetype */}
                      {documentData?.filetype?.includes('mp4') && (
                         <File formationId={formationId} />
@@ -67,7 +66,6 @@ const LessonArea = ({ formationId }) => {
                         Go to Quiz
                      </Link>
                   </div>
-
                   <FormationDetails formationId={formationId} />
                   {/* Lesson navigation tab */}
                   <LessonNavTav />
@@ -78,5 +76,4 @@ const LessonArea = ({ formationId }) => {
       </section>
    );
 };
-
 export default LessonArea;

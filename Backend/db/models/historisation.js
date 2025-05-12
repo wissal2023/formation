@@ -1,5 +1,5 @@
+// db/models/historisation.js
 'use strict';
-const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Historisation = sequelize.define('Historisation', {
@@ -13,36 +13,56 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    deleted_data: { 
-      type: DataTypes.JSONB,  // This will store metadata related to videos and documents
-      allowNull: false
+    userId: { 
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Users',
+        key: 'id'
+      },
+      onDelete: 'CASCADE'
     },
-    file_data: {  // This will store the actual file content as BLOB (Binary Large Object)
-      type: DataTypes.BLOB('long'),  // 'long' for large binary data
+    deleted_data: { 
+      type: DataTypes.JSONB,
       allowNull: true
+    },
+    formation_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Formations',
+        key: 'id'
+      },
+      onDelete: 'SET NULL'
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
+      type: DataTypes.DATE
     },
     updatedAt: {
       allowNull: false,
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
+      type: DataTypes.DATE
     },
     deletedAt: {
       type: DataTypes.DATE
     }
   }, {
-    paranoid: true, // Enables soft delete (for historisation itself)
+    paranoid: true,
     freezeTableName: true,
-    modelName: 'Historisations'
+    tableName: 'Historisations',
+    modelName: 'Historisation'
   });
 
-  // Associations
   Historisation.associate = (models) => {
-    Historisation.belongsTo(models.Formation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+    Historisation.belongsTo(models.Formation, {
+      foreignKey: 'formation_id',
+      onDelete: 'SET NULL'
+    });
+
+    Historisation.belongsTo(models.User, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
   };
 
   return Historisation;

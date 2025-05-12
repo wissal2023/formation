@@ -49,8 +49,6 @@ exports.createQuiz = async (req, res) => {
       }, { transaction });
 
       questionIds.push(createdQuestion.id);
-
-
       if (q.optionType === 'Multiple_choice' || q.optionType === 'single_choice') {
         if (Array.isArray(q.reponses)) {
           for (const rep of q.reponses) {
@@ -95,11 +93,9 @@ exports.createQuiz = async (req, res) => {
               points: i + 1  // Store the order in points (or any other field)
             }, { transaction });
           }
-
         }
       }
     }
-
     await Trace.create({
       userId,
       model: 'Quiz',
@@ -121,7 +117,152 @@ exports.createQuiz = async (req, res) => {
   console.error("Error details:", error.response ? error.response.data : error.message);
 }
 };
+/*
+exports.createQuiz = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const { userId, formationId, quizData } = req.body;
 
+    // Validate user
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+    }
+
+    // Check if the user has the required role
+    if (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin') {
+      return res.status(403).json({ message: 'Permission refusée.' });
+    }
+
+    // Validate formation
+    const formation = await Formation.findByPk(formationId);
+    if (!formation) {
+      return res.status(404).json({ message: 'Formation non trouvée.' });
+    }
+
+    // Create the quiz
+    const quiz = await Quiz.create({
+      formationId,
+      difficulty: quizData.difficulty,
+      totalScore: quizData.totalScore,
+      userId,
+    }, { transaction });
+
+    let questionIds = [];
+    for (let questionData of quizData.questions) {
+      // Create questions for the quiz
+      const question = await Question.create({
+        quizId: quiz.id,
+        questionText: questionData.questionText,
+        multipleChoice: questionData.multipleChoice, // Handle multiple choice questions
+      }, { transaction });
+
+      questionIds.push(question.id);
+
+      // Create answers for each question
+      if (questionData.reponses) {
+        for (let reponseData of questionData.reponses) {
+          await Reponse.create({
+            reponseText: reponseData.reponseText,
+            isCorrect: reponseData.isCorrect,
+            questId: question.id,
+          }, { transaction });
+        }
+      }
+    }
+
+    // Log the creation action in Trace
+    await Trace.create({
+      userId,
+      page: 'Quiz',
+      action: 'Création de quiz',
+      metadata: {
+        quizId: quiz.id,
+        formationId,
+        questionIds,
+      }
+    }, { transaction });
+
+    // Commit the transaction if everything goes well
+    await transaction.commit();
+
+    // Send success response
+    return res.status(201).json({
+      message: 'Quiz créé avec succès.',
+      quiz,
+      questions: questionIds,
+    });
+  } catch (error) {
+    // Rollback transaction if error occurs
+    await transaction.rollback();
+
+    // Log the error and send failure response
+    console.error('Erreur lors de la création du quiz:', error);
+    return res.status(500).json({ message: 'Erreur lors de la création du quiz', error: error.message });
+  }
+};
+*/
+exports.getQuizByFormation = async (req, res) => {
+  try {
+    const { formationId } = req.params;
+    console.log('➡ formationId from params:', formationId);
+
+    // 1. Get formation details
+    const formationDetails = await FormationDetails.findOne({
+      where: { formationId },
+    });
+
+    if (!formationDetails) {
+      return res.status(404).json({ message: 'Détails de formation non trouvés.' });
+    }
+
+    const formationDetailsId = formationDetails.id;
+
+    // 2. Get the quiz including questions and answers
+    const quiz = await Quiz.findOne({
+      where: { formationDetailsId },
+      include: [
+        {
+          model: Question,
+          as: 'Questions',
+          include: [
+            {
+              model: Reponse,
+              as: 'Reponses',
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz non trouvé pour cette formation.' });
+    }
+
+    // 3. Extract only the questions and answers
+    const questionsWithAnswers = quiz.Questions.map((questionInstance) => {
+      const question = questionInstance.get({ plain: true });
+      return {
+        id: question.id,
+        questionText: question.questionText,
+        optionType: question.optionType, // optional: remove if not needed
+        reponses: question.Reponses.map((reponse) => ({
+          id: reponse.id,
+          reponseText: reponse.reponseText,
+          // Include these if needed:
+          // isCorrect: reponse.isCorrect,
+          // points: reponse.points
+        })),
+      };
+    });
+
+    return res.status(200).json({ questions: questionsWithAnswers });
+
+  } catch (error) {
+    console.error('❌ Erreur récupération quiz:', error);
+    return res.status(500).json({ message: 'Erreur serveur', error: error.message });
+}
+};
 
 
 /*

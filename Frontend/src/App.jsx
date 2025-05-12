@@ -1,10 +1,14 @@
 
 import { HelmetProvider } from 'react-helmet-async';
-import AppNavigation from './navigation/Navigation';
-import  store from './redux/store';
 import { Provider } from 'react-redux';
-import { ToastContainer } from 'react-toastify';
+import store from './redux/store';
+import AppNavigation from './navigation/Navigation';
+import SignIn from '/src/SignIn';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+
+
 function App() {
 
   return (

@@ -14,13 +14,10 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
   ]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [optionType, setOptionType] = useState("Multiple_choice");
-
   const [reorganizeItems, setReorganizeItems] = useState(["", "", ""]);
   const [matchPairs, setMatchPairs] = useState([{ left: "", right: "" }]);
   const addStep = () => setReorganizeItems([...reorganizeItems, ""]);
   const addMatchPair = () => setMatchPairs([...matchPairs, { left: "", right: "" }]);
-
-
   useEffect(() => {
     // Reset when question type changes
     setReorganizeItems(["", "", ""]);
@@ -92,7 +89,6 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
     if (questions.length === 0) {
       toast.error("Please add at least one question.");
       return;
-
     }
     // Log the payload before sending
     const payload = {
@@ -190,6 +186,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
             </div>
           ))}
 
+
         {/* Reorganize */}
         {optionType === "reorganize" &&
 
@@ -209,6 +206,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
           ))}
 
         {optionType === "reorganize" && (
+
           <button
             type="button"
             className="pill-button"
@@ -292,4 +290,4 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
   );
 };
 
-export default Quizz;
+export default Quizz;
