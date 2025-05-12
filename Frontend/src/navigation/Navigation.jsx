@@ -19,9 +19,11 @@ import AddFormation from '../pages/AddFormation';
 import Convert from '../pages/Convert';
 import UserSetting from '../pages/UserSetting';
 import Lesson from '../pages/Lesson';
-import NotFound from '../pages/NotFound';
 import SignIn from "../pages/Login";
 import StudentProfile from '../pages/StudentProfile';
+
+import NotFound from '../pages/NotFound';
+
 
 const AppNavigation = () => {
   return (
@@ -44,7 +46,7 @@ const AppNavigation = () => {
         <Route path="/Myformations" element={<MyCourse />} />        
         <Route path="/Allformations" element={<Course />} />
         <Route path="/stepper" element={<AddFormation />} />
-        <Route path="/lesson/:id" element={<Lesson />} /> 
+        
         <Route path="/formation/:id" element={<Lesson />} /> 
 
         
@@ -56,7 +58,9 @@ const AppNavigation = () => {
         <Route path="/student-profile" element={<StudentProfile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
+
         {/*ROUTES TO BE USED         
+        <Route path="/passerQuiz" element={<DisplayQuiz />} />
 
 <Route path="/instructor-enrolled-courses" element={<InstructorEnrollCourse />} /> for the cards 
 
@@ -80,7 +84,7 @@ const AppNavigation = () => {
         <Route path="/student-wishlist" element={<StudentWishlist />} />
         <Route path="/about-us" element={<About />} />
         */}
-        <Route path="*" element={null} />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
     </Router>
    

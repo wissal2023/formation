@@ -43,7 +43,7 @@ const UserSettingPassword = ({ userId }) => {
             setRePassword('');
             
             // Logout the user after password change
-            await fetch('http://localhost:3000/users/logout', {
+            await fetch(`${import.meta.env.VITE_API_URL}/users/logout`, {
                method: 'POST',
                credentials: 'include'
             });

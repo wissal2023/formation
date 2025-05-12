@@ -1,273 +1,161 @@
-import { useState } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
-import './style.css';
+import { useState } from 'react';
+import MatchForm from './MatchForm';
+import ReorganizeForm from './ReorganizeForm';
+import MultipleChoiceForm from './MultipleChoiceForm';
+import SingleChoiceForm from './SingleChoiceForm';
+import { OPTION_TYPE } from '../../../constants/optionType';
+
+// Helper to display user-friendly labels
+const getLabelFromType = (type) => {
+  switch (type) {
+    case 'Multiple_choice':
+      return 'Choix multiple';
+    case 'single_choice':
+      return 'Choix unique';
+    case 'match':
+      return 'Appariement';
+    case 'reorganize':
+      return 'Réorganiser';
+    case 'drag_drop':
+      return 'Glisser-déposer';
+    default:
+      return type;
+  }
+};
 
 const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
-  const [questions, setQuestions] = useState([]);
-  const [question, setQuestion] = useState("");
-  const [reponses, setReponses] = useState([
-    { text: "" },
-    { text: "" },
-    { text: "" },
-    { text: "" },
-  ]);
-  const [correctAnswers, setCorrectAnswers] = useState([]);
-  const [optionType, setOptionQuet] = useState("Multiple_choice");
-  const [reorganizeItems, setReorganizeItems] = useState(["", "", ""]);
-  const [matchPairs, setMatchPairs] = useState([{ left: "", right: "" }]);
-  const addStep = () => setReorganizeItems([...reorganizeItems, ""]);
-  const addMatchPair = () => setMatchPairs([...matchPairs, { left: "", right: "" }]);
+  const [optionType, setOptionType] = useState('Multiple_choice');
+  const [tentatives, setTentatives] = useState(1);
+  const [difficulty, setDifficulty] = useState('Facile');
 
-  // Handle correct answer selection
-  const handleCorrectChange = (index) => {
-    if (optionType  === "Multiple_choice") {
-      setCorrectAnswers((prev) =>
-        prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-      );
-    } else {
-      setCorrectAnswers([index]);
-    }
-  };
-
-  const handleReponseChange = (index, value) => {
-    const newReponses = [...reponses];
-    newReponses[index].text = value;
-    setReponses(newReponses);
-  };
-
-  const handleReorganizeChange = (index, value) => {
-    const newItems = [...reorganizeItems];
-    newItems[index] = value;
-    setReorganizeItems(newItems);
-  };
-
-  const handleMatchPairChange = (index, field, value) => {
-    const updatedPairs = [...matchPairs];
-    updatedPairs[index][field] = value;
-    setMatchPairs(updatedPairs);
-  };
-
-  const addQuestion = () => {
-    if (!question.trim()) {
-      toast.error("Please enter the question.");
-      return;
-    }
-
-    // For "Reorganize" questions
-    if (optionType  === "reorganize") {
-      const validItems = reorganizeItems.filter((item) => item.trim() !== "");
-      if (validItems.length < 3) {
-        toast.error("Enter at least three steps for the reorganize question.");
-        return;
-      }
-
-       setQuestions([...questions, {
-        questionText: question,
-        optionQuet: "reorganize",
-        correctOrder: validItems,
-      }]);
-
-      resetForm();
-      return;
-    }
-
-    // For "Match" questions
-    if (optionType  === "match") {
-      const validPairs = matchPairs.filter(p => p.left.trim() && p.right.trim());
-      if (validPairs.length < 2) {
-        toast.error("Enter at least Two match pairs.");
-        return;
-      }
-
-      setQuestions([...questions, {
-        questionText: question,
-        optionType : "match",
-        matchPairs: validPairs,
-      }]);
-
-      resetForm();
-      return;
-    }
-
-    // For "Multiple_choice" and "Single_choice"
-    if (reponses.some((r) => !r.text.trim())) {
-      toast.error("All answer fields must be filled.");
-      return;
-    }
-
-    // Validate correct answers based on the question type
-    if (optionType  === "Multiple_choice") {
-      if (correctAnswers.length < 1) {
-        toast.error("Please select at least one correct answers.");
-        return;
-      }
-    } else if (optionType  === "Single_choice") {
-      if (correctAnswers.length !== 1) {
-        toast.error("Please select one correct answer.");
-        return;
-      }
-    }
-
-    const mappedReponses = reponses.map((rep, index) => ({
-      reponseText: rep.text,
-      isCorrect: correctAnswers.includes(index),
-      points: 1,
-    }));
-
-    setQuestions([...questions, {
-      questionText: question,
-      optionType ,
-      reponses: mappedReponses,
-    }]);
-
-    resetForm();
-  };
-
-  const resetForm = () => {
-    setQuestion("");
-    setReponses([{ text: "" }, { text: "" }, { text: "" }, { text: "" }]);
-    setCorrectAnswers([]);
-    setOptionQuet("Multiple_choice");
-    setReorganizeItems(["", "", ""]);
-    setMatchPairs([{ left: "", right: "" }]);
-  };
-
-  const handleSubmit = async (e) => {
-     e.preventDefault();
-    if (questions.length === 0) {
-        toast.error("Please add at least three questions before submitting.");
-        return;
-    }
-    // Log the payload before sending
-    const payload = {
-        formationDetailsId,
-        questions,
-    };
-    console.log("Payload being sent to API:", payload);
-
-
-    try {
-      // Send the quiz data to the backend
-      await axios.post(`${import.meta.env.VITE_API_URL}/quizzes/create`, {
-        formationDetailsId,
-        questions,
-      }, { withCredentials: true });
-
-      toast.success("Quiz created successfully!");
-      onNext();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error creating quiz.");
-      console.error(error);
+  const renderQuestionForm = () => {
+    switch (optionType) {
+      case 'Multiple_choice':
+        return <MultipleChoiceForm />;
+      case 'Single_choice':
+        return <SingleChoiceForm />;
+      case 'match':
+        return <MatchForm />;
+      case 'reorganize':
+        return <ReorganizeForm />;
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="instructor__profile-form-wrap">
-      <form onSubmit={handleSubmit} className="customer__form-wrap">
-        <span className="title">Create Quiz</span>
+    <>
+      <div>
+       
+        <div className="mt-4">{renderQuestionForm()}</div>
 
-        {/* Question Type Selector */}
-        <div className="question-type-selector">
-          <label>Question Type</label>
-          <select value={optionType } onChange={(e) => setOptionQuet(e.target.value)}>
-            <option value="Multiple_choice">Multiple Choice</option>
-            <option value="Single_choice">Single Choice</option>
-            <option value="Reorganize">Reorganize</option>
-            <option value="Match">Match</option>
-          </select>
-        </div>
-
-        {/* Question Input */}
-        <div className="quiz-form-grp">
-          <input
-            type="text"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Enter your question"
-          />
-        </div>
-
-        {/* Multiple/Single Choice */}
-        {["Multiple_choice", "Single_choice"].includes(optionType ) &&
-          reponses.map((rep, index) => (
-            <div key={index} className="quiz-form-grp">
-              <input
-                type="text"
-                placeholder={`Answer ${index + 1}`}
-                value={rep.text}
-                onChange={(e) => handleReponseChange(index, e.target.value)}
-              />
-              {optionType  === "Multiple_choice" ? (
-                <input
-                  type="checkbox"
-                  checked={correctAnswers.includes(index)}
-                  onChange={() => handleCorrectChange(index)}
-                />
-              ) : (
-                <input
-                  type="radio"
-                  name="radio-group"
-                  checked={correctAnswers.includes(index)}
-                  onChange={() => handleCorrectChange(index)}
-                />
-              )}
-            </div>
-          ))
-        }
-
-        {/* Reorganize Input */}
-        {optionType  === "Reorganize" &&
-          reorganizeItems.map((item, index) => (
-            <div key={index} className="quiz-form-grp">
-              <input
-                type="text"
-                placeholder={`Step ${index + 1}`}
-                value={item}
-                onChange={(e) => handleReorganizeChange(index, e.target.value)}
-              />
-            </div>
-          ))
-        }
-
-        {optionType  === "Reorganize" && (
-          <button type="button" className="pill-button" onClick={addStep}>
-            Add Step
+        <div className="mt-4">
+          <button onClick={onPrev} className="btn btn-secondary">
+            Précédent
           </button>
-        )}
-
-        {/* Match Input */}
-        {optionType  === "Match" &&
-          matchPairs.map((pair, index) => (
-            <div key={index} className="quiz-form-grp d-flex gap-2">
-              <input
-                type="text"
-                placeholder={`Left ${index + 1}`}
-                value={pair.left}
-                onChange={(e) => handleMatchPairChange(index, "left", e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder={`Right ${index + 1}`}
-                value={pair.right}
-                onChange={(e) => handleMatchPairChange(index, "right", e.target.value)}
-              />
-            </div>
-          ))
-        }
-
-        {optionType  === "Match" && (
-          <button type="button" className="pill-button" onClick={addMatchPair}>Add Match Pair</button>
-        )}
-        <button type="button" className="pill-button" onClick={addQuestion}>Add Question</button>
-
-        {/* Navigation Buttons */}
-        <div className="d-flex justify-content-between mt-3">
-          <button type="button" className="pill-button" onClick={onPrev}>Previous</button>
-          <button type="submit" className="pill-button"> Submit Quiz</button>
         </div>
-      </form>
-    </div>
+         <form className="customer__form-wrap">
+          <span className="title">create question</span>
+          
+          <div className="row">
+            <div className="col-md-6">
+              <div className="form-grp">
+                <label>Nombre de tentatives autorisées</label>
+                <input type="number" min="1" value={tentatives}
+                  onChange={(e) => setTentatives(parseInt(e.target.value))}/>
+              </div>
+            </div>
+            
+
+
+          </div>
+
+          <div className="row">
+            <div className="col-md-6">
+              <div className="form-grp">
+                <label>Type de question</label>
+                <select value={optionType} onChange={(e) => setOptionType(e.target.value)}>
+                  {OPTION_TYPE.map((type) => (
+                    <option key={type} value={type}>
+                      {getLabelFromType(type)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="col-md-6">
+              <div className="form-grp">
+                <label>Difficulté</label>
+                <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                  <option value="Facile">Facile</option>
+                  <option value="Moyenne">Moyenne</option>
+                  <option value="Difficile">Difficile</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-grp">
+            {renderQuestionForm()}
+          </div>
+          <div className="form-grp select-grp">
+            <label htmlFor="country-name">Country / Region *</label>
+            <select id="country-name" name="country-name" className="country-name">
+              <option value="United Kingdom (UK)">United Kingdom (UK)</option>
+              <option value="United States (US)">United States (US)</option>
+              <option value="Turkey">Turkey</option>
+              <option value="Saudi Arabia">Saudi Arabia</option>
+              <option value="Portugal">Portugal</option>
+            </select>
+          </div>
+          <div className="form-grp">
+            <label htmlFor="street-address">Street address *</label>
+            <input type="text" id="street-address" placeholder="House number and street name" />
+          </div>
+          <div className="form-grp">
+            <input type="text" id="street-address-two" placeholder="Apartment, suite, unit, etc. (optional)" />
+          </div>
+          <div className="form-grp">
+            <label htmlFor="town-name">Town / City *</label>
+            <input type="text" id="town-name" />
+          </div>
+          <div className="form-grp select-grp">
+            <label htmlFor="district-name">District *</label>
+            <select id="district-name" name="district-name" className="district-name">
+              <option value="Alabama">Alabama</option>
+              <option value="Alaska">Alaska</option>
+              <option value="Arizona">Arizona</option>
+              <option value="California">California</option>
+              <option value="New York">New York</option>
+            </select>
+          </div>
+          <div className="form-grp">
+            <label htmlFor="zip-code">ZIP Code *</label>
+            <input type="text" id="zip-code" />
+          </div>
+          <div className="row">
+            <div className="col-md-6">
+              <div className="form-grp">
+                <label htmlFor="phone">Phone *</label>
+                <input type="number" id="phone" />
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-grp">
+                <label htmlFor="email">Email address *</label>
+                <input type="email" id="email" />
+              </div>
+            </div>
+          </div>
+          <span className="title title-two">Additional Information</span>
+          <div className="form-grp">
+            <label htmlFor="note">Order notes (optional)</label>
+            <textarea id="note" placeholder="Notes about your order, e.g. special notes for delivery."></textarea>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 

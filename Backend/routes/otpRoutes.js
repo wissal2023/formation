@@ -10,10 +10,5 @@ router.get('/generate-secret', authenticateToken, generateTotpSecret);
 router.post('/verifyTotp', authenticateToken, verifyTotp);
 
 
-//router.get('/generate-secret', authenticateToken, generateSecret); 
-//router.post('/verifyTotp', authenticateToken, verifyTotp);
-
-//router.post('/verify-google-otp', verifyGoogleOtp);
-//router.get('/status', getOtpStatus);
 
 module.exports = router;

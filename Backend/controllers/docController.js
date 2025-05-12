@@ -42,6 +42,7 @@ const createDocument = async (req, res) => {
     return res.status(500).json({ message: 'Erreur lors du téléchargement du document.', error: error.message });
   }
 };
+
 //to be used for the video generator
 /* router.post('/AddDoc', authenticateToken, createDocument);
 const createDocument = async (req, res) => {
@@ -181,42 +182,9 @@ const deleteDocument = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-const servePDF = (req, res) => {
-  const { filename } = req.params;
 
-  // Construct the full path to the PDF file
-  const pdfPath = path.join(__dirname, '..', 'assets', 'documents', filename);
 
-  // Check if the file exists
-  fs.access(pdfPath, fs.constants.F_OK, (err) => {
-    if (err) {
-      // If the file does not exist, send a 404 error
-      return res.status(404).json({ message: 'Fichier non trouvé.' });
-    }
 
-    // If the file exists, send it as a response
-    res.sendFile(pdfPath);
-  });
-}
-/*
-const getDocumentByFormation = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const document = await Document.findOne({ formation: id });
-
-    if (!document) {
-      return res.status(404).json({ message: "Document not found" });
-    }
-
-    res.status(200).json({ filename: document.filename });
-  } catch (error) {
-    console.error("Error fetching document:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-
-};
-*/
 //app.use('/documents', docRoute );
 //router.get('/:formationDetailsId', authenticateToken, getDocumentByFormation);
 const getDocumentByFormation = async (req, res) => {
@@ -249,12 +217,32 @@ const getDocumentByFormation = async (req, res) => {
       filename: document.filename,
       filetype: document.filetype,
       uploadedDate: document.uploadedDate,
-      documentUrl: documentPath, // Return the document path as part of the response
+      documentUrl: documentPath, 
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+/*
+const getDocumentByFormation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const document = await Document.findOne({ formation: id });
+
+    if (!document) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    res.status(200).json({ filename: document.filename });
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+
+};
+*/
 
 module.exports = {
   createDocument,
@@ -263,7 +251,7 @@ module.exports = {
   getDocumentByName,
   updateDocument,
   deleteDocument,
-  servePDF,
+  //servePDF,
   getDocumentByFormation
 
 };

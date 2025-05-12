@@ -22,8 +22,6 @@ router.get('/getAll', authenticateToken, getAllUsers);
 router.get('/getById/:id', authenticateToken, getUserByIdController);
 router.put('/profile/:id', authenticateToken,uploadImage.single('photo'), updateProfileController);
 router.get('/:name', getUserByName);
-router.get('/login', (req, res) => {
-  res.json({ message: 'Bienvenue sur le dashboard admin', user: req.user });
-});
+
 
 module.exports = router;

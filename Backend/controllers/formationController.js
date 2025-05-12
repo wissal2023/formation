@@ -1,39 +1,187 @@
-const { sequelize, Formation, FormationDetails, Quizz, Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
+const { sequelize, Formation, FormationDetails, UserFormation , Trace, User,Document,Historisation,Evaluation,NoteDigitale,Quiz} = require('../db/models');
 const { USER_ROLES } = require('../db/constants/roles');
 
 //app.use('/formations', formationRoutes);
 // router.post('/AddFormation',authenticateToken, createFormation);
 const createFormation = async (req, res) => {
   try {
+    // Log incoming request data
+    console.log('Request body:', req.body);
+
+    // Ensure user exists and has the correct role
     const user = req.user;
-    if (!user || (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin'))
+    if (!user) {
+      console.log('User not authenticated');
+      return res.status(403).json({ message: 'Utilisateur non autorisé.' });
+    }
+
+    if (user.roleUtilisateur !== 'Formateur' && user.roleUtilisateur !== 'Admin') {
+      console.log('User does not have permission. Role:', user.roleUtilisateur);
       return res.status(403).json({ message: 'Permission refusée.' });
+    }
 
-    const formation = await Formation.create({
-      ...req.body,
-      status: 'in_progress', 
-      userId: user.id
-    });
+    // Log user validation success
+    console.log('User authenticated and authorized:', user.id);
 
-    await Trace.create({
+    // Attempt to create formation
+    const formationData = {
+      titre: req.body.titre,
+      thematique: req.body.thematique,
+      typeFlag: req.body.typeFlag,
+      statusFormation: 'created',
+    };
+
+    // Create the Formation record
+    const formation = await Formation.create(formationData);
+
+    // Log formation creation success
+    console.log('Formation created successfully:', formation.id, formation.titre);
+
+    // Create the entry in the userFormations join table
+    await formation.addUser(user.id);
+
+    // Log Trace creation for audit purposes
+    const traceData = {
       userId: user.id,
       model: 'Formation',
       action: 'Création de formation',
-      data: { id: formation.id, titre: formation.titre }
-    });
+      data: { id: formation.id, titre: formation.titre },
+    };
 
+    const trace = await Trace.create(traceData);
+
+    console.log('Trace created:', trace);
+
+    // Respond with the created formation details
     return res.status(201).json({ formation });
   } catch (error) {
+    // Log the full error stack
+    console.error('Error in createFormation:', error);
+
+    // Return the error message to the client
     return res.status(500).json({ message: 'Erreur création formation', error: error.message });
   }
 };
-// get all formations
+
+
+
+//app.use('/formations', formationRoutes);
+//router.get('/finished', authenticateToken, getAllFinishedFormations);
+const getAllFinishedFormations = async (req, res) => {
+  try {
+    const user = req.user;
+    console.log('User:', user); // Log the user object to check if it's being passed correctly
+
+    if (!user || !user.roleUtilisateur) {
+      console.log('User or roleUtilisateur is missing'); // Log if the user or role is not found
+      return res.status(403).json({ message: 'Utilisateur non autorisé.' });
+    }
+
+    // Add a console log to check the where conditions and see if they are correct
+    console.log('Fetching formations with conditions:', {
+      statusFormation: 'finished',
+      typeFlag: 'obligatoire'
+    });
+
+    const formations = await Formation.findAll({
+      where: {
+        statusFormation: 'finished',
+        typeFlag: 'obligatoire'
+      },
+      include: [
+        { model: User, attributes: ['username'] },
+        {
+          model: FormationDetails,
+          include: [
+            { model: Document },
+            { model: Quiz }
+          ]
+        },
+        {
+          model: UserFormation,
+          where: { userId: user.id },
+          required: false // in case user isn't enrolled yet
+        } 
+      ]
+    });
+
+    console.log('Fetched formations:', formations); // Log the formations fetched from the database
+
+    const enrichedFormations = formations.map(formation => {
+      let progress = 0;
+
+      const userFormation = formation.UserFormations?.[0]; // get the current user's relation entry
+      console.log('User Formation:', userFormation); // Log the user's formation to check its status
+
+      // +25% if the user has userformation.status = 'enrolled'
+      if (userFormation?.status === 'enrolled') {
+        progress += 25;
+      }
+
+      // +25% if user watched all videos or read all files
+      // +25% if user started the quiz
+      // +25% if user passed quiz and got certification
+
+      // NOTE: Implement these checks with user-specific tracking tables if available
+
+      return {
+        ...formation.toJSON(),
+        progress,
+        isCompleted: progress === 100
+      };
+    });
+
+    console.log('Enriched formations:', enrichedFormations); // Log the enriched formations after progress calculation
+
+    return res.status(200).json(enrichedFormations);
+
+  } catch (error) {
+    console.error('Error in getAllFormations:', error); // Log the error if it happens
+    res.status(500).json({ message: 'Erreur lors de la récupération des formations', error });
+  }
+};
+//app.use('/formations', formationRoutes);
+//router.post('/:id/status', authenticateToken, getFormationsByStatus); 
+const getFormationsByStatus = async (req, res) => {
+  try {
+    const formationId = req.params.id;
+    const userId = req.user.id;
+
+    const formation = await Formation.findOne({ where: { id: formationId } });
+    if (!formation) {
+      return res.status(404).json({ message: 'Formation not found.' });
+    }
+
+    
+   // Create or update the UserFormation record
+    const [userFormation, created] = await UserFormation.findOrCreate({
+      where: { userId, formationId },
+      defaults: { status: 'enrolled' }
+    });
+
+    if (!created) {
+      // If already exists, update the status
+      userFormation.status = 'enrolled';
+      await userFormation.save();
+    }
+
+    return res.status(200).json({ message: 'User enrolled in the formation.' });
+  } catch (err) {
+    console.error('Enrollment error:', err);
+    return res.status(500).json({ message: 'Enrollment failed.', error: err });
+  }
+};
+
+
+
+//*************************************** */
+// get all formations where status=finished & typeFlag=obligatoire
 const getAllFormations = async (req, res) => {
   try {
     const user = req.user;
 
     if (!user || !user.roleUtilisateur) {
-      return res.status(403).json({ message: 'Rôle utilisateur non autorisé.' });
+      return res.status(403).json({ message: 'Utilisateur non autorisé.' });
     }
      
     const formations = await Formation.findAll({
@@ -79,41 +227,6 @@ const getAllFormations = async (req, res) => {
   }
 };
 
-
-
-
-// get all formation that are created (formation, formationDetails, document, quizz)
-const getfilteredFormation = async (req, res) => {
-  try {
-    const formations = await Formation.findAll({
-      where: {
-        status: 'created' // Only get formations that are marked as completed
-      },
-      include: [
-        {
-          model: FormationDetails,
-          required: true // Ensures that only formations with details are included
-        },
-        {
-          model: Document, // Assuming this is the model for uploaded content
-          required: true // Ensures that only formations with documents are included
-        },
-        {
-          model: Quiz,
-          required: true // Ensures that only formations with quizzes are included
-        }
-      ]
-    });
-
-    return res.status(200).json(formations);
-  } catch (error) {
-    console.error("Error fetching formations:", error);
-    return res.status(500).json({ message: 'Error fetching formations', error: error.message });
-  }
-};
-
-
-
 // get by id
 const getFormationById = async (req, res) => {
   try {
@@ -142,7 +255,6 @@ const updateFormation = async (req, res) => {
 };
 
 // Delete
-
 const deleteFormation = async (req, res) => {
   const { id } = req.params;
   const transaction = await sequelize.transaction();  // Ensure atomic operations
@@ -265,5 +377,8 @@ const getFormationsByUser = async (req, res) => {
 
 
 module.exports = {
-  createFormation, getAllFormations,getFormationById, updateFormation, deleteFormation, getCompletedFormations,getFormationsByUser
+  createFormation, getAllFinishedFormations,
+  getAllFormations,getFormationById, updateFormation,
+  deleteFormation, getCompletedFormations,
+  getFormationsByUser, getFormationsByStatus
 };

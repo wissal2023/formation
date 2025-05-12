@@ -5,14 +5,13 @@ import axios from 'axios';
 
 const LessonPDF = ({ filename }) => {
    const [pdfBlobUrl, setPdfBlobUrl] = useState('');
-   const API = import.meta.env.VITE_API_URL;
 
    useEffect(() => {
       if (filename) {
-         const url = `${API}/documents/view/${filename}`;
+         const url = `${import.meta.env.VITE_API_URL}/documents/view/${filename}`;
 
          axios.get(url, {
-            responseType: 'blob', // Get the actual PDF binary data
+            responseType: 'blob',
             withCredentials: true
          })
          .then(res => {

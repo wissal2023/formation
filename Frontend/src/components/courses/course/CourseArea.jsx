@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import CourseTop from './CourseTop';
-import UseFormations from '../../../hooks/UseFormations';
+import UseFinishedFormations from '../../../hooks/UseFinishedFormations';
 import { Link } from 'react-router-dom';
+import BtnArrow from '../../../svg/BtnArrow';
 
 const CourseArea = () => {
-   const { formations, setFormations, loading, error } = UseFormations();
+   const { formations, setFormations, loading, error } = UseFinishedFormations();
 
    const itemsPerPage = 6;
    const [itemOffset, setItemOffset] = useState(0);
@@ -88,25 +89,18 @@ const CourseArea = () => {
                               </div>
                               <div className="courses__item-bottom">
                                  <div className="button">
-                                    {item.progress === 100 ? (
-                                       <Link to={`/formation/${item.id}`}>
-                                          <span className="text">more details</span>
-                                          <i className="flaticon-arrow-right"></i>
-                                       </Link>
-                                    ) : (
-                                        <button className="disabled-button" disabled style={{
-                                          backgroundColor: '#dfe652',
-                                          cursor: 'not-allowed',
-                                          padding: '8px 16px',
-                                          border: 'none',
-                                          borderRadius: '4px'
-                                       }}>
-                                          <span className="text">Not finished yet</span>
-                                       </button>
-                                    )}
+                                 {item.progress === 100 ? (
+                                    <Link to={`/formation/${item.id}`}>
+                                       <span className="text">more details</span>
+                                       <i className="flaticon-arrow-right"></i>
+                                    </Link>
+                                 ) : (
+                                    <div className="load-more-btn text-center mt-20">
+                                       <Link to={`/formation/${item.id}`} className="link-btn">Enroll <BtnArrow /></Link>
+                                    </div>
+                                 )}
                                  </div>
                               </div>
-
                            </div>
                         </div>
                      </div>

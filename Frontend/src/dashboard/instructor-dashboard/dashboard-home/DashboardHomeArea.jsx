@@ -15,7 +15,6 @@ const DashboardHomeArea = () => {
          </div>         
          {/* <DashboardCourse />
          <DashboardReviewTable />*/}
-
          
       </div>
    );

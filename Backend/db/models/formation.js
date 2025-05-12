@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize');
+const { TYPE_FLAG } = require('../constants/typeFlag');
 
 module.exports = (sequelize, DataTypes) => {
   const Formation = sequelize.define('Formation', {
@@ -11,9 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     titre: { type: DataTypes.STRING },
     thematique: { type: DataTypes.STRING },
     verouillee: { type: DataTypes.BOOLEAN, defaultValue: false },
-    typeFlag: { type: DataTypes.ENUM('obligatoire', 'facultat'), allowNull: false,},
-    status: { type: DataTypes.ENUM('created','enrolled', 'in_progress', 'completed'), allowNull: false,},
-    userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'User', key: 'id'}},
+    typeFlag: { type: DataTypes.ENUM(...TYPE_FLAG), allowNull: false,},
+    statusFormation: { type: DataTypes.ENUM('created','finished'), allowNull: false,},
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -37,11 +37,13 @@ module.exports = (sequelize, DataTypes) => {
 
   // Associations
   Formation.associate = (models) => {
-    Formation.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
+    Formation.belongsToMany(models.User, {through: 'UserFormations', foreignKey: 'formationId', otherKey: 'userId',});
     Formation.hasOne(models.FormationDetails, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.Evaluation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
     Formation.hasMany(models.NoteDigitale, { foreignKey: 'formationId', onDelete: 'CASCADE' });    
     Formation.hasOne(models.Historisation, { foreignKey: 'formationId', onDelete: 'CASCADE' });
+  
+  
   };
 
   return Formation;

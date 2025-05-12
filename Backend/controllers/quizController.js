@@ -25,55 +25,51 @@ exports.createQuiz = async (req, res) => {
       return res.status(404).json({ message: 'Formation non trouvée.' });
     }
 
-    // Create or find the quiz for the given formationDetailsId
+    // Step 3: Create or find existing quiz
     const [quiz, created] = await Quiz.findOrCreate({
       where: { formationDetailsId },
       defaults: {
         difficulty: difficulty || 'medium',
         tentatives: tentatives || 0,
         totalScore: 0,
-        score: 0
+        score: 0,
+        date: new Date()
       },
       transaction
     });
 
-    let questionIds = [];
+    //Create Questions and Reponses
+    let totalScore = 0;
 
-    // Create questions and their corresponding responses
     for (const q of questions) {
+      if (!q.questionText || !q.reponses || !Array.isArray(q.reponses)) {
+        continue; // Skip invalid questions
+      }
       const createdQuestion = await Question.create({
         questionText: q.questionText,
         optionType: q.optionType || 'Multiple_choice',
         quizId: quiz.id
       }, { transaction });
 
-      questionIds.push(createdQuestion.id);
+      for (const rep of q.reponses) {
+        if (!rep.reponseText) continue;
 
-      // Check if reponses exist and are an array
-      if (Array.isArray(q.reponses)) {
-        for (const rep of q.reponses) {
- await Reponse.create({
-            questionId: createdQuestion.id,
-            reponseText: rep.reponseText,
-            isCorrect: rep.isCorrect,
-            points: rep.points || 1
-          }, { transaction });
-        }
-      } else {
-        console.warn(`No reponses found for question ID ${createdQuestion.id}`);
+        const reponse = await Reponse.create({
+          reponseText: rep.reponseText,
+          isCorrect: rep.isCorrect || false,
+          points: rep.points || 0,
+          questionId: createdQuestion.id
+        }, { transaction });
+
+         if (rep.isCorrect) totalScore += reponse.points || 0;
       }
     }
 
-    // Update the status of the associated formation to 'created'
-    const formation = await Formation.findOne({
-      where: { id: formationDetails.formationId },
-      transaction
-    });
+    await quiz.update({ totalScore }, { transaction });
 
-    if (formation) {
-      formation.status = 'created';
-      await formation.save({ transaction });
-    }
+    // Update the formationDetails status to 'finished'
+    await formationDetails.update({ statusFormation: 'finished' }, { transaction });
+
 
     // Log creation in Trace table
     await Trace.create({
@@ -83,7 +79,6 @@ exports.createQuiz = async (req, res) => {
       data: {
         quizId: quiz.id,
         formationDetailsId,
-        questionIds,
         difficulty: quiz.difficulty,
         tentatives: quiz.tentatives
       }
