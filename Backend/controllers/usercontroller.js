@@ -3,30 +3,20 @@ const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
-<<<<<<< HEAD
-const { sendAccountEmail } = require('../utils/emailService');
-const { User, Trace } = db;
-
-=======
 const { sendAccountEmail , sendTemporaryPasswordEmail } = require('../utils/emailService');
 const path = require('path');
 const fs = require('fs');
 const { User, Trace, Historisation } = db;
 const sequelize = db.sequelize;
 const updateUserStreak = require('../services/streak');
->>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 
 const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
 
-<<<<<<< HEAD
-//router.post('/login', loginUserController);
-const loginUserController = async (req, res) => {
-=======
+
 //router.post('/users/login', loginUserController);
 const loginUserController = async (req, res) => { 
->>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
   const { email, mdp } = req.body;
 
   try {
@@ -302,7 +292,7 @@ const getUserByIdController = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
-<<<<<<< HEAD
+
 const getUser = async (req, res) => {
   const { id } = req.params;
 
@@ -326,10 +316,9 @@ const getUser = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
-// update user as an admin
-=======
+
+
 // router.put('/edit/:id', authenticateToken, uploadImage.single('photo'), updateUserController);
->>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 const updateUserController = async (req, res) => {
   const userId = req.params.id;
 
@@ -400,13 +389,8 @@ const updateUserController = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
- //GET the loged in user
- const getOnceUser = async (req, res) => {
-=======
 //GET the loged in user
 const getOnceUser = async (req, res) => {
->>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
     try {
         const userId = req.user.id;
         const user = await User.findByPk(userId, {
@@ -458,7 +442,6 @@ const updateProfileController = async (req, res) => {
     return res.status(500).json({ message: 'Erreur interne.', error: err.message });
   }
 };
-<<<<<<< HEAD
 /*
 const updateUserProfileController = async (req, res) => {
   const userId = req.params.id;
@@ -566,8 +549,6 @@ const updateUserProfileController = async (req, res) => {
 
 
 //************************ NEEDS TO BE UPDATED ***************************/
-=======
->>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 
 const toggleUserActivation = async (req, res) => {
   const userId = req.params.id;
@@ -781,11 +762,8 @@ module.exports = {
     getAllUsers,
     getOnceUser, 
     getUserByName,
-<<<<<<< HEAD
-    getUser,
-    updateUserProfileController
-=======
+    getUser, deleteUser,
+    updateUserProfileController,
     forgotPasswordController,
     modifyPasswordController
->>>>>>> ff98b09c543b0841982ac6c6453ff4b7b82e3c6e
 };
