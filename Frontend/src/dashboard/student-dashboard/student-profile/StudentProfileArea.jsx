@@ -1,6 +1,6 @@
 import DashboardBannerTwo from "../../dashboard-common/DashboardBannerTwo"
 import DashboardSidebarTwo from "../../dashboard-common/DashboardSidebarTwo"
-import InstructorProfileContent from "../../instructor-dashboard/profile/InstructorProfileContent"
+import StudentProfileContent from "../../student-dashboard/student-profile/StudentProfileContent"
 
 const StudentProfileArea = () => {
    return (
@@ -10,7 +10,7 @@ const StudentProfileArea = () => {
             <div className="dashboard__inner-wrap">
                <div className="row">
                   <DashboardSidebarTwo />
-                  <InstructorProfileContent style={true} />
+                  <StudentProfileContent style={false} />
                </div>
             </div>
          </div>

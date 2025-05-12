@@ -57,7 +57,6 @@ const LessonArea = ({ formationId }) => {
                         Go to Quiz
                      </Link>
                   </div>
-                  
                   <FormationDetails formationId={formationId} />
                </div>
             </div>

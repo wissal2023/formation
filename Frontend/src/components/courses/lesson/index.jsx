@@ -7,7 +7,7 @@ const Lesson = ({ lessonId, filename }) => { // Accept filename as a prop
       <>
          <HeaderOne />
          <main className="main-area fix">
-            <LessonArea lessonId={lessonId} filename={filename} /> {/* Pass filename prop here */}
+            <LessonArea lessonId={lessonId} filname={filename} /> {/* Pass filename prop here */}
          </main>
          <Footer />
       </>
