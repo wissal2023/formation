@@ -139,6 +139,15 @@ a:focus,
   box-shadow: none;
 }
 
+.disabled-button {
+   background-color: #ccc;
+   color: #666;
+   cursor: not-allowed;
+   padding: 8px 16px;
+   border: none;
+   border-radius: 4px;
+}
+
 a:hover,
 button:hover {
   color: var(--tg-theme-secondary);
@@ -20633,3 +20642,32 @@ blockquote > p {
 }
 
 /*# sourceMappingURL=main.css.map */
+.pill-button {
+    background-color: #a4b452;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 4px 6px 0px #0b005c;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    -webkit-transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    -moz-transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    -ms-transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+    -o-transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+  
+  .pill-button:hover {
+    background-color: #dfe3d5; /* Yellow */
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: none; /* Shadow removed */
+  }
+  
+  .pill-button:active {
+    transform: translateY(1px);
+    box-shadow: 2px 4px 0px #0b005c;
+  }
+  

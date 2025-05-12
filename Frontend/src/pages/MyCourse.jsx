@@ -2,12 +2,12 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import InstructorCourse from "../components/courses/course/InstructorCourse"
 
 
-const Course = () => {
+const MyCourse = () => {
   return (
-      <DashboardLayout pageTitle="mes formations">
+      <DashboardLayout pageTitle="All formations">
           <InstructorCourse />
       </DashboardLayout>
   );
 };
 
-export default Course;
+export default MyCourse;

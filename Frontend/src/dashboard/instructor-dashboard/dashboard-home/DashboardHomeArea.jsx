@@ -9,14 +9,13 @@ const DashboardHomeArea = () => {
                <h4 className="title">Dashboard</h4>
             </div>
             <div className="row">
-               
-              {/*<Stats />*/}
+               <Stats />
             </div>
          </div>         
          {/* <DashboardCourse />
          <DashboardReviewTable />*/}
 
-         
+     
       </div>
    );
 };

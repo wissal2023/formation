@@ -16,7 +16,7 @@ const Wrapper = ({ children }) => {
     return (
         <>
             {children}
-            <ScrollToTop />
+         {/*   <ScrollToTop /> */}
             <ToastContainer position="top-center" />
         </>
     );

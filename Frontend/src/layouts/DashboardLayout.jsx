@@ -25,9 +25,9 @@ const DashboardLayout = ({ pageTitle, children }) => {
                   {children}
               </div>
             </div>
-          </div>
+          </div>          
+          <ChatWidget/>
         </section>
-        <ChatWidget/>
       </main>
       <Footer />
      

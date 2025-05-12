@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const db = require('../db/models');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
-const { sendAccountEmail } = require('../utils/emailService');
+const { sendAccountEmail , sendTemporaryPasswordEmail } = require('../utils/emailService');
 const path = require('path');
 const fs = require('fs');
 const { User, Trace, Historisation } = db;
@@ -14,7 +14,7 @@ const generateRandomPassword = (length = 12) => {
   return crypto.randomBytes(length).toString("base64").slice(0, length);
 };
 
-//router.post('/login', loginUserController);
+//router.post('/users/login', loginUserController);
 const loginUserController = async (req, res) => { 
   const { email, mdp } = req.body;
 
@@ -96,8 +96,7 @@ const loginUserController = async (req, res) => {
     });
   }
 };
-
-//router.get('/auth', getAuthenticatedUser);
+//router.get('/users/auth', getAuthenticatedUser);
 const getAuthenticatedUser = (req, res) => {
   const token = req.cookies.token;
 
@@ -302,8 +301,7 @@ const getUserByIdController = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
-
-// update user as an admin
+// router.put('/edit/:id', authenticateToken, uploadImage.single('photo'), updateUserController);
 const updateUserController = async (req, res) => {
   const userId = req.params.id;
 
@@ -393,8 +391,7 @@ const getOnceUser = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
       }
 };
-
-// update Profile as a formateur or apprenant
+//router.put('/profile/:id', authenticateToken,uploadImage.single('photo'), updateProfileController);
 const updateProfileController = async (req, res) => {
   const userId = req.params.id;
 
@@ -545,18 +542,104 @@ const deleteUser = async (req, res) => {
     });
   }
 };
+const forgotPasswordController = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "Aucun utilisateur trouvé avec cet email." });
+    }
+
+    const newPassword = generateRandomPassword();
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.mdp = hashedPassword;
+    user.mustUpdatePassword = true;
+    await user.save();
+
+    // 👉 Appel de ta fonction d'envoi de mot de passe temporaire
+    await sendTemporaryPasswordEmail(user.email, newPassword);
+
+    await Trace.create({
+      userId: user.id,
+      action: 'reset password',
+      model: 'User',
+      data: {
+        email: user.email,
+        username: user.username,
+        resetAt: new Date()
+      }
+    });
+
+    res.status(200).json({ message: 'Un nouveau mot de passe a été envoyé à votre email.' });
+
+  } catch (error) {
+    console.error('Erreur de reset mdp:', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
+const modifyPasswordController = async (req, res) => {
+  const { email, currentPassword, newPassword, rePassword } = req.body;
+
+  // Vérification des champs
+  if (!email || !currentPassword || !newPassword || !rePassword) {
+    return res.status(400).json({ message: "Champs manquants." });
+  }
+
+  if (newPassword !== rePassword) {
+    return res.status(400).json({ message: "Les nouveaux mots de passe ne correspondent pas." });
+  }
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable." });
+    }
+
+    // Vérification du mot de passe actuel (temporaire ou réel)
+    const isMatch = await bcrypt.compare(currentPassword, user.mdp);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Mot de passe actuel incorrect." });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.mdp = hashedNewPassword;
+    user.mustUpdatePassword = false;
+    await user.save();
+
+    await Trace.create({
+      userId: user.id,
+      action: 'update password',
+      model: 'User',
+      data: {
+        email: user.email,
+        updatedAt: new Date()
+      }
+    });
+
+    res.status(200).json({ message: 'Mot de passe mis à jour avec succès.' });
+
+  } catch (error) {
+    console.error('Erreur de mise à jour du mot de passe :', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
 module.exports = {
-  getAuthenticatedUser,
-  addUserController,
-  loginUserController,
-  logoutUserController,
-  updateUserController,
-  toggleUserActivation,
-  updatePasswordController,
-  updateProfileController,
-  getUserByIdController,
-  getAllUsers,
-  getOnceUser, 
-  getUserByName,
-  deleteUser
+    getAuthenticatedUser,
+    addUserController,
+    loginUserController,
+    logoutUserController,
+    updateUserController,
+    toggleUserActivation,
+    updatePasswordController,
+    updateProfileController,
+    getUserByIdController,
+    getAllUsers,
+    getOnceUser, 
+    getUserByName,
+    forgotPasswordController,
+    modifyPasswordController
 };

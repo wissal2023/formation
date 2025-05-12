@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import './DisplayQuiz.css';
-
+import HeaderOne from '../../../layouts/headers/HeaderOne';
 const DisplayQuiz = () => {
   const { id: formationId } = useParams();
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ const DisplayQuiz = () => {
 
   const handleSubmit = async () => {
     try {
-      await axios.post(
+      const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/quizzes/${quiz.id}/attempt`,
         { userAnswers },
         { withCredentials: true }
@@ -264,9 +264,195 @@ const DisplayQuiz = () => {
             </button>
           </div>
         )}
+  const isAllAnswered =
+    quiz &&
+    quiz.questions &&
+    quiz.questions.every(question => {
+      const ans = userAnswers[question.id];
+      if (question.optionType === 'Multiple_choice') {
+        return ans && ans.length > 0;
+      } else if (question.optionType === 'single_choice') {
+        return ans !== undefined && ans !== null;
+      } else if (question.optionType === 'Match') {
+        return (
+          ans &&
+          Array.isArray(ans) &&
+          ans.length === question.matchPairs.length &&
+          ans.every(pair => pair.left && pair.right)
+        );
+      } else if (question.optionType === 'reorganize') {
+        return ans && Array.isArray(ans) && ans.length === question.reorganizeItems.length;
+      } else {
+        return ans !== undefined && ans !== null;
+      }
+    });
+
+  if (loading) return <div>Loading quiz...</div>;
+
+  if (!quiz || !quiz.questions || quiz.questions.length === 0)
+    return <div>Quiz not found or no questions available!</div>;
+
+  const currentQuestion = quiz.questions[currentQuestionIndex];
+  const currentReorganizeAnswer =
+    userAnswers[currentQuestion.id] || currentQuestion.reorganizeItems || [];
+
+  const moveItem = (arr, fromIndex, toIndex) => {
+    const newArr = [...arr];
+    const item = newArr.splice(fromIndex, 1)[0];
+    newArr.splice(toIndex, 0, item);
+    return newArr;
+  };
+
+  return (
+   
+    <div className="col-xl-9 col-lg-8" style={{ maxWidth: '100%', padding: '1rem' }}>
+      <div className="lesson__video-wrap">
+        <div className="lesson__video-wrap-top" style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <h1>Quiz</h1>
+          <button onClick={() => navigate(-1)} style={{ fontSize: '1.25rem' }}>
+            <i className="fas fa-times" />
+          </button>
+        </div>
+
+        <div className="quiz-content" style={{ marginTop: '1rem' }}>
+          <h3>{currentQuestion.questionText}</h3>
+
+          {/* Single or Multiple Choice */}
+          {(currentQuestion.optionType === 'Multiple_choice' ||
+            currentQuestion.optionType === 'single_choice') && (
+            <div>
+              {currentQuestion.reponses.map(option => {
+                const checked =
+                  currentQuestion.optionType === 'Multiple_choice'
+                    ? (userAnswers[currentQuestion.id] || []).includes(option.id)
+                    : userAnswers[currentQuestion.id] === option.id;
+
+                return (
+                  <div key={option.id} style={{ marginBottom: '0.5rem' }}>
+                    <label>
+                      <input
+                        type={currentQuestion.optionType === 'Multiple_choice' ? 'checkbox' : 'radio'}
+                        name={`question-${currentQuestion.id}`}
+                        value={option.id}
+                        checked={checked}
+                        onChange={() =>
+                          currentQuestion.optionType === 'Multiple_choice'
+                            ? handleMultipleChoiceChange(currentQuestion.id, option.id)
+                            : handleSingleChoiceChange(currentQuestion.id, option.id)
+                        }
+                        style={{ marginRight: '8px' }}
+                      />
+                      {option.reponseText}
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Match */}
+          {currentQuestion.optionType === 'Match' && (
+            <div>
+              <p>Match the pairs:</p>
+              {currentQuestion.matchPairs.map((pair, idx) => {
+                const userPair = (userAnswers[currentQuestion.id] && userAnswers[currentQuestion.id][idx]) || {
+                  left: '',
+                  right: '',
+                };
+                return (
+                  <div key={idx} style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }}>
+                    <input
+                      type="text"
+                      placeholder="Left"
+                      value={userPair.left}
+                      onChange={e => handleMatchChange(currentQuestion.id, 'left', idx, e.target.value)}
+                      style={{ flex: 1 }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Right"
+                      value={userPair.right}
+                      onChange={e => handleMatchChange(currentQuestion.id, 'right', idx, e.target.value)}
+                      style={{ flex: 1 }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Reorganize */}
+          {currentQuestion.optionType === 'reorganize' && (
+            <div>
+              <p>Arrange the steps in the correct order:</p>
+              {currentReorganizeAnswer.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <span>{item}</span>
+                  <div>
+                    <button
+                      type="button"
+                      disabled={idx === 0}
+                      onClick={() =>
+                        handleReorganizeChange(
+                          currentQuestion.id,
+                          moveItem(currentReorganizeAnswer, idx, idx - 1)
+                        )
+                      }
+                    >
+                      ▲
+                    </button>
+                    <button
+                      type="button"
+                      disabled={idx === currentReorganizeAnswer.length - 1}
+                      onClick={() =>
+                        handleReorganizeChange(
+                          currentQuestion.id,
+                          moveItem(currentReorganizeAnswer, idx, idx + 1)
+                        )
+                      }
+                    >
+                      ▼
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Navigation Buttons */}
+          <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between' }}>
+            <button onClick={prevQuestion} disabled={currentQuestionIndex === 0}>
+              Previous
+            </button>
+            <button
+              onClick={nextQuestion}
+              disabled={currentQuestionIndex === quiz.questions.length - 1}
+            >
+              Next
+            </button>
+          </div>
+
+          {/* Submit Button */}
+          {currentQuestionIndex === quiz.questions.length - 1 && (
+            <div style={{ marginTop: '2rem' }}>
+              <button
+                onClick={handleSubmit}
+                disabled={!isAllAnswered}
+                style={{
+                  backgroundColor: isAllAnswered ? '#28a745' : '#ccc',
+                  color: 'white',
+                  padding: '0.75rem 1.5rem',
+                  cursor: isAllAnswered ? 'pointer' : 'not-allowed',
+                }}
+              >
+                Submit Quiz
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
-
 export default DisplayQuiz;
+

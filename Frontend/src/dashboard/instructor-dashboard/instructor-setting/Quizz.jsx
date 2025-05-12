@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import './style.css';
@@ -16,85 +16,102 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
   const [optionType, setOptionType] = useState("Multiple_choice");
   const [reorganizeItems, setReorganizeItems] = useState(["", "", ""]);
   const [matchPairs, setMatchPairs] = useState([{ left: "", right: "" }]);
+  const addStep = () => setReorganizeItems([...reorganizeItems, ""]);
+  const addMatchPair = () => setMatchPairs([...matchPairs, { left: "", right: "" }]);
+  useEffect(() => {
+    // Reset when question type changes
+    setReorganizeItems(["", "", ""]);
+    setMatchPairs([{ left: "", right: "" }]);
+  }, [optionType]);
 
   const handleAddQuestion = () => {
-    if (!question || !optionType) {
-      alert("Please fill in both the question and option type.");
+    if (!question.trim()) {
+      toast.error("Question text is required.");
       return;
     }
-
-    console.log("Selected Option Type:", optionType);
 
     let newQuestion = {
       questionText: question,
       optionType: optionType,
     };
 
-    switch (optionType) {
-      case "Multiple_choice":
-      case "single_choice":
-        if (reponses.length === 0) {
-          alert("Please provide responses for multiple or single choice.");
-          return;
-        }
-        newQuestion.reponses = reponses.map((rep, index) => ({
-          reponseText: rep.text,
-          isCorrect: correctAnswers.includes(index),
-        }));
-        break;
+    if (optionType === "Multiple_choice" || optionType === "single_choice") {
+      const filteredResponses = reponses
+        .map((r) => r.text.trim())
+        .map((text, index) => ({ text, index }))
+        .filter((r) => r.text);
 
-      case "match":
-        if (matchPairs.length === 0) {
-          alert("Please provide matching pairs.");
-          return;
-        }
-        newQuestion.matchPairs = matchPairs;
-        break;
 
-      case "reorganize":
-        if (reorganizeItems.length === 0) {
-          alert("Please provide reorderable items.");
-          return;
-        }
-        newQuestion.reorganizeItems = reorganizeItems;
-        break;
-
-      default:
-        alert("Invalid option type.");
+      if (filteredResponses.length < 2) {
+        toast.error("At least two non-empty responses are required.");
         return;
+      }
+
+      newQuestion.reponses = filteredResponses.map(({ text, index }) => ({
+        reponseText: text,
+        isCorrect: correctAnswers.includes(index),
+        points: 1,
+      }));
+    } else if (optionType === "match") {
+      const filteredPairs = matchPairs.filter(
+        (pair) => pair.left.trim() && pair.right.trim()
+      );
+      if (filteredPairs.length < 1) {
+        toast.error("At least one valid match pair is required.");
+        return;
+      }
+      newQuestion.matchPairs = filteredPairs;
+    } else if (optionType === "reorganize") {
+      const filteredSteps = reorganizeItems.filter((item) => item.trim());
+      if (filteredSteps.length < 2) {
+        toast.error("At least two steps are required.");
+
+        return;
+      }
+      newQuestion.reorganizeItems = filteredSteps;
     }
 
-    setQuestions((prev) => [...prev, newQuestion]);
-    resetForm();
-  };
+    setQuestions([...questions, newQuestion]);
 
-  const resetForm = () => {
+
+    // Reset fields
+
     setQuestion("");
+    setOptionType("Multiple_choice");
     setReponses([{ text: "" }, { text: "" }, { text: "" }, { text: "" }]);
     setCorrectAnswers([]);
-    setOptionType("Multiple_choice");
     setReorganizeItems(["", "", ""]);
     setMatchPairs([{ left: "", right: "" }]);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
+     e.preventDefault();
     if (questions.length === 0) {
       toast.error("Please add at least one question.");
       return;
     }
-
-    try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/quizzes/create`, {
+    // Log the payload before sending
+    const payload = {
         formationDetailsId,
         questions,
-      }, { withCredentials: true });
+    };
+    console.log("Payload being sent to API:", payload);
+
+
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/quizzes/create`,
+        {
+          formationDetailsId,
+          questions,
+        },
+        { withCredentials: true }
+      );
 
       toast.success("Quiz created successfully!");
       onNext();
     } catch (error) {
-      toast.error("Error creating quiz.");
+      toast.error(error.response?.data?.message || "Error creating quiz.");
       console.error(error);
     }
   };
@@ -107,7 +124,12 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
         {/* Question Type Selector */}
         <div className="question-type-selector">
           <label>Question Type</label>
-          <select value={optionType} onChange={(e) => setOptionType(e.target.value)}>
+
+          <select
+            value={optionType}
+            onChange={(e) => setOptionType(e.target.value)}
+          >
+
             <option value="Multiple_choice">Multiple Choice</option>
             <option value="single_choice">Single Choice</option>
             <option value="reorganize">Reorganize</option>
@@ -139,6 +161,7 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
                   setReponses(updated);
                 }}
               />
+
               {optionType === "Multiple_choice" ? (
                 <input
                   type="checkbox"
@@ -163,8 +186,10 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
             </div>
           ))}
 
+
         {/* Reorganize */}
         {optionType === "reorganize" &&
+
           reorganizeItems.map((item, index) => (
             <div key={index} className="quiz-form-grp">
               <input
@@ -181,13 +206,19 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
           ))}
 
         {optionType === "reorganize" && (
-          <button type="button" className="pill-button" onClick={() => setReorganizeItems([...reorganizeItems, ""])} >
+
+          <button
+            type="button"
+            className="pill-button"
+            onClick={() => setReorganizeItems([...reorganizeItems, ""])}
+          >
             Add Step
           </button>
         )}
 
         {/* Match */}
         {optionType === "match" &&
+
           matchPairs.map((pair, index) => (
             <div key={index} className="quiz-form-grp d-flex gap-2">
               <input
@@ -211,26 +242,48 @@ const Quizz = ({ formationDetailsId, onPrev, onNext }) => {
                 }}
               />
             </div>
+
           ))}
 
         {optionType === "match" && (
-          <button type="button" className="pill-button" onClick={() => setMatchPairs([...matchPairs, { left: "", right: "" }])}>
+          <button
+            type="button"
+            className="pill-button"
+            onClick={() =>
+              setMatchPairs([...matchPairs, { left: "", right: "" }])
+            }
+          >
             Add Match Pair
           </button>
         )}
 
-        <button type="button" className="pill-button" onClick={handleAddQuestion}>
+        <button
+          type="button"
+          className="pill-button mt-2"
+          onClick={handleAddQuestion}
+        >
           Add Question
         </button>
 
+
+        {/* Preview Added Questions */}
+        {questions.length > 0 && (
+          <div className="preview-questions mt-4">
+            <h5>Preview Questions:</h5>
+            <ul>
+              {questions.map((q, i) => (
+                <li key={i}>
+                  {i + 1}. {q.questionText} ({q.optionType})
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Navigation Buttons */}
         <div className="d-flex justify-content-between mt-3">
-          <button type="button" className="pill-button" onClick={onPrev}>
-            Previous
-          </button>
-          <button type="submit" className="pill-button">
-            Submit Quiz
-          </button>
+          <button type="button" className="pill-button" onClick={onPrev}>Previous</button>
+          <button type="submit" className="pill-button"> Submit Quiz</button>
         </div>
       </form>
     </div>

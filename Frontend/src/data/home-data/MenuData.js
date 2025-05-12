@@ -1,21 +1,32 @@
-// src/data/home-data/MenuData.js
 const menu_data = [
     {   
         id: 1,
         title: "Dashboard",
-        link: "/instructor-dashboard"
+        link: "/instructor-dashboard",
+        roles: ["Formateur"],  
     },
     {
         id: 2,
-        title: "Formation",
-        link: "#",
+        title: "Formations",
+        link: "/formations",    
+        roles: ["Admin"],  
+    },
+    {
+        id: 3,
+        title: "Utilisateurs",
+        link: "/listUsers",
+        roles: ["Admin"],  
+    },
+    {
+        id: 4,
+        title: "Formations",
+        link: "#",    
+        roles: ["Formateur"],  
         sub_menus: [
-            { link: "/courses", title: "All Formation" },
-            { link: "/course-details", title: "Formation Details" },
-            { link: "/lesson", title: "video" },
+            { link: "/formations", title: "Formations" },
+            { link: "/Myformations", title: "Mes Formations" },  
         ],
     },
-    
 ];
 
 export default menu_data;

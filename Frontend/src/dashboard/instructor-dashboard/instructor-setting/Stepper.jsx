@@ -31,7 +31,7 @@ const Stepper = ({ userId, style }) => {
   
     // If current tab is the last step (Quizz), redirect
     if (activeTab === 3) {
-      navigate("/formations");
+      navigate("/Myformations");
       return;
     }
   
@@ -54,7 +54,7 @@ const Stepper = ({ userId, style }) => {
       <div className="dashboard__content-wrap">
         <div className="dashboard__content-title">
           <h4 className="title">Add formation</h4>
-          <button className="pill-button" onClick={resetProgress}>Reset Progress</button>
+          
         </div>
         <div className="row">
           <div className="col-lg-12">

@@ -1,6 +1,9 @@
-const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails } = require('../db/models');
+
+const { Quiz, Trace, User, Question, Reponse, QuizProg, FormationDetails,Historisation,Formation } = require('../db/models');
+
+
 const { calculateScore } = require('../services/quizService');
-const sequelize = require('../db/models').sequelize; // Add this to access transactions
+const sequelize = require('../db/models').sequelize; 
 
 
 //app.use('/quizzes', quizRoutes);
@@ -17,8 +20,10 @@ exports.createQuiz = async (req, res) => {
       return res.status(403).json({ message: 'Permission refusée ou utilisateur introuvable.' });
     }
 
+
     const formation = await FormationDetails.findByPk(formationDetailsId);
     if (!formation) {
+
       await transaction.rollback();
       return res.status(404).json({ message: 'Formation non trouvée.' });
     }
@@ -44,7 +49,6 @@ exports.createQuiz = async (req, res) => {
       }, { transaction });
 
       questionIds.push(createdQuestion.id);
-
       if (q.optionType === 'Multiple_choice' || q.optionType === 'single_choice') {
         if (Array.isArray(q.reponses)) {
           for (const rep of q.reponses) {
@@ -66,7 +70,7 @@ exports.createQuiz = async (req, res) => {
               reponseText: pair.left,
               isCorrect: true,  // Or handle correctness separately
               points: pairIndex, // Use points to indicate position or correctness
-              pairIndex, // You can add a pairIndex field if you want to separate pairs
+              pairIndex, // You can add a `pairIndex` field if you want to separate pairs
             }, { transaction });
             await Reponse.create({
               questionId: createdQuestion.id,
@@ -113,8 +117,6 @@ exports.createQuiz = async (req, res) => {
   console.error("Error details:", error.response ? error.response.data : error.message);
 }
 };
-
-
 /*
 exports.createQuiz = async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -263,8 +265,6 @@ exports.getQuizByFormation = async (req, res) => {
 };
 
 
-
-
 /*
 exports.createQuiz = async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -350,6 +350,73 @@ exports.createQuiz = async (req, res) => {
   }
 };
 */
+exports.getQuizByFormation = async (req, res) => {
+  try {
+    const { formationId } = req.params;
+    console.log('➡️ formationId from params:', formationId);
+
+    // 1. Get formation details
+    const formationDetails = await FormationDetails.findOne({
+      where: { formationId },
+    });
+
+    if (!formationDetails) {
+      return res.status(404).json({ message: 'Détails de formation non trouvés.' });
+    }
+
+    const formationDetailsId = formationDetails.id;
+
+    // 2. Get the quiz including questions and answers
+    const quiz = await Quiz.findOne({
+      where: { formationDetailsId },
+      include: [
+        {
+          model: Question,
+          as: 'Questions',
+          include: [
+            {
+              model: Reponse,
+              as: 'Reponses',
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz non trouvé pour cette formation.' });
+    }
+
+    // 3. Extract only the questions and answers
+    const questionsWithAnswers = quiz.Questions.map((questionInstance) => {
+      const question = questionInstance.get({ plain: true });
+      return {
+        id: question.id,
+        questionText: question.questionText,
+        optionType: question.optionType, // optional: remove if not needed
+        reponses: question.Reponses.map((reponse) => ({
+          id: reponse.id,
+          reponseText: reponse.reponseText,
+          // Include these if needed:
+          // isCorrect: reponse.isCorrect,
+          // points: reponse.points
+        })),
+      };
+    });
+
+    return res.status(200).json({ questions: questionsWithAnswers });
+
+  } catch (error) {
+    console.error('❌ Erreur récupération quiz:', error);
+    return res.status(500).json({ message: 'Erreur serveur', error: error.message });
+  }
+};
+
+
+
+
+
+
 
 exports.attemptQuiz = async (req, res) => {
   try {
@@ -382,7 +449,7 @@ exports.attemptQuiz = async (req, res) => {
 
       // Get the correct answers for this question
       const correctReponses = await Reponse.findAll({
-        where: { questId: question.id, isCorrect: true },
+        where: { questionId: question.id, isCorrect: true },
       });
 
       // User's answers for the current question
@@ -586,25 +653,9 @@ exports.deleteQuiz = async (req, res) => {
     res.status(500).json({ message: 'Error deleting quiz', error });
   }
 };
-exports.getQuizById = async (req, res) => {
-  try {
-    const quizId = req.params.id;
-    const quiz = await Quiz.findByPk(quizId, {
-      include: [
-        { model: Question, include: [Reponse] }
-      ]
-    });
 
-    if (!quiz) {
-      return res.status(404).json({ message: 'Quiz not found' });
-    }
 
-    return res.status(200).json({ message: 'Quiz found successfully', quiz });
-  } catch (error) {
-    console.error("Error fetching quiz:", error);
-    return res.status(500).json({ message: 'Error fetching quiz', error });
-  }
-};
+
 exports.getAllQuizzesByUser = async (req, res) => {
   try {
     const userId = req.user.id;
